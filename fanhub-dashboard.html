@@ -480,15 +480,106 @@ button{font-family:inherit;cursor:pointer;border:none;outline:none;background:no
 .metric-card:nth-child(4){animation-delay:.17s}
 .charts-row,.bottom-grid{animation:fadeUp .4s .2s both}
 
+/* ── MOBILE NAV ──────────────────────────────── */
+.mob-topbar{
+  display:none;
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  height:52px;background:var(--nav);
+  border-bottom:1px solid var(--bd);
+  padding:0 16px;
+  align-items:center;justify-content:space-between;
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  transition:background var(--tr),border-color var(--tr);
+}
+.mob-topbar-logo{font-size:16px;font-weight:500;letter-spacing:.18em;color:var(--p)}
+.mob-topbar-logo em{font-style:normal;font-weight:400;opacity:.55}
+.mob-topbar-right{display:flex;align-items:center;gap:10px}
+.mob-theme-btn{
+  width:38px;height:22px;border-radius:11px;
+  background:var(--surface2);border:1.5px solid var(--bd2);
+  position:relative;cursor:pointer;padding:2px;display:flex;align-items:center;
+  transition:background var(--tr),border-color var(--tr);
+}
+.mob-theme-btn::after{content:'';width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.18);transition:transform var(--tr)}
+[data-theme=dark] .mob-theme-btn{background:var(--p);border-color:var(--p)}
+[data-theme=dark] .mob-theme-btn::after{transform:translateX(16px)}
+.mob-ham{width:36px;height:36px;border-radius:8px;background:var(--surface2);display:flex;align-items:center;justify-content:center;cursor:pointer;border:1px solid var(--bd);transition:background var(--tr)}
+.mob-ham svg{width:18px;height:18px;stroke:var(--t1)}
+
+/* Mobile bottom nav */
+.mob-bottom-nav{
+  display:none;
+  position:fixed;bottom:0;left:0;right:0;z-index:200;
+  background:var(--surface);border-top:1px solid var(--bd);
+  padding:8px 0 env(safe-area-inset-bottom,8px);
+  transition:background var(--tr),border-color var(--tr);
+}
+.mob-nav-items{display:flex;justify-content:space-around}
+.mob-nav-item{
+  display:flex;flex-direction:column;align-items:center;gap:3px;
+  padding:4px 12px;cursor:pointer;
+  font-size:11px;color:var(--t3);transition:color .18s;
+  min-width:56px;
+}
+.mob-nav-item.active{color:var(--p)}
+.mob-nav-item svg{width:22px;height:22px}
+
+/* Sidebar overlay for mobile */
+.sidebar-overlay{
+  display:none;position:fixed;inset:0;z-index:150;
+  background:rgba(0,0,0,.5);backdrop-filter:blur(2px);
+}
+.sidebar-overlay.open{display:block}
+.sidebar.mob-open{transform:translateX(0) !important}
+
 /* Responsive */
 @media(max-width:760px){
-  .sidebar{transform:translateX(-100%)}
-  .main{margin-left:0}
-  .content{padding:20px 16px 48px}
+  .sidebar{transform:translateX(-100%);transition:transform .3s cubic-bezier(.4,0,.2,1)}
+  .main{margin-left:0;padding-top:52px}
+  .topbar{display:none}
+  .mob-topbar{display:flex}
+  .mob-bottom-nav{display:block}
+  .content{padding:16px 14px 80px}
+  
+  /* Hero payout: stack vertically on mobile */
+  .payout-hero-inner{
+    grid-template-columns:1fr !important;
+    gap:20px !important;
+  }
+  .payout-hero-inner > div:last-child{
+    align-items:flex-start !important;
+  }
+  
+  /* Metrics: 2 col on mobile */
+  .metrics{grid-template-columns:repeat(2,1fr) !important}
+  
+  /* Charts: single col */
+  .charts-row{grid-template-columns:1fr !important}
+  .bottom-grid{grid-template-columns:1fr !important}
+  
+  /* Hero font smaller on mobile */
+  #payoutHero{font-size:36px !important}
+}
+@media(max-width:400px){
+  .metrics{grid-template-columns:1fr !important}
 }
 </style>
 </head>
 <body>
+
+<!-- MOBILE TOPBAR -->
+<div class="mob-topbar">
+  <div class="mob-topbar-logo">FAN<em>HUB</em></div>
+  <div class="mob-topbar-right">
+    <div class="mob-theme-btn" id="mobThemeBtn"></div>
+    <div class="mob-ham" onclick="toggleMobSidebar()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </div>
+  </div>
+</div>
+
+<!-- SIDEBAR OVERLAY -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleMobSidebar()"></div>
 
 <!-- ── SIDEBAR ────────────────────────────────────── -->
 <div class="sidebar">
@@ -585,7 +676,7 @@ button{font-family:inherit;cursor:pointer;border:none;outline:none;background:no
       display:grid;grid-template-columns:1fr auto;
       gap:32px;align-items:center;
       position:relative;overflow:hidden;
-    ">
+    " class="payout-hero-inner">
       <!-- Decorative rings -->
       <div style="
         position:absolute;right:-60px;top:-60px;
@@ -995,6 +1086,48 @@ function setPeriod(btn, period) {
 }
 
 renderChart('m');
+
+/* Mobile sidebar toggle */
+function toggleMobSidebar(){
+  const sidebar = document.querySelector('.sidebar');
+  const overlay = document.getElementById('sidebarOverlay');
+  sidebar.classList.toggle('mob-open');
+  overlay.classList.toggle('open');
+}
+
+/* Mobile theme button sync */
+document.getElementById('mobThemeBtn').addEventListener('click', () => {
+  const n = root.dataset.theme === 'light' ? 'dark' : 'light';
+  root.dataset.theme = n;
+  localStorage.setItem('fh-theme', n);
+});
 </script>
+
+<!-- MOBILE BOTTOM NAV -->
+<div class="mob-bottom-nav">
+  <div class="mob-nav-items">
+    <div class="mob-nav-item active" onclick="">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      儀表板
+    </div>
+    <div class="mob-nav-item" onclick="window.location.href='fanhub-post-create.html'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
+      發布
+    </div>
+    <div class="mob-nav-item" onclick="window.location.href='fanhub-messages.html'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      私訊
+    </div>
+    <div class="mob-nav-item" onclick="window.location.href='fanhub-subscribers.html'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      訂閱者
+    </div>
+    <div class="mob-nav-item" onclick="window.location.href='fanhub-settings.html'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      設定
+    </div>
+  </div>
+</div>
+
 </body>
 </html>

@@ -29,6 +29,7 @@ body{
   font-family:'DM Sans',sans-serif;font-size:16px;
   background:var(--bg);color:var(--t1);min-height:100vh;
   -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
   transition:background var(--tr),color var(--tr);
 }
 button{font-family:inherit;cursor:pointer;border:none;outline:none;background:none}
@@ -258,6 +259,15 @@ input{font-family:inherit}
 @keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
 .modal-header{animation:fadeUp .35s .04s both}
 .plan-tabs{animation:fadeUp .35s .07s both}
+
+.mob-bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:200;background:var(--surface);border-top:1px solid var(--bd);padding:8px 0 max(8px,env(safe-area-inset-bottom));transition:background var(--tr),border-color var(--tr)}
+.mob-nav-items{display:flex;justify-content:space-around}
+.mob-nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 6px;cursor:pointer;font-size:11px;color:var(--t3);transition:color .18s;min-width:48px;text-align:center}
+.mob-nav-item.active{color:var(--p)}
+.mob-nav-item svg{width:22px;height:22px}
+
+@media(max-width:680px){.mob-bottom-nav{display:block}body{overflow-x:hidden;padding-bottom:60px}}
+@media(max-width:680px){.nav-right{display:flex !important}.nav-links{display:none}.btn-login,.btn-join{display:none}}
 </style>
 </head>
 <body>

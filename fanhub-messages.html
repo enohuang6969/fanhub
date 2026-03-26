@@ -455,9 +455,35 @@ input,textarea{font-family:inherit;outline:none}
 /* Entrance */
 @keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
 .bubble-group{animation:fadeIn .22s both}
+
+/* ── MOBILE ── */
+.mob-topbar{display:none;position:fixed;top:0;left:0;right:0;z-index:200;height:52px;background:var(--nav);border-bottom:1px solid var(--bd);padding:0 16px;align-items:center;justify-content:space-between;backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);transition:background var(--tr),border-color var(--tr)}
+.mob-topbar-logo{font-size:16px;font-weight:500;letter-spacing:.18em;color:var(--p)}
+.mob-topbar-logo em{font-style:normal;font-weight:400;opacity:.55}
+.mob-topbar-right{display:flex;align-items:center;gap:10px}
+.mob-theme-btn{width:38px;height:22px;border-radius:11px;background:var(--surface2);border:1.5px solid var(--bd2);position:relative;cursor:pointer;padding:2px;display:flex;align-items:center;transition:background var(--tr),border-color var(--tr)}
+.mob-theme-btn::after{content:"";width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.18);transition:transform var(--tr)}
+[data-theme=dark] .mob-theme-btn{background:var(--p);border-color:var(--p)}
+[data-theme=dark] .mob-theme-btn::after{transform:translateX(16px)}
+.mob-ham{width:36px;height:36px;border-radius:8px;background:var(--surface2);display:flex;align-items:center;justify-content:center;cursor:pointer;border:1px solid var(--bd)}
+.mob-bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:200;background:var(--surface);border-top:1px solid var(--bd);padding:8px 0 max(8px,env(safe-area-inset-bottom));transition:background var(--tr),border-color var(--tr)}
+.mob-nav-items{display:flex;justify-content:space-around}
+.mob-nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 8px;cursor:pointer;font-size:11px;color:var(--t3);transition:color .18s;min-width:52px}
+.mob-nav-item.active{color:var(--p)}
+.mob-nav-item svg{width:22px;height:22px}
+.sidebar-overlay{display:none;position:fixed;inset:0;z-index:150;background:rgba(0,0,0,.5)}
+.sidebar-overlay.open{display:block}
+
+@media(max-width:680px){
+  .mob-topbar{display:flex}
+  .mob-bottom-nav{display:block}
+  body{overflow-x:hidden}
+}
 </style>
 </head>
 <body>
+<div class="mob-topbar"><div class="mob-topbar-logo">FAN<em>HUB</em></div><div class="mob-topbar-right"><div class="mob-theme-btn" id="mobThemeBtn"></div></div></div>
+
 
 <nav class="nav">
   <div class="nav-logo" onclick="window.location.href='fanhub-explore.html'">FAN<em>HUB</em></div>
@@ -781,6 +807,44 @@ window.addEventListener('load', () => {
   const msgs = document.getElementById('messages');
   msgs.scrollTop = msgs.scrollHeight;
 });
+
+function toggleMobSidebar(){
+  var s=document.querySelector('.sidebar,.snav,.s-nav');
+  var o=document.getElementById('sidebarOverlay');
+  if(s)s.classList.toggle('mob-open');
+  if(o)o.classList.toggle('open');
+}
+var _mbt=document.getElementById('mobThemeBtn');
+if(_mbt)_mbt.addEventListener('click',function(){
+  var n=root.dataset.theme==='light'?'dark':'light';
+  root.dataset.theme=n;localStorage.setItem('fh-theme',n);
+});
 </script>
+
+<!-- MOBILE BOTTOM NAV -->
+<div class="mob-bottom-nav">
+  <div class="mob-nav-items">
+    <div class="mob-nav-item" onclick="window.location.href='fanhub-explore.html'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      探索
+    </div>
+    <div class="mob-nav-item" onclick="window.location.href='fanhub-favorites.html'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      收藏
+    </div>
+    <div class="mob-nav-item active" onclick="window.location.href='#'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      私訊
+    </div>
+    <div class="mob-nav-item" onclick="window.location.href='fanhub-notifications.html'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+      通知
+    </div>
+    <div class="mob-nav-item" onclick="window.location.href='fanhub-settings.html'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      設定
+    </div>
+  </div>
+</div>
 </body>
 </html>

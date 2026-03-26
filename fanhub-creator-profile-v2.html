@@ -36,6 +36,7 @@ body{
   background:var(--bg);color:var(--t1);
   min-height:100vh;
   -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
   transition:background var(--tr),color var(--tr);
 }
 button{font-family:inherit;cursor:pointer;border:none;outline:none;background:none}
@@ -665,6 +666,41 @@ a{text-decoration:none;color:inherit}
 /* Divider */
 .section-divider{height:1px;background:var(--bd);margin:0 32px 28px;transition:background var(--tr)}
 @media(max-width:680px){.section-divider{margin:0 18px 24px}}
+
+/* ── MOBILE ── */
+@media(max-width:680px){
+  .profile-header{padding:0 16px}
+  .hero-cover{height:240px}
+  .avatar{width:80px;height:80px;font-size:30px}
+  .avatar-row{margin-top:-32px}
+  .creator-name{font-size:26px}
+  .stats-row{gap:14px}
+  .stat-num{font-size:20px}
+  .stat-divider{height:26px}
+  .story-section,.highlights-section,.sub-section,.tabs-section{padding:0 16px}
+  .section-divider{margin:0 16px 24px}
+  .highlights-scroll{padding-bottom:8px}
+  .highlight-card{width:150px}
+  .highlight-cover{height:180px}
+  /* Plans: stack on mobile */
+  .plans-3col{grid-template-columns:1fr !important}
+  /* Posts: 2 col on mobile */
+  .posts-grid{grid-template-columns:repeat(2,1fr)}
+  .about-stat-grid{grid-template-columns:1fr 1fr}
+  body{overflow-x:hidden}
+}
+@media(max-width:400px){
+  .posts-grid{grid-template-columns:1fr}
+  .badges-row{flex-direction:column;align-items:flex-start}
+}
+
+.mob-bottom-nav{display:none;position:fixed;bottom:0;left:0;right:0;z-index:200;background:var(--surface);border-top:1px solid var(--bd);padding:8px 0 max(8px,env(safe-area-inset-bottom));transition:background var(--tr),border-color var(--tr)}
+.mob-nav-items{display:flex;justify-content:space-around}
+.mob-nav-item{display:flex;flex-direction:column;align-items:center;gap:3px;padding:4px 6px;cursor:pointer;font-size:11px;color:var(--t3);transition:color .18s;min-width:48px;text-align:center}
+.mob-nav-item.active{color:var(--p)}
+.mob-nav-item svg{width:22px;height:22px}
+
+@media(max-width:680px){.mob-bottom-nav{display:block}body{overflow-x:hidden;padding-bottom:60px}}
 </style>
 </head>
 <body>

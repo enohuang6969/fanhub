@@ -35,6 +35,7 @@ body{
   font-size:16px;
   background:var(--bg);color:var(--t1);
   -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
   transition:background var(--tr),color var(--tr);
   overflow:hidden;
 }
@@ -495,9 +496,28 @@ input,textarea,select{font-family:inherit;outline:none}
   .editor-settings{border-top:1px solid var(--bd)}
   body{overflow:auto}
 }
+
+/* ── MOBILE POST CREATE ── */
+.mob-topbar{display:none;position:fixed;top:0;left:0;right:0;z-index:200;height:52px;background:var(--nav);border-bottom:1px solid var(--bd);padding:0 16px;align-items:center;justify-content:space-between;backdrop-filter:blur(20px);transition:background var(--tr),border-color var(--tr)}
+.mob-topbar-logo{font-size:16px;font-weight:500;letter-spacing:.18em;color:var(--p)}
+.mob-topbar-logo em{font-style:normal;font-weight:400;opacity:.55}
+.mob-theme-btn{width:38px;height:22px;border-radius:11px;background:var(--surface2);border:1.5px solid var(--bd2);position:relative;cursor:pointer;padding:2px;display:flex;align-items:center;transition:background var(--tr),border-color var(--tr)}
+.mob-theme-btn::after{content:"";width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.18);transition:transform var(--tr)}
+[data-theme=dark] .mob-theme-btn{background:var(--p);border-color:var(--p)}
+[data-theme=dark] .mob-theme-btn::after{transform:translateX(16px)}
+@media(max-width:760px){
+  .editor-layout{grid-template-columns:1fr !important;height:auto !important;overflow:visible}
+  .editor-main{overflow-y:visible;height:auto;min-height:400px}
+  .editor-settings{border-top:1px solid var(--bd);border-left:none !important;height:auto;overflow-y:visible;max-height:none}
+  .navbar,.topbar{display:none !important}
+  .mob-topbar{display:flex}
+  body{overflow-x:hidden;padding-top:52px}
+}
 </style>
 </head>
 <body>
+<div class="mob-topbar"><div class="mob-topbar-logo">FAN<em>HUB</em></div><div class="mob-theme-btn" id="mobThemeBtn"></div></div>
+
 
 <!-- TOPBAR -->
 <div class="topbar">
@@ -930,6 +950,12 @@ function showToast(msg) {
     t.style.opacity='0'; t.style.transform='translateX(-50%) translateY(8px)';
   }, 2200);
 }
+
+var _mbt2=document.getElementById('mobThemeBtn');
+if(_mbt2)_mbt2.addEventListener('click',function(){
+  var n=root.dataset.theme==='light'?'dark':'light';
+  root.dataset.theme=n;localStorage.setItem('fh-theme',n);
+});
 </script>
 </body>
 </html>

@@ -1,0 +1,791 @@
+<!DOCTYPE html>
+<html lang="zh-TW" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>申請提領 · FANHUB</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ── TOKENS ────────────────────────────────────────
+   Light : bg=#fdf9f6  surface=#ffffff  surface2=#faf3ef  surface3=#fdf0eb
+           p=#cc5e76   t1=#2e1118  nav=rgba(253,249,246,.94)
+   Dark  : bg=#0f0a0d  surface=#1a0f14  surface2=#2d1822  surface3=#3d2230
+           p=#d4718b   t1=#f0c0cf  nav=rgba(15,10,13,.94)
+─────────────────────────────────────────────────── */
+:root{
+  --bg:#fdf9f6;--surface:#ffffff;--surface2:#faf3ef;--surface3:#fdf0eb;
+  --p:#cc5e76;--ph:#b84d65;--p2:#8a3248;
+  --t1:#2e1118;--t2:#4a1e2a;--t3:#7a4858;
+  --bd:rgba(150,70,90,.25);--bd2:rgba(150,70,90,.42);
+  --nav:rgba(253,249,246,.94);
+  --ok:#2d8a4e;--ok-bg:#eaf6ee;
+  --warn:#854f0b;--warn-bg:#faeeda;
+  --tr:.22s cubic-bezier(.4,0,.2,1);
+}
+[data-theme=dark]{
+  --bg:#080508;--surface:#1e1016;--surface2:#2a1820;--surface3:#382030;
+  --p:#d4718b;--ph:#e07d96;--p2:#9b4c6a;
+  --t1:#f8e0e8;--t2:#d8a8b8;--t3:#a87888;
+  --bd:rgba(200,120,150,.22);--bd2:rgba(200,120,150,.42);
+  --nav:rgba(8,5,8,.96);
+  --ok:#5eca7a;--ok-bg:#0d2518;
+  --warn:#ef9f27;--warn-bg:#2a1a05;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:'DM Sans',sans-serif;
+  font-size:16px;
+  background:var(--bg);color:var(--t1);
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+  transition:background var(--tr),color var(--tr);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Crect width='1' height='1' x='0' y='0' fill='rgba(180,100,110,.025)'/%3E%3Crect width='1' height='1' x='2' y='2' fill='rgba(180,100,110,.018)'/%3E%3C/svg%3E");
+}
+[data-theme=dark] body{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Crect width='1' height='1' x='0' y='0' fill='rgba(212,113,139,.04)'/%3E%3Crect width='1' height='1' x='2' y='2' fill='rgba(212,113,139,.025)'/%3E%3C/svg%3E");
+}
+button{font-family:inherit;cursor:pointer;border:none;outline:none;background:none}
+input,select{font-family:inherit;outline:none}
+
+/* ── SIDEBAR (shared) ─────────────────────────────── */
+.sidebar{
+  position:fixed;top:0;left:0;bottom:0;width:220px;z-index:100;
+  background:var(--surface);border-right:1px solid var(--bd);
+  display:flex;flex-direction:column;
+  transition:background var(--tr),border-color var(--tr);
+}
+.sidebar-logo{
+  padding:20px 20px 16px;border-bottom:1px solid var(--bd);
+  display:flex;align-items:center;justify-content:space-between;
+  transition:border-color var(--tr);
+}
+.logo-text{font-size:17px;font-weight:500;letter-spacing:.18em;color:var(--p);cursor:pointer}
+.logo-text em{font-style:normal;font-weight:400;opacity:.55}
+.theme-btn{
+  width:34px;height:20px;border-radius:10px;
+  background:var(--surface2);border:1.5px solid var(--bd2);
+  position:relative;cursor:pointer;padding:2px;display:flex;align-items:center;
+  transition:background var(--tr),border-color var(--tr);
+}
+.theme-btn::after{
+  content:'';width:14px;height:14px;border-radius:50%;
+  background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.18);transition:transform var(--tr);
+}
+[data-theme=dark] .theme-btn{background:var(--p);border-color:var(--p)}
+[data-theme=dark] .theme-btn::after{transform:translateX(14px)}
+.sidebar-profile{
+  padding:16px 20px;border-bottom:1px solid var(--bd);
+  display:flex;align-items:center;gap:10px;transition:border-color var(--tr);
+}
+.s-avatar{
+  width:38px;height:38px;border-radius:50%;
+  background:linear-gradient(135deg,var(--p),var(--p2));
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:600;color:#fff;flex-shrink:0;
+}
+.s-name{font-size:17px;font-weight:500;color:var(--t1);transition:color var(--tr)}
+.s-handle{font-size:18px;color:var(--t3);transition:color var(--tr)}
+.sidebar-nav{flex:1;padding:12px 0;overflow-y:auto}
+.nav-section{font-size:17px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);padding:10px 20px 4px;transition:color var(--tr)}
+.nav-item{
+  display:flex;align-items:center;gap:10px;padding:9px 20px;
+  font-size:14.5px;color:var(--t2);cursor:pointer;transition:all .18s;position:relative;
+}
+.nav-item:hover{background:var(--surface2);color:var(--t1)}
+.nav-item.active{background:var(--surface3);color:var(--p);font-weight:500}
+.nav-item.active::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--p);border-radius:0 2px 2px 0}
+.nav-item svg{width:15px;height:15px;flex-shrink:0}
+.sidebar-footer{padding:14px 20px;border-top:1px solid var(--bd);transition:border-color var(--tr)}
+.s-footer-link{font-size:17px;color:var(--t3);padding:5px 0;cursor:pointer;transition:color .18s;display:flex;align-items:center;gap:6px}
+.s-footer-link:hover{color:var(--p)}
+.s-footer-link svg{width:13px;height:13px}
+
+/* ── MAIN ─────────────────────────────────────────── */
+.main{margin-left:220px;min-height:100vh}
+.topbar{
+  height:56px;padding:0 32px;
+  display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid var(--bd);background:var(--surface);
+  position:sticky;top:0;z-index:50;
+  transition:background var(--tr),border-color var(--tr);
+}
+.topbar-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:20px;font-weight:600;color:var(--t1);transition:color var(--tr);
+}
+.topbar-back{
+  display:flex;align-items:center;gap:6px;
+  font-size:18px;color:var(--t3);cursor:pointer;transition:color .18s;
+}
+.topbar-back:hover{color:var(--p)}
+.topbar-back svg{width:14px;height:14px}
+
+.content{padding:28px 32px 60px;max-width:700px}
+
+/* ── BALANCE HERO ─────────────────────────────────── */
+.balance-hero{
+  background:var(--t1);border-radius:18px;
+  padding:28px 32px;margin-bottom:24px;
+  display:grid;grid-template-columns:1fr auto;
+  gap:24px;align-items:center;
+  position:relative;overflow:hidden;
+  transition:background var(--tr);
+}
+.balance-deco{
+  position:absolute;right:-40px;top:-40px;
+  width:200px;height:200px;border-radius:50%;
+  border:1px solid rgba(212,113,139,.1);pointer-events:none;
+}
+.balance-deco::after{
+  content:'';position:absolute;inset:30px;border-radius:50%;
+  border:1px solid rgba(212,113,139,.07);
+}
+.balance-label{
+  font-size:18px;font-weight:500;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--p);margin-bottom:8px;
+}
+.balance-amount{
+  font-family:'Cormorant Garamond',serif;
+  font-size:56px;font-weight:600;color:#fff;line-height:1;
+  margin-bottom:6px;
+}
+.balance-sub{font-size:18px;color:rgba(255,255,255,.45);margin-bottom:18px}
+.balance-breakdown{display:flex;gap:20px;flex-wrap:wrap}
+.breakdown-item{display:flex;flex-direction:column;gap:2px}
+.breakdown-dot-row{display:flex;align-items:center;gap:6px}
+.breakdown-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+.breakdown-lbl{font-size:18px;color:rgba(255,255,255,.45)}
+.breakdown-val{font-size:17px;font-weight:500;color:rgba(255,255,255,.8)}
+.balance-right{
+  display:flex;flex-direction:column;gap:12px;align-items:flex-end;
+  position:relative;z-index:1;
+}
+.next-payout-card{
+  background:rgba(255,255,255,.07);border-radius:12px;
+  padding:14px 16px;text-align:right;min-width:160px;
+}
+.next-payout-label{font-size:17px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:4px}
+.next-payout-date{font-size:18px;font-weight:600;color:#fff}
+.next-payout-sub{font-size:18px;color:rgba(255,255,255,.4);margin-top:2px}
+
+/* ── SECTION CARD ─────────────────────────────────── */
+.section-card{
+  background:var(--surface);border:1px solid var(--bd);
+  border-radius:14px;overflow:hidden;margin-bottom:16px;
+  transition:background var(--tr),border-color var(--tr);
+}
+.section-head{
+  padding:14px 20px;border-bottom:1px solid var(--bd);
+  display:flex;align-items:center;gap:8px;
+  transition:border-color var(--tr);
+}
+.section-head svg{width:14px;height:14px;color:var(--p)}
+.section-title{font-size:17px;font-weight:600;color:var(--t1);transition:color var(--tr)}
+
+/* ── AMOUNT SELECTOR ──────────────────────────────── */
+.amount-display{
+  padding:24px 20px 20px;
+  border-bottom:1px solid var(--bd);
+  transition:border-color var(--tr);
+}
+.amount-label{font-size:17px;color:var(--t3);margin-bottom:10px;transition:color var(--tr)}
+.amount-input-wrap{
+  display:flex;align-items:center;gap:0;
+  background:var(--surface2);border:1.5px solid var(--bd2);
+  border-radius:12px;overflow:hidden;
+  transition:border-color .18s,background var(--tr);
+}
+.amount-input-wrap:focus-within{border-color:var(--p);box-shadow:0 0 0 3px rgba(204,94,118,.09)}
+.amount-prefix{
+  padding:0 16px;font-size:18px;font-weight:400;color:var(--t3);
+  border-right:1px solid var(--bd2);height:56px;
+  display:flex;align-items:center;flex-shrink:0;
+  transition:color var(--tr),border-color var(--tr);
+}
+.amount-input{
+  flex:1;height:56px;padding:0 16px;border:none;background:transparent;
+  font-family:'Cormorant Garamond',serif;
+  font-size:32px;font-weight:600;color:var(--t1);
+  transition:color var(--tr);
+}
+.amount-input::placeholder{color:var(--bd2)}
+.amount-max-btn{
+  padding:0 16px;font-size:17px;font-weight:600;color:var(--p);
+  border-left:1px solid var(--bd2);height:56px;flex-shrink:0;
+  display:flex;align-items:center;
+  transition:color .18s,border-color var(--tr),background .18s;
+}
+.amount-max-btn:hover{background:var(--surface3)}
+.amount-hint{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-top:10px;font-size:17px;color:var(--t3);
+  transition:color var(--tr);
+}
+.amount-hint span{color:var(--t2);font-weight:500}
+
+/* Quick amount pills */
+.quick-amounts{
+  display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;
+}
+.quick-pill{
+  font-size:17px;font-weight:500;
+  padding:5px 14px;border-radius:16px;
+  border:1px solid var(--bd2);color:var(--t2);
+  background:var(--surface);
+  transition:all .18s;
+}
+.quick-pill:hover{border-color:var(--p);color:var(--p)}
+.quick-pill.selected{background:var(--p);color:#fff;border-color:var(--p)}
+
+/* ── BANK ACCOUNT ROW ─────────────────────────────── */
+.bank-row{
+  display:flex;align-items:center;gap:12px;
+  padding:14px 20px;border-bottom:1px solid var(--bd);
+  transition:border-color var(--tr);cursor:pointer;
+}
+.bank-row:hover{background:var(--surface2)}
+.bank-icon{
+  width:40px;height:40px;border-radius:10px;
+  background:var(--surface2);border:1px solid var(--bd);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;transition:background var(--tr),border-color var(--tr);
+}
+.bank-icon svg{width:18px;height:18px;color:var(--t2)}
+.bank-info{flex:1}
+.bank-name{font-size:17px;font-weight:500;color:var(--t1);transition:color var(--tr)}
+.bank-acct{font-size:17px;color:var(--t3);margin-top:2px;transition:color var(--tr)}
+.bank-verified{
+  display:flex;align-items:center;gap:4px;
+  font-size:18px;font-weight:600;
+  padding:2px 8px;border-radius:6px;
+  background:var(--ok-bg);color:var(--ok);flex-shrink:0;
+}
+.bank-verified svg{width:10px;height:10px}
+.bank-change{font-size:17px;color:var(--p);flex-shrink:0;cursor:pointer}
+
+/* Add bank row */
+.add-bank-row{
+  display:flex;align-items:center;gap:12px;
+  padding:14px 20px;cursor:pointer;
+  transition:background .18s;
+}
+.add-bank-row:hover{background:var(--surface2)}
+.add-bank-icon{
+  width:40px;height:40px;border-radius:10px;
+  border:1.5px dashed var(--bd2);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--t3);flex-shrink:0;transition:all .18s;
+}
+.add-bank-row:hover .add-bank-icon{border-color:var(--p);color:var(--p)}
+.add-bank-icon svg{width:16px;height:16px}
+.add-bank-label{font-size:17px;color:var(--t2);transition:color var(--tr)}
+
+/* ── FEE BREAKDOWN ────────────────────────────────── */
+.fee-table{padding:0}
+.fee-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:12px 20px;border-bottom:1px solid var(--bd);
+  font-size:17px;transition:border-color var(--tr);
+}
+.fee-row:last-child{border-bottom:none}
+.fee-label{color:var(--t2);display:flex;align-items:center;gap:6px;transition:color var(--tr)}
+.fee-label svg{width:13px;height:13px;color:var(--t3)}
+.fee-value{font-weight:500;color:var(--t1);transition:color var(--tr)}
+.fee-value.deduct{color:var(--p)}
+.fee-value.total{
+  font-family:'Cormorant Garamond',serif;
+  font-size:22px;font-weight:600;color:var(--ok);
+}
+.fee-row.total-row{background:var(--surface2);transition:background var(--tr)}
+
+/* ── HISTORY TABLE ────────────────────────────────── */
+.history-row{
+  display:flex;align-items:center;gap:12px;
+  padding:12px 20px;border-bottom:1px solid var(--bd);
+  transition:border-color var(--tr),background .15s;cursor:default;
+}
+.history-row:last-child{border-bottom:none}
+.history-row:hover{background:var(--surface2)}
+.history-icon{
+  width:36px;height:36px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.history-icon svg{width:15px;height:15px}
+.history-info{flex:1}
+.history-title{font-size:18px;font-weight:500;color:var(--t1);transition:color var(--tr)}
+.history-date{font-size:18px;color:var(--t3);margin-top:2px;transition:color var(--tr)}
+.history-amount{font-size:17px;font-weight:600;color:var(--ok);flex-shrink:0;transition:color var(--tr)}
+.history-status{
+  font-size:17px;font-weight:700;letter-spacing:.06em;
+  padding:2px 8px;border-radius:6px;flex-shrink:0;
+}
+.status-done{background:var(--ok-bg);color:var(--ok)}
+.status-pending{background:var(--warn-bg);color:var(--warn)}
+
+/* ── SUBMIT BTN ──────────────────────────────────── */
+.submit-wrap{margin-top:8px;padding:0 0 8px}
+.submit-btn{
+  width:100%;height:50px;border-radius:14px;
+  background:var(--p);color:#fff;
+  font-size:18px;font-weight:600;letter-spacing:.03em;
+  box-shadow:0 4px 18px rgba(204,94,118,.28);
+  transition:background .18s,transform .15s,box-shadow .18s;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  position:relative;overflow:hidden;
+}
+.submit-btn:hover{background:var(--ph);transform:translateY(-1px);box-shadow:0 6px 24px rgba(204,94,118,.36)}
+.submit-btn::after{
+  content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.15),transparent);
+  transition:left .5s;
+}
+.submit-btn:hover::after{left:140%}
+.submit-btn svg{width:16px;height:16px}
+.submit-btn.loading{pointer-events:none;opacity:.8}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spinner{width:18px;height:18px;border-radius:50%;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;animation:spin .7s linear infinite;display:none}
+.submit-btn.loading .spinner{display:block}
+.submit-btn.loading .btn-txt{display:none}
+
+/* Notice box */
+.notice{
+  display:flex;align-items:flex-start;gap:10px;
+  padding:12px 14px;border-radius:10px;margin-top:10px;
+}
+.notice-warn{background:var(--warn-bg);border:1px solid rgba(133,79,11,.15)}
+.notice-info{background:var(--surface3);border:1px solid var(--bd2)}
+.notice svg{width:14px;height:14px;flex-shrink:0;margin-top:1px}
+.notice-warn svg{stroke:var(--warn)}
+.notice-info svg{stroke:var(--t3)}
+.notice-text{font-size:17px;line-height:1.6}
+.notice-warn .notice-text{color:var(--warn)}
+.notice-info .notice-text{color:var(--t2);transition:color var(--tr)}
+
+/* Success overlay */
+.success-overlay{
+  display:none;position:fixed;inset:0;z-index:300;
+  background:rgba(15,10,13,.55);backdrop-filter:blur(6px);
+  align-items:center;justify-content:center;padding:24px;
+}
+.success-overlay.show{display:flex}
+.success-card{
+  background:var(--surface);border-radius:20px;
+  border:1px solid var(--bd);
+  padding:40px 32px;text-align:center;
+  max-width:380px;width:100%;
+  transition:background var(--tr),border-color var(--tr);
+}
+.success-ring{
+  width:64px;height:64px;border-radius:50%;
+  border:2px solid var(--ok);background:var(--ok-bg);
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 16px;
+}
+.success-ring svg{width:26px;height:26px;stroke:var(--ok)}
+.success-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:24px;font-weight:600;color:var(--t1);
+  margin-bottom:8px;transition:color var(--tr);
+}
+.success-msg{font-size:17px;color:var(--t2);line-height:1.65;margin-bottom:24px;transition:color var(--tr)}
+.success-detail{
+  background:var(--surface2);border-radius:12px;
+  padding:14px 16px;margin-bottom:20px;
+  display:flex;flex-direction:column;gap:8px;
+  transition:background var(--tr);
+}
+.success-detail-row{display:flex;justify-content:space-between;font-size:18px}
+.success-detail-label{color:var(--t3);transition:color var(--tr)}
+.success-detail-value{font-weight:600;color:var(--t1);transition:color var(--tr)}
+.success-close{
+  width:100%;height:44px;border-radius:12px;
+  background:var(--p);color:#fff;font-size:17px;font-weight:600;
+  transition:background .18s;
+}
+.success-close:hover{background:var(--ph)}
+
+/* Animations */
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.balance-hero{animation:fadeUp .4s .04s both}
+.section-card{animation:fadeUp .4s both}
+.section-card:nth-child(2){animation-delay:.08s}
+.section-card:nth-child(3){animation-delay:.12s}
+.section-card:nth-child(4){animation-delay:.16s}
+.section-card:nth-child(5){animation-delay:.20s}
+
+@media(max-width:760px){
+  .sidebar{transform:translateX(-100%)}
+  .main{margin-left:0}
+  .content{padding:20px 16px 48px}
+  .topbar{padding:0 16px}
+  .balance-hero{grid-template-columns:1fr;padding:22px 20px}
+  .balance-right{align-items:flex-start}
+}
+</style>
+</head>
+<body>
+
+<!-- ── SIDEBAR ────────────────────────────────────── -->
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-text" onclick="window.location.href='fanhub-dashboard.html'">FAN<em>HUB</em></div>
+    <div class="theme-btn" id="themeBtn"></div>
+  </div>
+  <div class="sidebar-profile">
+    <div class="s-avatar">A</div>
+    <div>
+      <div class="s-name">Ava Lin</div>
+      <div class="s-handle">@avalin</div>
+    </div>
+  </div>
+  <div class="sidebar-nav">
+    <div class="nav-section">主要</div>
+    <div class="nav-item" onclick="window.location.href='fanhub-dashboard.html'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      儀表板
+    </div>
+    <div class="nav-item" onclick="window.location.href='fanhub-creator-profile.html'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      個人主頁
+    </div>
+    <div class="nav-item" onclick="window.location.href='fanhub-messages.html'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8h2a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-2v4l-4-4H9a2 2 0 0 1-2-2v-1"/><path d="M15 3H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2v4l4-4h4a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2z"/></svg>
+      私訊
+    </div>
+    <div class="nav-section">收益</div>
+    <div class="nav-item active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      申請提領
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+      訂閱者
+    </div>
+    <div class="nav-section">帳號</div>
+    <div class="nav-item" onclick="window.location.href='fanhub-settings.html'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      設定
+    </div>
+  </div>
+  <div class="sidebar-footer">
+    <div class="s-footer-link" onclick="window.location.href='fanhub-dashboard.html'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      返回儀表板
+    </div>
+  </div>
+</div>
+
+<!-- ── MAIN ───────────────────────────────────────── -->
+<div class="main">
+  <div class="topbar">
+    <div class="topbar-title">申請提領</div>
+    <div class="topbar-back" onclick="window.location.href='fanhub-dashboard.html'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      返回儀表板
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- Balance hero -->
+    <div class="balance-hero">
+      <div class="balance-deco"></div>
+      <div style="position:relative;z-index:1">
+        <div class="balance-label">可提領餘額</div>
+        <div class="balance-amount">NT$30,888</div>
+        <div class="balance-sub">3 月結算 · 已扣除平台費用 15%</div>
+        <div class="balance-breakdown">
+          <div class="breakdown-item">
+            <div class="breakdown-dot-row">
+              <div class="breakdown-dot" style="background:var(--p)"></div>
+              <div class="breakdown-lbl">訂閱</div>
+            </div>
+            <div class="breakdown-val">NT$20,088</div>
+          </div>
+          <div class="breakdown-item">
+            <div class="breakdown-dot-row">
+              <div class="breakdown-dot" style="background:#7aac7c"></div>
+              <div class="breakdown-lbl">單篇解鎖</div>
+            </div>
+            <div class="breakdown-val">NT$5,400</div>
+          </div>
+          <div class="breakdown-item">
+            <div class="breakdown-dot-row">
+              <div class="breakdown-dot" style="background:#d4a05e"></div>
+              <div class="breakdown-lbl">付費訊息</div>
+            </div>
+            <div class="breakdown-val">NT$4,200</div>
+          </div>
+          <div class="breakdown-item">
+            <div class="breakdown-dot-row">
+              <div class="breakdown-dot" style="background:#8898c0"></div>
+              <div class="breakdown-lbl">打賞</div>
+            </div>
+            <div class="breakdown-val">NT$1,200</div>
+          </div>
+        </div>
+      </div>
+      <div class="balance-right">
+        <div class="next-payout-card">
+          <div class="next-payout-label">自動結算日</div>
+          <div class="next-payout-date">4 月 1 日</div>
+          <div class="next-payout-sub">每月 1 日自動計算</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Amount section -->
+    <div class="section-card">
+      <div class="section-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        <div class="section-title">提領金額</div>
+      </div>
+      <div class="amount-display">
+        <div class="amount-label">輸入提領金額（最低 NT$1,000）</div>
+        <div class="amount-input-wrap">
+          <div class="amount-prefix">NT$</div>
+          <input class="amount-input" type="number" id="amountInput"
+            placeholder="0" min="1000" max="30888"
+            oninput="updateFees()">
+          <button class="amount-max-btn" onclick="setMax()">全額提領</button>
+        </div>
+        <div class="amount-hint">
+          <span>可提領上限：<span style="color:var(--t1)">NT$30,888</span></span>
+          <span id="amountError" style="color:var(--p);display:none">金額超過可提領上限</span>
+        </div>
+        <div class="quick-amounts">
+          <button class="quick-pill" onclick="setAmount(10000)">NT$10,000</button>
+          <button class="quick-pill" onclick="setAmount(20000)">NT$20,000</button>
+          <button class="quick-pill" onclick="setAmount(30000)">NT$30,000</button>
+          <button class="quick-pill" onclick="setMax()">全額 NT$30,888</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bank account -->
+    <div class="section-card">
+      <div class="section-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+        <div class="section-title">收款帳戶</div>
+      </div>
+      <div class="bank-row">
+        <div class="bank-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="22" x2="21" y2="22"/><line x1="6" y1="18" x2="6" y2="11"/><line x1="10" y1="18" x2="10" y2="11"/><line x1="14" y1="18" x2="14" y2="11"/><line x1="18" y1="18" x2="18" y2="11"/><polygon points="12 2 20 7 4 7"/></svg>
+        </div>
+        <div class="bank-info">
+          <div class="bank-name">玉山銀行</div>
+          <div class="bank-acct">808 · ****-****-1234 · Ava Lin</div>
+        </div>
+        <div class="bank-verified">
+          <svg viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,6 5,9 10,3"/></svg>
+          已驗證
+        </div>
+        <button class="bank-change" onclick="showToast('銀行帳戶管理功能開發中')">更換</button>
+      </div>
+      <div class="add-bank-row" onclick="showToast('新增帳戶功能開發中')">
+        <div class="add-bank-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        </div>
+        <div class="add-bank-label">新增收款帳戶</div>
+      </div>
+    </div>
+
+    <!-- Fee breakdown -->
+    <div class="section-card">
+      <div class="section-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+        <div class="section-title">費用明細</div>
+      </div>
+      <div class="fee-table">
+        <div class="fee-row">
+          <div class="fee-label">提領金額</div>
+          <div class="fee-value" id="feeAmount">NT$0</div>
+        </div>
+        <div class="fee-row">
+          <div class="fee-label">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+            金流手續費（1.5%）
+          </div>
+          <div class="fee-value deduct" id="feeGateway">-NT$0</div>
+        </div>
+        <div class="fee-row total-row">
+          <div class="fee-label" style="font-weight:600;color:var(--t1)">實際到帳金額</div>
+          <div class="fee-value total" id="feeTotal">NT$0</div>
+        </div>
+      </div>
+      <div style="padding:14px 20px 16px">
+        <div class="notice notice-info">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          <div class="notice-text">提領申請後通常於 <strong>1–3 個工作天</strong>內到帳。實際到帳時間依各銀行作業時間而定。</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Submit -->
+    <div class="submit-wrap">
+      <button class="submit-btn" id="submitBtn" onclick="doWithdraw()">
+        <span class="btn-txt" style="display:flex;align-items:center;gap:8px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          確認申請提領
+        </span>
+        <div class="spinner"></div>
+      </button>
+      <div class="notice notice-warn" style="margin-top:10px">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        <div class="notice-text">申請後無法取消，請確認帳戶資訊正確無誤後再送出。</div>
+      </div>
+    </div>
+
+    <!-- History -->
+    <div class="section-card" style="margin-top:24px">
+      <div class="section-head">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+        <div class="section-title">歷史提領記錄</div>
+      </div>
+      <div class="history-row">
+        <div class="history-icon" style="background:var(--ok-bg)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--ok)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <div class="history-info">
+          <div class="history-title">2 月份收益提領</div>
+          <div class="history-date">2025/03/01 · 玉山銀行 ****1234</div>
+        </div>
+        <div class="history-amount">NT$28,320</div>
+        <div class="history-status status-done">已到帳</div>
+      </div>
+      <div class="history-row">
+        <div class="history-icon" style="background:var(--ok-bg)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--ok)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+        <div class="history-info">
+          <div class="history-title">1 月份收益提領</div>
+          <div class="history-date">2025/02/01 · 玉山銀行 ****1234</div>
+        </div>
+        <div class="history-amount">NT$24,650</div>
+        <div class="history-status status-done">已到帳</div>
+      </div>
+      <div class="history-row">
+        <div class="history-icon" style="background:var(--warn-bg)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--warn)" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
+        <div class="history-info">
+          <div class="history-title">12 月份收益提領</div>
+          <div class="history-date">2025/01/01 · 玉山銀行 ****1234</div>
+        </div>
+        <div class="history-amount">NT$19,480</div>
+        <div class="history-status status-pending">處理中</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Success overlay -->
+<div class="success-overlay" id="successOverlay">
+  <div class="success-card">
+    <div class="success-ring">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <div class="success-title">提領申請成功！</div>
+    <p class="success-msg">你的申請已送出，將於 1–3 個工作天內到帳。</p>
+    <div class="success-detail">
+      <div class="success-detail-row">
+        <div class="success-detail-label">提領金額</div>
+        <div class="success-detail-value" id="successAmount">NT$0</div>
+      </div>
+      <div class="success-detail-row">
+        <div class="success-detail-label">實際到帳</div>
+        <div class="success-detail-value" id="successNet">NT$0</div>
+      </div>
+      <div class="success-detail-row">
+        <div class="success-detail-label">收款帳戶</div>
+        <div class="success-detail-value">玉山銀行 ****1234</div>
+      </div>
+      <div class="success-detail-row">
+        <div class="success-detail-label">預計到帳</div>
+        <div class="success-detail-value">1–3 個工作天</div>
+      </div>
+    </div>
+    <button class="success-close" onclick="document.getElementById('successOverlay').classList.remove('show');window.location.href='fanhub-dashboard.html'">返回儀表板</button>
+  </div>
+</div>
+
+<!-- Toast -->
+<div style="position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(8px);background:var(--t1);color:var(--bg);font-size:12.5px;font-weight:500;padding:9px 20px;border-radius:22px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .22s,transform .22s;z-index:400;display:flex;align-items:center;gap:7px" id="toast">
+  <div style="width:6px;height:6px;border-radius:50%;background:var(--p);flex-shrink:0"></div>
+  <span id="toastMsg"></span>
+</div>
+
+<script>
+/* Theme */
+const root = document.documentElement;
+root.dataset.theme = 'light'; // demo: force light on load
+document.getElementById('themeBtn').addEventListener('click', () => {
+  const n = root.dataset.theme === 'light' ? 'dark' : 'light';
+  root.dataset.theme = n; localStorage.setItem('fh-theme', n);
+});
+
+const MAX = 30888;
+
+/* Update fees whenever amount changes */
+function updateFees() {
+  const raw = parseInt(document.getElementById('amountInput').value) || 0;
+  const over = raw > MAX;
+  document.getElementById('amountError').style.display = over ? '' : 'none';
+  const amt = Math.min(raw, MAX);
+  const gateway = Math.round(amt * 0.015);
+  const net = amt - gateway;
+  document.getElementById('feeAmount').textContent = 'NT$' + amt.toLocaleString();
+  document.getElementById('feeGateway').textContent = '-NT$' + gateway.toLocaleString();
+  document.getElementById('feeTotal').textContent = 'NT$' + net.toLocaleString();
+  /* update quick pill selection */
+  document.querySelectorAll('.quick-pill').forEach(p => p.classList.remove('selected'));
+}
+
+function setAmount(n) {
+  document.getElementById('amountInput').value = n;
+  updateFees();
+  document.querySelectorAll('.quick-pill').forEach(p => {
+    p.classList.toggle('selected', p.textContent.includes(n.toLocaleString()));
+  });
+}
+
+function setMax() {
+  setAmount(MAX);
+  document.querySelectorAll('.quick-pill').forEach(p => {
+    p.classList.toggle('selected', p.textContent.includes('全額'));
+  });
+}
+
+/* Withdraw */
+function doWithdraw() {
+  const raw = parseInt(document.getElementById('amountInput').value) || 0;
+  if (raw < 1000) { showToast('最低提領金額為 NT$1,000'); return; }
+  if (raw > MAX) { showToast('金額超過可提領上限'); return; }
+  const btn = document.getElementById('submitBtn');
+  btn.classList.add('loading');
+  setTimeout(() => {
+    btn.classList.remove('loading');
+    const gateway = Math.round(raw * 0.015);
+    const net = raw - gateway;
+    document.getElementById('successAmount').textContent = 'NT$' + raw.toLocaleString();
+    document.getElementById('successNet').textContent = 'NT$' + net.toLocaleString();
+    document.getElementById('successOverlay').classList.add('show');
+  }, 1800);
+}
+
+/* Toast */
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  t.style.opacity = '1'; t.style.transform = 'translateX(-50%) translateY(0)';
+  clearTimeout(window._tt);
+  window._tt = setTimeout(() => {
+    t.style.opacity = '0'; t.style.transform = 'translateX(-50%) translateY(8px)';
+  }, 2200);
+}
+</script>
+</body>
+</html>

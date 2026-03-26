@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="zh-TW" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>帳號設定 · FANHUB</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fdf9f6;--surface:#ffffff;--surface2:#faf3ef;--surface3:#fdf0eb;
+  --p:#cc5e76;--ph:#b84d65;--p2:#8a3248;
+  --t1:#2e1118;--t2:#4a1e2a;--t3:#7a4858;
+  --bd:rgba(150,70,90,.25);--bd2:rgba(150,70,90,.42);
+  --nav:rgba(253,249,246,.94);
+  --err:#c0392b;--err-bg:#fdf0ef;
+  --ok:#2d8a4e;--ok-bg:#eaf6ee;
+  --tr:.24s cubic-bezier(.4,0,.2,1);
+}
+[data-theme=dark]{
+  --bg:#080508;--surface:#1e1016;--surface2:#2a1820;--surface3:#382030;
+  --p:#d4718b;--ph:#e07d96;--p2:#9b4c6a;
+  --t1:#f8e0e8;--t2:#d8a8b8;--t3:#a87888;
+  --bd:rgba(200,120,150,.22);--bd2:rgba(200,120,150,.42);
+  --nav:rgba(8,5,8,.96);
+  --err:#e57373;--err-bg:#2d1010;
+  --ok:#5eca7a;--ok-bg:#0d2518;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'DM Sans',sans-serif;
+  font-size:16px;
+  background:var(--bg);color:var(--t1);
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+  transition:background var(--tr),color var(--tr);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Crect width='1' height='1' x='0' y='0' fill='rgba(180,100,110,.025)'/%3E%3Crect width='1' height='1' x='2' y='2' fill='rgba(180,100,110,.018)'/%3E%3C/svg%3E");
+}
+[data-theme=dark] body{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Crect width='1' height='1' x='0' y='0' fill='rgba(212,113,139,.04)'/%3E%3Crect width='1' height='1' x='2' y='2' fill='rgba(212,113,139,.025)'/%3E%3C/svg%3E")}
+button{font-family:inherit;cursor:pointer;border:none;outline:none;background:none}
+input,textarea,select{font-family:inherit;outline:none}
+a{color:var(--p);text-decoration:none}
+
+/* ── NAVBAR ─────────────────────────────────────── */
+.nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  height:52px;background:var(--nav);
+  backdrop-filter:blur(20px) saturate(160%);
+  -webkit-backdrop-filter:blur(20px) saturate(160%);
+  border-bottom:1px solid var(--bd);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 24px;transition:background var(--tr);
+}
+.nav-logo{font-size:17px;font-weight:500;letter-spacing:.18em;color:var(--p);cursor:pointer}
+.nav-logo em{font-style:normal;font-weight:400;opacity:.55}
+.nav-center{display:flex;gap:24px}
+.nav-link{font-size:17px;font-weight:400;letter-spacing:.05em;color:var(--t3);cursor:pointer;transition:color .18s}
+.nav-link:hover{color:var(--t1)}
+.nav-link.active{color:var(--t1)}
+.nav-right{display:flex;align-items:center;gap:10px}
+.theme-btn{
+  width:38px;height:22px;border-radius:11px;
+  background:var(--surface2);border:1.5px solid var(--bd2);
+  position:relative;cursor:pointer;padding:2px;display:flex;align-items:center;
+  transition:background var(--tr),border-color var(--tr);
+}
+.theme-btn::after{
+  content:'';width:16px;height:16px;border-radius:50%;
+  background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.18);
+  transition:transform var(--tr);
+}
+[data-theme=dark] .theme-btn{background:var(--p);border-color:var(--p)}
+[data-theme=dark] .theme-btn::after{transform:translateX(16px)}
+
+/* ── LAYOUT ──────────────────────────────────────── */
+.layout{
+  max-width:840px;margin:0 auto;
+  padding:76px 24px 60px;
+  display:grid;
+  grid-template-columns:200px 1fr;
+  gap:32px;
+  align-items:start;
+}
+@media(max-width:640px){
+  .layout{grid-template-columns:1fr;padding:70px 16px 48px}
+  .sidebar-nav{display:none}
+}
+
+/* ── SIDEBAR NAV ─────────────────────────────────── */
+.sidebar-nav{
+  position:sticky;top:72px;
+  display:flex;flex-direction:column;gap:2px;
+}
+.snav-section{
+  font-size:17px;font-weight:500;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--t3);
+  padding:14px 10px 6px;transition:color var(--tr);
+}
+.snav-item{
+  display:flex;align-items:center;gap:9px;
+  padding:9px 10px;border-radius:9px;
+  font-size:14.5px;color:var(--t2);
+  cursor:pointer;transition:all .18s;
+}
+.snav-item:hover{background:var(--surface2);color:var(--t1)}
+.snav-item.active{background:var(--surface3);color:var(--p);font-weight:500}
+.snav-item svg{width:15px;height:15px;flex-shrink:0}
+.snav-danger{color:var(--err) !important}
+.snav-danger:hover{background:var(--err-bg) !important}
+
+/* ── MAIN CONTENT ────────────────────────────────── */
+.main{}
+
+/* Page title */
+.page-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:30px;font-weight:600;
+  color:var(--t1);margin-bottom:24px;
+  transition:color var(--tr);
+}
+
+/* Section card */
+.section-card{
+  background:var(--surface);
+  border:1px solid var(--bd);
+  border-radius:16px;
+  overflow:hidden;
+  margin-bottom:16px;
+  transition:background var(--tr),border-color var(--tr);
+}
+.section-head{
+  padding:16px 20px;
+  border-bottom:1px solid var(--bd);
+  display:flex;align-items:center;justify-content:space-between;
+  transition:border-color var(--tr);
+}
+.section-title{
+  font-size:17px;font-weight:600;color:var(--t1);
+  display:flex;align-items:center;gap:7px;
+  transition:color var(--tr);
+}
+.section-title svg{width:15px;height:15px;color:var(--p)}
+.section-edit-btn{
+  font-size:17px;font-weight:500;color:var(--p);
+  padding:4px 12px;border-radius:8px;
+  border:1px solid var(--bd2);
+  transition:all .18s;
+}
+.section-edit-btn:hover{border-color:var(--p);background:var(--surface3)}
+
+/* Avatar row */
+.avatar-row{
+  padding:20px;
+  display:flex;align-items:center;gap:18px;
+  border-bottom:1px solid var(--bd);
+  transition:border-color var(--tr);
+}
+.avatar-circle{
+  width:64px;height:64px;border-radius:50%;
+  background:linear-gradient(135deg,var(--p),var(--p2));
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Cormorant Garamond',serif;
+  font-size:26px;font-weight:600;color:#fff;
+  flex-shrink:0;position:relative;
+  box-shadow:0 3px 12px rgba(204,94,118,.22);
+}
+.avatar-edit-ring{
+  position:absolute;inset:-2px;border-radius:50%;
+  border:2px dashed var(--bd2);
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;transition:opacity .18s;cursor:pointer;
+}
+.avatar-circle:hover .avatar-edit-ring{opacity:1;background:rgba(204,94,118,.1)}
+.avatar-edit-icon{
+  width:22px;height:22px;border-radius:50%;
+  background:var(--p);display:flex;align-items:center;justify-content:center;
+  color:#fff;
+}
+.avatar-edit-icon svg{width:11px;height:11px}
+.avatar-info{}
+.avatar-name{font-size:17px;font-weight:600;color:var(--t1);margin-bottom:2px;transition:color var(--tr)}
+.avatar-handle{font-size:18px;color:var(--t3);margin-bottom:8px;transition:color var(--tr)}
+.avatar-upload-btn{
+  font-size:17px;font-weight:500;
+  padding:5px 13px;border-radius:8px;
+  background:var(--surface2);border:1px solid var(--bd2);
+  color:var(--t2);transition:all .18s;
+}
+.avatar-upload-btn:hover{border-color:var(--p);color:var(--p)}
+
+/* Field row */
+.field-row{
+  padding:14px 20px;
+  display:flex;align-items:center;justify-content:space-between;
+  gap:16px;
+  border-bottom:1px solid var(--bd);
+  transition:border-color var(--tr);
+}
+.field-row:last-child{border-bottom:none}
+.field-label{
+  font-size:17px;font-weight:500;color:var(--t3);
+  width:100px;flex-shrink:0;letter-spacing:.03em;
+  transition:color var(--tr);
+}
+.field-value{font-size:17px;color:var(--t1);flex:1;transition:color var(--tr)}
+.field-value.muted{color:var(--t3)}
+
+/* Inline input (editing mode) */
+.field-input{
+  flex:1;height:36px;padding:0 12px;
+  background:var(--surface2);
+  border:1.5px solid var(--bd2);border-radius:8px;
+  font-size:17px;color:var(--t1);
+  transition:border-color .18s,background var(--tr),color var(--tr);
+}
+.field-input:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(204,94,118,.09)}
+.field-input::placeholder{color:var(--t3)}
+.field-textarea{
+  flex:1;padding:10px 12px;
+  background:var(--surface2);
+  border:1.5px solid var(--bd2);border-radius:8px;
+  font-size:17px;color:var(--t1);
+  resize:none;min-height:72px;line-height:1.55;
+  transition:border-color .18s,background var(--tr),color var(--tr);
+}
+.field-textarea:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(204,94,118,.09)}
+.field-save-btn{
+  font-size:17px;font-weight:600;
+  padding:7px 14px;border-radius:8px;
+  background:var(--p);color:#fff;flex-shrink:0;
+  transition:background .18s;
+}
+.field-save-btn:hover{background:var(--ph)}
+.field-cancel-btn{
+  font-size:17px;color:var(--t3);
+  padding:7px 10px;flex-shrink:0;
+  transition:color .18s;
+}
+.field-cancel-btn:hover{color:var(--t1)}
+
+/* Badge */
+.field-badge{
+  font-size:17px;font-weight:600;letter-spacing:.05em;
+  padding:2px 8px;border-radius:6px;
+  margin-left:8px;
+}
+.badge-ok{background:var(--ok-bg);color:var(--ok)}
+.badge-warn{background:#faeeda;color:#854f0b}
+
+/* Toggle row */
+.toggle-row{
+  padding:14px 20px;
+  display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid var(--bd);
+  gap:16px;transition:border-color var(--tr);
+}
+.toggle-row:last-child{border-bottom:none}
+.toggle-info{flex:1}
+.toggle-label{font-size:17px;font-weight:500;color:var(--t1);margin-bottom:2px;transition:color var(--tr)}
+.toggle-desc{font-size:17px;color:var(--t3);transition:color var(--tr)}
+.toggle-switch{
+  width:42px;height:24px;border-radius:12px;
+  background:var(--surface2);border:1.5px solid var(--bd2);
+  position:relative;cursor:pointer;padding:3px;
+  display:flex;align-items:center;flex-shrink:0;
+  transition:background .22s,border-color .22s;
+}
+.toggle-switch.on{background:var(--p);border-color:var(--p)}
+.toggle-thumb{
+  width:16px;height:16px;border-radius:50%;
+  background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.18);
+  transition:transform .22s;
+}
+.toggle-switch.on .toggle-thumb{transform:translateX(18px)}
+
+/* Subscription list */
+.sub-item{
+  padding:14px 20px;
+  display:flex;align-items:center;gap:12px;
+  border-bottom:1px solid var(--bd);
+  transition:border-color var(--tr);
+}
+.sub-item:last-child{border-bottom:none}
+.sub-avatar{
+  width:38px;height:38px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Cormorant Garamond',serif;
+  font-size:17px;font-weight:600;color:#fff;flex-shrink:0;
+}
+.sub-info{flex:1}
+.sub-name{font-size:17px;font-weight:500;color:var(--t1);transition:color var(--tr)}
+.sub-detail{font-size:17px;color:var(--t3);margin-top:1px;transition:color var(--tr)}
+.sub-cancel{
+  font-size:17px;color:var(--t3);
+  padding:5px 10px;border-radius:7px;
+  border:1px solid var(--bd2);
+  transition:all .18s;flex-shrink:0;
+}
+.sub-cancel:hover{border-color:var(--err);color:var(--err)}
+
+/* Danger zone */
+.danger-card{
+  background:var(--err-bg);
+  border:1px solid rgba(192,57,43,.2);
+  border-radius:16px;overflow:hidden;
+  margin-bottom:16px;
+  transition:background var(--tr);
+}
+.danger-row{
+  padding:14px 20px;
+  display:flex;align-items:center;justify-content:space-between;
+  gap:16px;border-bottom:1px solid rgba(192,57,43,.15);
+}
+.danger-row:last-child{border-bottom:none}
+.danger-label{font-size:17px;font-weight:500;color:var(--err)}
+.danger-desc{font-size:17px;color:var(--err);opacity:.7;margin-top:2px}
+.danger-btn{
+  font-size:17px;font-weight:600;color:var(--err);
+  padding:6px 14px;border-radius:8px;
+  border:1px solid rgba(192,57,43,.3);
+  flex-shrink:0;transition:all .18s;
+}
+.danger-btn:hover{background:rgba(192,57,43,.1)}
+
+/* Hidden / shown */
+.edit-mode{display:none}
+.view-mode{display:flex;align-items:center;flex:1}
+
+/* Creator apply banner */
+.creator-banner{
+  background:linear-gradient(135deg,var(--surface3),var(--surface2));
+  border:1px solid var(--bd2);
+  border-radius:16px;padding:20px;
+  display:flex;align-items:center;gap:16px;
+  margin-bottom:16px;
+  transition:background var(--tr),border-color var(--tr);
+}
+.creator-banner-icon{
+  width:44px;height:44px;border-radius:12px;
+  background:var(--p);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;
+}
+.creator-banner-icon svg{width:22px;height:22px;stroke:#fff}
+.creator-banner-info{flex:1}
+.creator-banner-title{font-size:18px;font-weight:600;color:var(--t1);margin-bottom:3px;transition:color var(--tr)}
+.creator-banner-sub{font-size:18px;color:var(--t2);line-height:1.5;transition:color var(--tr)}
+.creator-banner-btn{
+  font-size:18px;font-weight:600;
+  padding:9px 18px;border-radius:10px;
+  background:var(--p);color:#fff;flex-shrink:0;
+  transition:background .18s;
+}
+.creator-banner-btn:hover{background:var(--ph)}
+
+/* Toast */
+.toast{
+  position:fixed;bottom:28px;left:50%;
+  transform:translateX(-50%) translateY(8px);
+  background:var(--t1);color:var(--bg);
+  font-size:14.5px;font-weight:500;
+  padding:9px 20px;border-radius:22px;
+  white-space:nowrap;opacity:0;pointer-events:none;
+  transition:opacity .22s,transform .22s;z-index:300;
+  display:flex;align-items:center;gap:7px;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.t-dot{width:6px;height:6px;border-radius:50%;background:var(--p);flex-shrink:0}
+
+/* Animations */
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.section-card{animation:fadeUp .4s both}
+.section-card:nth-child(1){animation-delay:.06s}
+.section-card:nth-child(2){animation-delay:.10s}
+.section-card:nth-child(3){animation-delay:.14s}
+.section-card:nth-child(4){animation-delay:.18s}
+.creator-banner{animation:fadeUp .4s .04s both}
+.danger-card{animation:fadeUp .4s .22s both}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-logo" onclick="window.location.href='fanhub-explore.html'">FAN<em>HUB</em></div>
+  <div class="nav-center">
+    <span class="nav-link" onclick="window.location.href='fanhub-explore.html'">探索</span>
+    <span class="nav-link" onclick="window.location.href='fanhub-favorites.html'">收藏</span>
+    <span class="nav-link" onclick="window.location.href='fanhub-messages.html'">私訊</span>
+    <span class="nav-link active">設定</span>
+  </div>
+  <div class="nav-right">
+    <div class="theme-btn" id="themeBtn"></div>
+  </div>
+</nav>
+
+<div class="layout">
+
+  <!-- ── SIDEBAR ─────────────────────────────────── -->
+  <div class="sidebar-nav">
+    <div class="snav-section">帳號</div>
+    <div class="snav-item active" onclick="scrollTo('profile')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      個人資料
+    </div>
+    <div class="snav-item" onclick="scrollTo('account')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      帳號安全
+    </div>
+    <div class="snav-item" onclick="scrollTo('notify')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+      通知設定
+    </div>
+    <div class="snav-item" onclick="scrollTo('subs')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      訂閱管理
+    </div>
+    <div class="snav-section">其他</div>
+    <div class="snav-item" onclick="scrollTo('creator')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+      成為創作者
+    </div>
+    <div class="snav-item snav-danger" onclick="scrollTo('danger')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+      刪除帳號
+    </div>
+  </div>
+
+  <!-- ── MAIN ───────────────────────────────────── -->
+  <div class="main">
+
+    <!-- Profile section -->
+    <div id="profile">
+      <div class="page-title">設定</div>
+
+      <div class="section-card">
+        <div class="section-head">
+          <div class="section-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            個人資料
+          </div>
+        </div>
+
+        <!-- Avatar -->
+        <div class="avatar-row">
+          <div class="avatar-circle">
+            U
+            <div class="avatar-edit-ring" onclick="showToast('照片上傳功能開發中')">
+              <div class="avatar-edit-icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+              </div>
+            </div>
+          </div>
+          <div class="avatar-info">
+            <div class="avatar-name">User Name</div>
+            <div class="avatar-handle">@username</div>
+            <button class="avatar-upload-btn" onclick="showToast('照片上傳功能開發中')">更換大頭照</button>
+          </div>
+        </div>
+
+        <!-- Display name -->
+        <div class="field-row" id="row-name">
+          <div class="field-label">顯示名稱</div>
+          <div class="view-mode" id="view-name">
+            <div class="field-value">User Name</div>
+            <button class="section-edit-btn" onclick="editField('name')">編輯</button>
+          </div>
+          <div class="edit-mode" id="edit-name" style="flex:1;display:none;gap:8px;align-items:center">
+            <input class="field-input" type="text" value="User Name" id="input-name">
+            <button class="field-save-btn" onclick="saveField('name')">儲存</button>
+            <button class="field-cancel-btn" onclick="cancelField('name')">取消</button>
+          </div>
+        </div>
+
+        <!-- Handle -->
+        <div class="field-row">
+          <div class="field-label">用戶名稱</div>
+          <div class="view-mode">
+            <div class="field-value">@username</div>
+            <button class="section-edit-btn" onclick="showToast('用戶名稱每 30 天可修改一次')">編輯</button>
+          </div>
+        </div>
+
+        <!-- Bio -->
+        <div class="field-row" id="row-bio">
+          <div class="field-label">個人簡介</div>
+          <div class="view-mode" id="view-bio">
+            <div class="field-value muted">尚未填寫簡介</div>
+            <button class="section-edit-btn" onclick="editField('bio')">新增</button>
+          </div>
+          <div class="edit-mode" id="edit-bio" style="flex:1;display:none;gap:8px;align-items:flex-start">
+            <textarea class="field-textarea" id="input-bio" placeholder="介紹你自己…"></textarea>
+            <div style="display:flex;flex-direction:column;gap:5px">
+              <button class="field-save-btn" onclick="saveField('bio')">儲存</button>
+              <button class="field-cancel-btn" onclick="cancelField('bio')">取消</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Gender -->
+        <div class="field-row">
+          <div class="field-label">性別</div>
+          <div class="view-mode">
+            <div class="field-value muted">未設定</div>
+            <button class="section-edit-btn" onclick="showToast('已儲存')">設定</button>
+          </div>
+        </div>
+
+        <!-- Birthday -->
+        <div class="field-row">
+          <div class="field-label">生日</div>
+          <div class="view-mode">
+            <div class="field-value muted">未設定</div>
+            <button class="section-edit-btn" onclick="showToast('已儲存')">設定</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Account security -->
+    <div id="account">
+      <div class="section-card">
+        <div class="section-head">
+          <div class="section-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            帳號安全
+          </div>
+        </div>
+
+        <!-- Email -->
+        <div class="field-row">
+          <div class="field-label">電子郵件</div>
+          <div class="view-mode">
+            <div class="field-value">
+              <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="413432243301242c20282d6f222e2c">[email&#160;protected]</a>
+              <span class="field-badge badge-ok">已驗證</span>
+            </div>
+            <button class="section-edit-btn" onclick="showToast('驗證信已寄出')">更換</button>
+          </div>
+        </div>
+
+        <!-- Password -->
+        <div class="field-row" id="row-pw">
+          <div class="field-label">密碼</div>
+          <div class="view-mode" id="view-pw">
+            <div class="field-value">••••••••••</div>
+            <button class="section-edit-btn" onclick="editField('pw')">修改</button>
+          </div>
+          <div class="edit-mode" id="edit-pw" style="flex:1;display:none;flex-direction:column;gap:8px">
+            <input class="field-input" type="password" placeholder="目前密碼" style="width:100%">
+            <input class="field-input" type="password" placeholder="新密碼（至少 8 字元）" style="width:100%">
+            <input class="field-input" type="password" placeholder="確認新密碼" style="width:100%">
+            <div style="display:flex;gap:8px">
+              <button class="field-save-btn" onclick="saveField('pw')">更新密碼</button>
+              <button class="field-cancel-btn" onclick="cancelField('pw')">取消</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- 2FA -->
+        <div class="field-row">
+          <div class="field-label">兩步驗證</div>
+          <div class="view-mode">
+            <div class="field-value">
+              未啟用
+              <span class="field-badge badge-warn">建議開啟</span>
+            </div>
+            <button class="section-edit-btn" onclick="showToast('兩步驗證設定開發中')">啟用</button>
+          </div>
+        </div>
+
+        <!-- Phone -->
+        <div class="field-row">
+          <div class="field-label">手機號碼</div>
+          <div class="view-mode">
+            <div class="field-value muted">未綁定</div>
+            <button class="section-edit-btn" onclick="showToast('已儲存')">綁定</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Notifications -->
+    <div id="notify">
+      <div class="section-card">
+        <div class="section-head">
+          <div class="section-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+            通知設定
+          </div>
+        </div>
+
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <div class="toggle-label">創作者發新貼文</div>
+            <div class="toggle-desc">你收藏或訂閱的創作者發布新內容時通知</div>
+          </div>
+          <div class="toggle-switch on" onclick="this.classList.toggle('on')"><div class="toggle-thumb"></div></div>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <div class="toggle-label">私訊通知</div>
+            <div class="toggle-desc">收到新私訊時發送推播通知</div>
+          </div>
+          <div class="toggle-switch on" onclick="this.classList.toggle('on')"><div class="toggle-thumb"></div></div>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <div class="toggle-label">直播開始提醒</div>
+            <div class="toggle-desc">訂閱的創作者開始直播時通知</div>
+          </div>
+          <div class="toggle-switch on" onclick="this.classList.toggle('on')"><div class="toggle-thumb"></div></div>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <div class="toggle-label">訂閱即將到期</div>
+            <div class="toggle-desc">訂閱到期前 3 天發送提醒</div>
+          </div>
+          <div class="toggle-switch on" onclick="this.classList.toggle('on')"><div class="toggle-thumb"></div></div>
+        </div>
+        <div class="toggle-row">
+          <div class="toggle-info">
+            <div class="toggle-label">電子報與平台公告</div>
+            <div class="toggle-desc">FANHUB 新功能與活動資訊</div>
+          </div>
+          <div class="toggle-switch" onclick="this.classList.toggle('on')"><div class="toggle-thumb"></div></div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Subscriptions -->
+    <div id="subs">
+      <div class="section-card">
+        <div class="section-head">
+          <div class="section-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+            訂閱管理
+          </div>
+        </div>
+
+        <div class="sub-item">
+          <div class="sub-avatar" style="background:linear-gradient(135deg,#cc5e76,#8a3248)">A</div>
+          <div class="sub-info">
+            <div class="sub-name">Ava Lin</div>
+            <div class="sub-detail">NT$299／月 · 下次扣款 2025/04/25</div>
+          </div>
+          <button class="sub-cancel" onclick="confirmCancel(this)">取消訂閱</button>
+        </div>
+
+        <div class="sub-item">
+          <div class="sub-avatar" style="background:linear-gradient(135deg,#5faa6e,#387a45)">S</div>
+          <div class="sub-info">
+            <div class="sub-name">Sara Wu</div>
+            <div class="sub-detail">NT$149／月 · 下次扣款 2025/04/18</div>
+          </div>
+          <button class="sub-cancel" onclick="confirmCancel(this)">取消訂閱</button>
+        </div>
+
+        <div class="field-row" style="padding:12px 20px">
+          <div style="font-size:13px;color:var(--t3)">共 2 個訂閱 · 每月 NT$448</div>
+          <button class="section-edit-btn" onclick="window.location.href='fanhub-favorites.html'">管理收藏</button>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Become creator -->
+    <div id="creator">
+      <div class="creator-banner">
+        <div class="creator-banner-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+        </div>
+        <div class="creator-banner-info">
+          <div class="creator-banner-title">開始創作，開始獲得收益</div>
+          <div class="creator-banner-sub">申請成為創作者，設定你的訂閱方案，立即開始賺取收益。</div>
+        </div>
+        <button class="creator-banner-btn" onclick="showToast('創作者申請頁面開發中')">立即申請</button>
+      </div>
+    </div>
+
+    <!-- Danger zone -->
+    <div id="danger">
+      <div class="danger-card">
+        <div class="danger-row">
+          <div>
+            <div class="danger-label">登出所有裝置</div>
+            <div class="danger-desc">登出所有目前登入的裝置</div>
+          </div>
+          <button class="danger-btn" onclick="showToast('已登出所有裝置')">登出</button>
+        </div>
+        <div class="danger-row">
+          <div>
+            <div class="danger-label">停用帳號</div>
+            <div class="danger-desc">暫時停用，可隨時重新登入恢復</div>
+          </div>
+          <button class="danger-btn" onclick="showToast('請聯繫客服進行帳號停用')">停用</button>
+        </div>
+        <div class="danger-row">
+          <div>
+            <div class="danger-label">刪除帳號</div>
+            <div class="danger-desc">永久刪除帳號及所有資料，此操作無法復原</div>
+          </div>
+          <button class="danger-btn" onclick="showToast('請聯繫客服進行帳號刪除')">刪除帳號</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">
+  <div class="t-dot"></div>
+  <span id="toastMsg">已儲存</span>
+</div>
+
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+/* Theme */
+const root = document.documentElement;
+root.dataset.theme = 'light'; // demo: force light on load
+document.getElementById('themeBtn').addEventListener('click', () => {
+  const n = root.dataset.theme === 'light' ? 'dark' : 'light';
+  root.dataset.theme = n; localStorage.setItem('fh-theme', n);
+});
+
+/* Edit field toggle */
+function editField(id) {
+  document.getElementById('view-'+id).style.display = 'none';
+  const edit = document.getElementById('edit-'+id);
+  edit.style.display = 'flex';
+  const inp = edit.querySelector('input,textarea');
+  if (inp) inp.focus();
+}
+function saveField(id) {
+  const edit = document.getElementById('edit-'+id);
+  const inp = edit.querySelector('input,textarea');
+  const view = document.getElementById('view-'+id);
+  if (inp && inp.value.trim()) {
+    const val = view.querySelector('.field-value');
+    if (val) val.textContent = inp.value.trim();
+  }
+  edit.style.display = 'none';
+  view.style.display = 'flex';
+  showToast('已儲存');
+}
+function cancelField(id) {
+  document.getElementById('edit-'+id).style.display = 'none';
+  document.getElementById('view-'+id).style.display = 'flex';
+}
+
+/* Smooth scroll */
+function scrollTo(id) {
+  document.getElementById(id).scrollIntoView({behavior:'sm

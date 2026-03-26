@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="zh-TW" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>編輯個人頁 · FANHUB</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fdf9f6;--surface:#ffffff;--surface2:#faf3ef;--surface3:#fdf0eb;
+  --p:#cc5e76;--ph:#b84d65;--p2:#8a3248;
+  --t1:#2e1118;--t2:#4a1e2a;--t3:#7a4858;
+  --bd:rgba(150,70,90,.25);--bd2:rgba(150,70,90,.42);
+  --nav:rgba(253,249,246,.94);
+  --ok:#2d8a4e;--ok-bg:#eaf6ee;
+  --tr:.22s cubic-bezier(.4,0,.2,1);
+}
+[data-theme=dark]{
+  --bg:#080508;--surface:#1e1016;--surface2:#2a1820;--surface3:#382030;
+  --p:#d4718b;--ph:#e07d96;--p2:#9b4c6a;
+  --t1:#f8e0e8;--t2:#d8a8b8;--t3:#a87888;
+  --bd:rgba(200,120,150,.22);--bd2:rgba(200,120,150,.42);
+  --nav:rgba(8,5,8,.96);
+  --ok:#5eca7a;--ok-bg:#0d2518;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:'DM Sans',sans-serif;
+  font-size:16px;
+  background:var(--bg);color:var(--t1);
+  -webkit-font-smoothing:antialiased;
+  transition:background var(--tr),color var(--tr);
+}
+button{font-family:inherit;cursor:pointer;border:none;outline:none;background:none}
+input,textarea,select{font-family:inherit;outline:none}
+
+/* ── SIDEBAR (same as dashboard) ─────────────────── */
+.sidebar{
+  position:fixed;top:0;left:0;bottom:0;width:220px;z-index:100;
+  background:var(--surface);border-right:1px solid var(--bd);
+  display:flex;flex-direction:column;
+  transition:background var(--tr),border-color var(--tr);
+}
+.sidebar-logo{
+  padding:20px 20px 16px;border-bottom:1px solid var(--bd);
+  display:flex;align-items:center;justify-content:space-between;
+  transition:border-color var(--tr);
+}
+.logo-text{font-size:17px;font-weight:500;letter-spacing:.18em;color:var(--p);cursor:pointer;transition:color var(--tr)}
+.logo-text em{font-style:normal;font-weight:400;opacity:.55}
+.theme-btn{
+  width:34px;height:20px;border-radius:10px;
+  background:var(--surface2);border:1.5px solid var(--bd2);
+  position:relative;cursor:pointer;padding:2px;display:flex;align-items:center;
+  transition:background var(--tr),border-color var(--tr);
+}
+.theme-btn::after{
+  content:'';width:14px;height:14px;border-radius:50%;
+  background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.18);transition:transform var(--tr);
+}
+[data-theme=dark] .theme-btn{background:var(--p);border-color:var(--p)}
+[data-theme=dark] .theme-btn::after{transform:translateX(14px)}
+.sidebar-profile{
+  padding:16px 20px;border-bottom:1px solid var(--bd);
+  display:flex;align-items:center;gap:10px;transition:border-color var(--tr);
+}
+.s-avatar{
+  width:38px;height:38px;border-radius:50%;
+  background:linear-gradient(135deg,var(--p),var(--p2));
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:600;color:#fff;flex-shrink:0;
+}
+.s-name{font-size:17px;font-weight:500;color:var(--t1);transition:color var(--tr)}
+.s-handle{font-size:18px;color:var(--t3);transition:color var(--tr)}
+.sidebar-nav{flex:1;padding:12px 0;overflow-y:auto}
+.nav-section{
+  font-size:17px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--t3);padding:10px 20px 4px;transition:color var(--tr);
+}
+.nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 20px;font-size:14.5px;color:var(--t2);
+  cursor:pointer;transition:all .18s;position:relative;
+}
+.nav-item:hover{background:var(--surface2);color:var(--t1)}
+.nav-item.active{background:var(--surface3);color:var(--p);font-weight:500}
+.nav-item.active::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;
+  width:3px;background:var(--p);border-radius:0 2px 2px 0;
+}
+.nav-item svg{width:15px;height:15px;flex-shrink:0}
+.sidebar-footer{
+  padding:14px 20px;border-top:1px solid var(--bd);
+  transition:border-color var(--tr);
+}
+.s-footer-link{
+  font-size:17px;color:var(--t3);padding:5px 0;cursor:pointer;
+  transition:color .18s;display:flex;align-items:center;gap:6px;
+}
+.s-footer-link:hover{color:var(--p)}
+.s-footer-link svg{width:13px;height:13px}
+
+/* ── MAIN LAYOUT ─────────────────────────────────── */
+.main{margin-left:220px;min-height:100vh;display:flex;flex-direction:column}
+.topbar{
+  height:56px;padding:0 32px;
+  display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid var(--bd);background:var(--surface);
+  position:sticky;top:0;z-index:50;
+  transition:background var(--tr),border-color var(--tr);
+}
+.topbar-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:20px;font-weight:600;color:var(--t1);transition:color var(--tr);
+}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.btn-outline{
+  font-size:18px;font-weight:500;padding:7px 16px;border-radius:8px;
+  border:1px solid var(--bd2);color:var(--t2);
+  transition:all .18s;
+}
+.btn-outline:hover{border-color:var(--p);color:var(--p)}
+.btn-primary{
+  font-size:18px;font-weight:600;padding:7px 18px;border-radius:8px;
+  background:var(--p);color:#fff;transition:background .18s;
+}
+.btn-primary:hover{background:var(--ph)}
+
+/* ── EDITOR LAYOUT ───────────────────────────────── */
+.editor-wrap{
+  display:grid;
+  grid-template-columns:1fr 340px;
+  gap:0;flex:1;
+  align-items:start;
+}
+@media(max-width:900px){.editor-wrap{grid-template-columns:1fr}}
+
+/* ── FORM PANEL ──────────────────────────────────── */
+.form-panel{
+  padding:28px 32px 60px;
+  border-right:1px solid var(--bd);
+  transition:border-color var(--tr);
+}
+
+/* Section */
+.form-section{
+  background:var(--surface);
+  border:1px solid var(--bd);border-radius:14px;
+  overflow:hidden;margin-bottom:16px;
+  transition:background var(--tr),border-color var(--tr);
+}
+.form-section-head{
+  padding:14px 18px;border-bottom:1px solid var(--bd);
+  display:flex;align-items:center;gap:8px;
+  transition:border-color var(--tr);
+}
+.form-section-title{
+  font-size:17px;font-weight:600;color:var(--t1);transition:color var(--tr);
+}
+.form-section-head svg{width:14px;height:14px;color:var(--p)}
+
+/* Cover upload */
+.cover-upload{
+  height:140px;position:relative;overflow:hidden;cursor:pointer;
+  background:var(--surface2);transition:background var(--tr);
+}
+.cover-upload:hover .cover-hover{opacity:1}
+.cover-preview{
+  width:100%;height:100%;
+  background:linear-gradient(155deg,#e8c8c0,#d4aab0,#c090a0);
+  transition:transform .3s;
+}
+.cover-upload:hover .cover-preview{transform:scale(1.02)}
+.cover-hover{
+  position:absolute;inset:0;
+  background:rgba(15,10,13,.4);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:6px;opacity:0;transition:opacity .22s;
+}
+.cover-hover svg{width:22px;height:22px;stroke:#fff}
+.cover-hover span{font-size:17px;color:#fff;font-weight:500}
+
+/* Avatar upload row */
+.avatar-row{
+  padding:16px 18px;display:flex;align-items:center;gap:14px;
+  border-bottom:1px solid var(--bd);transition:border-color var(--tr);
+}
+.avatar-upload-circle{
+  width:60px;height:60px;border-radius:50%;
+  background:linear-gradient(135deg,var(--p),var(--p2));
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600;color:#fff;
+  flex-shrink:0;cursor:pointer;position:relative;
+  box-shadow:0 3px 12px rgba(204,94,118,.22);
+  overflow:hidden;
+}
+.avatar-upload-circle:hover .avatar-hover{opacity:1}
+.avatar-hover{
+  position:absolute;inset:0;background:rgba(15,10,13,.45);
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;transition:opacity .2s;border-radius:50%;
+}
+.avatar-hover svg{width:16px;height:16px;stroke:#fff}
+.avatar-upload-info{}
+.avatar-upload-name{font-size:17px;font-weight:600;color:var(--t1);transition:color var(--tr)}
+.avatar-upload-hint{font-size:17px;color:var(--t3);margin-top:2px;transition:color var(--tr)}
+.avatar-upload-btns{display:flex;gap:7px;margin-top:8px}
+.upload-btn-sm{
+  font-size:17px;font-weight:500;padding:4px 12px;border-radius:7px;
+  background:var(--surface2);border:1px solid var(--bd2);color:var(--t2);
+  transition:all .18s;
+}
+.upload-btn-sm:hover{border-color:var(--p);color:var(--p)}
+
+/* Form field */
+.form-field{
+  padding:14px 18px;border-bottom:1px solid var(--bd);
+  transition:border-color var(--tr);
+}
+.form-field:last-child{border-bottom:none}
+.field-label{
+  font-size:10.5px;font-weight:500;letter-spacing:.04em;
+  color:var(--t3);margin-bottom:7px;
+  display:flex;align-items:center;justify-content:space-between;
+  transition:color var(--tr);
+}
+.field-hint{font-size:18px;color:var(--t3);font-weight:400}
+.field-char-count{font-size:18px;color:var(--t3);font-weight:400;transition:color var(--tr)}
+.field-char-count.warn{color:var(--p)}
+.field-input{
+  width:100%;height:40px;padding:0 12px;
+  background:var(--surface2);border:1.5px solid var(--bd2);
+  border-radius:9px;font-size:17px;color:var(--t1);
+  transition:border-color .18s,box-shadow .18s,background var(--tr),color var(--tr);
+}
+.field-input:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(204,94,118,.09);background:var(--surface)}
+.field-input::placeholder{color:var(--t3)}
+.field-textarea{
+  width:100%;padding:10px 12px;min-height:80px;
+  background:var(--surface2);border:1.5px solid var(--bd2);
+  border-radius:9px;font-size:17px;color:var(--t1);
+  resize:vertical;line-height:1.6;
+  transition:border-color .18s,box-shadow .18s,background var(--tr),color var(--tr);
+}
+.field-textarea:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(204,94,118,.09);background:var(--surface)}
+.field-textarea::placeholder{color:var(--t3)}
+.field-select{
+  width:100%;height:40px;padding:0 12px;
+  background:var(--surface2);border:1.5px solid var(--bd2);
+  border-radius:9px;font-size:17px;color:var(--t1);
+  appearance:none;cursor:pointer;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23b08090' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+  background-repeat:no-repeat;background-position:right 12px center;
+  transition:border-color .18s,background var(--tr),color var(--tr);
+}
+.field-select:focus{border-color:var(--p);outline:none}
+
+/* Tag input */
+.tag-input-wrap{
+  display:flex;flex-wrap:wrap;gap:6px;
+  padding:8px 10px;min-height:44px;
+  background:var(--surface2);border:1.5px solid var(--bd2);
+  border-radius:9px;cursor:text;
+  transition:border-color .18s,background var(--tr);
+}
+.tag-input-wrap:focus-within{border-color:var(--p);box-shadow:0 0 0 3px rgba(204,94,118,.09);background:var(--surface)}
+.tag-chip{
+  display:flex;align-items:center;gap:5px;
+  background:var(--surface3);border:1px solid var(--bd2);
+  border-radius:6px;padding:2px 8px;
+  font-size:17px;color:var(--p2);
+  transition:background var(--tr),color var(--tr),border-color var(--tr);
+}
+.tag-chip-x{color:var(--t3);cursor:pointer;font-size:17px;line-height:1;transition:color .18s}
+.tag-chip-x:hover{color:var(--p)}
+.tag-input-field{
+  border:none;background:transparent;font-size:18px;
+  color:var(--t1);min-width:80px;flex:1;
+  transition:color var(--tr);
+}
+.tag-input-field::placeholder{color:var(--t3)}
+
+/* Price input */
+.price-input-wrap{
+  display:flex;align-items:center;
+  background:var(--surface2);border:1.5px solid var(--bd2);
+  border-radius:9px;overflow:hidden;
+  transition:border-color .18s,background var(--tr);
+}
+.price-input-wrap:focus-within{border-color:var(--p);box-shadow:0 0 0 3px rgba(204,94,118,.09);background:var(--surface)}
+.price-prefix{
+  padding:0 12px;font-size:17px;color:var(--t3);
+  border-right:1px solid var(--bd2);height:40px;
+  display:flex;align-items:center;flex-shrink:0;
+  transition:color var(--tr),border-color var(--tr);
+}
+.price-input{
+  flex:1;height:40px;padding:0 12px;
+  border:none;background:transparent;
+  font-size:17px;color:var(--t1);
+  transition:color var(--tr);
+}
+.price-suffix{
+  padding:0 12px;font-size:17px;color:var(--t3);flex-shrink:0;
+  transition:color var(--tr);
+}
+
+/* Toggle */
+.toggle-field{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+}
+.toggle-field-info{}
+.toggle-field-label{font-size:17px;font-weight:500;color:var(--t1);transition:color var(--tr)}
+.toggle-field-desc{font-size:17px;color:var(--t3);margin-top:2px;transition:color var(--tr)}
+.toggle-sw{
+  width:38px;height:22px;border-radius:11px;
+  background:var(--surface2);border:1.5px solid var(--bd2);
+  position:relative;cursor:pointer;padding:2px;
+  display:flex;align-items:center;flex-shrink:0;
+  transition:background .22s,border-color .22s;
+}
+.toggle-sw.on{background:var(--p);border-color:var(--p)}
+.toggle-sw-thumb{
+  width:16px;height:16px;border-radius:50%;
+  background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.18);
+  transition:transform .22s;
+}
+.toggle-sw.on .toggle-sw-thumb{transform:translateX(16px)}
+
+/* ── PREVIEW PANEL ───────────────────────────────── */
+.preview-panel{
+  padding:20px;
+  position:sticky;top:56px;
+  height:calc(100vh - 56px);
+  overflow-y:auto;
+  background:var(--surface2);
+  transition:background var(--tr);
+}
+.preview-label{
+  font-size:18px;font-weight:500;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--t3);
+  margin-bottom:12px;
+  display:flex;align-items:center;justify-content:space-between;
+  transition:color var(--tr);
+}
+.preview-device-toggle{display:flex;gap:4px}
+.device-btn{
+  width:24px;height:24px;border-radius:5px;
+  display:flex;align-items:center;justify-content:center;
+  color:var(--t3);border:1px solid var(--bd2);
+  transition:all .18s;cursor:pointer;
+}
+.device-btn.active,.device-btn:hover{border-color:var(--p);color:var(--p)}
+.device-btn svg{width:12px;height:12px}
+
+/* Mini profile preview */
+.mini-profile{
+  background:var(--surface);border-radius:14px;
+  border:1px solid var(--bd);overflow:hidden;
+  transition:background var(--tr),border-color var(--tr);
+}
+.mini-cover{
+  height:90px;position:relative;overflow:hidden;cursor:pointer;
+}
+.mini-cover-bg{
+  width:100%;height:100%;
+  background:linear-gradient(155deg,#e8c8c0,#d4aab0,#c090a0);
+  transition:transform .3s;
+}
+.mini-cover:hover .mini-cover-bg{transform:scale(1.03)}
+.mini-avatar-wrap{
+  padding:0 14px;margin-top:-20px;margin-bottom:8px;
+  display:flex;align-items:flex-end;justify-content:space-between;
+}
+.mini-avatar{
+  width:44px;height:44px;border-radius:50%;
+  border:3px solid var(--surface);
+  background:linear-gradient(135deg,var(--p),var(--p2));
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;color:#fff;
+  flex-shrink:0;position:relative;z-index:1;
+  box-shadow:0 2px 8px rgba(204,94,118,.2);
+  transition:border-color var(--tr);
+}
+.mini-sub-btn{
+  font-size:18px;font-weight:600;padding:5px 12px;border-radius:10px;
+  background:var(--p);color:#fff;
+  transition:background .18s;
+}
+.mini-body{padding:0 14px 14px}
+.mini-name{
+  font-family:'Cormorant Garamond',serif;
+  font-size:18px;font-weight:600;color:var(--t1);
+  margin-bottom:2px;transition:color var(--tr);
+}
+.mini-handle{font-size:18px;color:var(--t3);margin-bottom:6px;transition:color var(--tr)}
+.mini-bio-text{font-size:17px;color:var(--t2);line-height:1.55;margin-bottom:10px;transition:color var(--tr)}
+.mini-tags{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px}
+.mini-tag{
+  font-size:17px;padding:2px 7px;border-radius:6px;
+  background:var(--surface3);color:var(--p2);
+  border:1px solid var(--bd);
+  transition:background var(--tr),color var(--tr);
+}
+.mini-stats{display:flex;gap:12px;padding-top:10px;border-top:1px solid var(--bd);transition:border-color var(--tr)}
+.mini-stat{display:flex;flex-direction:column}
+.mini-stat-num{
+  font-family:'Cormorant Garamond',serif;
+  font-size:18px;font-weight:600;color:var(--t1);transition:color var(--tr);
+}
+.mini-stat-lbl{font-size:17px;color:var(--t3);transition:color var(--tr)}
+
+/* Subscription plan preview */
+.plan-preview{
+  background:var(--surface);border-radius:12px;
+  border:1.5px solid var(--p);padding:14px;margin-top:12px;
+  transition:background var(--tr),border-color var(--tr);
+}
+.plan-preview-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.plan-preview-name{font-size:17px;font-weight:600;color:var(--p2);transition:color var(--tr)}
+.plan-preview-badge{
+  font-size:17px;font-weight:700;padding:2px 7px;border-radius:6px;
+  background:var(--p);color:#fff;
+}
+.plan-preview-price{
+  font-family:'Cormorant Garamond',serif;
+  font-size:26px;font-weight:600;color:var(--t1);
+  margin-bottom:10px;transition:color var(--tr);
+}
+.plan-preview-price span{font-family:'DM Sans',sans-serif;font-size:17px;font-weight:400;color:var(--t3)}
+.plan-preview-perks{display:flex;flex-direction:column;gap:5px}
+.plan-preview-perk{
+  display:flex;align-items:center;gap:6px;
+  font-size:18px;color:var(--t2);transition:color var(--tr);
+}
+.perk-check-sm{
+  width:14px;height:14px;border-radius:50%;
+  background:var(--p);display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  transition:background var(--tr);
+}
+.perk-check-sm svg{width:7px;height:7px}
+
+/* Unsaved changes badge */
+.unsaved-badge{
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:18px;font-weight:500;color:var(--warn,#854f0b);
+  background:var(--warn-bg,#faeeda);
+  padding:4px 10px;border-radius:8px;
+}
+.unsaved-dot{width:6px;height:6px;border-radius:50%;background:var(--warn,#854f0b)}
+
+/* Toast */
+.toast{
+  position:fixed;bottom:28px;left:50%;
+  transform:translateX(-50%) translateY(8px);
+  background:var(--t1);color:var(--bg);
+  font-size:14.5px;font-weight:500;
+  padding:9px 20px;border-radius:22px;
+  white-space:nowrap;opacity:0;pointer-events:none;
+  transition:opacity .22s,transform .22s;z-index:300;
+  display:flex;align-items:center;gap:7px;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.t-dot{width:6px;height:6px;border-radius:50%;background:var(--ok);flex-shrink:0}
+
+/* Animations */
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.form-section{animation:fadeUp .35s both}
+.form-section:nth-child(1){animation-delay:.04s}
+.form-section:nth-child(2){animation-delay:.08s}
+.form-section:nth-child(3){animation-delay:.12s}
+.form-section:nth-child(4){animation-delay:.16s}
+.form-section:nth-child(5){animation-delay:.20s}
+
+@media(max-width:760px){
+  .sidebar{transform:translateX(-100%)}
+  .main{margin-left:0}
+  .editor-wrap{grid-template-columns:1fr}
+  .preview-panel{display:none}
+  .form-panel{padding:20px 16px 48px;border-right:none}
+}
+</style>
+</head>
+<body>
+
+<!-- ── SIDEBAR ────────────────────────────────────── -->
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-text" onclick="window.location.href='fanhub-dashboard.html'">FAN<em>HUB</em></div>
+    <div class="theme-btn" id="themeBtn"></div>
+  </div>
+  <div class="sidebar-profile">
+    <div class="s-avatar">A</div>
+    <div>
+      <div class="s-name">Ava Lin</div>
+      <div class="s-handle">@avalin</div>
+    </div>
+  </div>
+  <div class="sidebar-nav">
+    <div class="nav-section">主要</div>
+    <div class="nav-item" onclick="window.location.href='fanhub-dashboard.html'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      儀表板
+    </div>
+    <div class="nav-item active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      編輯個人頁
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      我的貼文
+    </div>
+    <div class="nav-item" onclick="window.location.href='fanhub-messages.html'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8h2a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-2v4l-4-4H9a2 2 0 0 1-2-2v-1"/><path d="M15 3H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2v4l4-4h4a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2z"/></svg>
+      私訊
+    </div>
+    <div class="nav-section">收益</div>
+    <div class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      收益總覽
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      訂閱者
+    </div>
+    <div class="nav-section">帳號</div>
+    <div class="nav-item" onclick="window.location.href='fanhub-settings.html'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      設定
+    </div>
+  </div>
+  <div class="sidebar-footer">
+    <div class="s-footer-link" onclick="window.location.href='fanhub-creator-profile.html'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+      預覽公開主頁
+    </div>
+  </div>
+</div>
+
+<!-- ── MAIN ───────────────────────────────────────── -->
+<div class="main">
+
+  <div class="topbar">
+    <div style="display:flex;align-items:center;gap:12px">
+      <div class="topbar-title">編輯個人頁</div>
+      <div class="unsaved-badge" id="unsavedBadge" style="display:none">
+        <div class="unsaved-dot"></div>
+        有未儲存的變更
+      </div>
+    </div>
+    <div class="topbar-right">
+      <button class="btn-outline" onclick="discardChanges()" style="color:var(--t3);border-color:var(--bd)">捨棄變更</button>
+      <button class="btn-outline" onclick="window.location.href='fanhub-creator-profile.html'">預覽</button>
+      <button class="btn-primary" onclick="saveAll()">儲存並發布</button>
+    </div>
+  </div>
+
+  <div class="editor-wrap">
+
+    <!-- ── FORM PANEL ───────────────────────────────── -->
+    <div class="form-panel">
+
+      <!-- Cover & Avatar -->
+      <div class="form-section">
+        <div class="form-section-head">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          <div class="form-section-title">封面與頭貼</div>
+        </div>
+        <div class="cover-upload" onclick="showToast('圖片上傳功能開發中')">
+          <div class="cover-preview" id="coverPreview"></div>
+          <div class="cover-hover">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            <span>點擊更換封面</span>
+          </div>
+        </div>
+        <div class="avatar-row">
+          <div class="avatar-upload-circle" onclick="showToast('圖片上傳功能開發中')">
+            A
+            <div class="avatar-hover">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+            </div>
+          </div>
+          <div class="avatar-upload-info">
+            <div class="avatar-upload-name">大頭照</div>
+            <div class="avatar-upload-hint">建議尺寸 400×400px，支援 JPG、PNG</div>
+            <div class="avatar-upload-btns">
+              <button class="upload-btn-sm" onclick="showToast('圖片上傳功能開發中')">上傳圖片</button>
+              <button class="upload-btn-sm" onclick="showToast('已移除')">移除</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Basic info -->
+      <div class="form-section">
+        <div class="form-section-head">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+          <div class="form-section-title">基本資料</div>
+        </div>
+        <div class="form-field">
+          <div class="field-label">顯示名稱</div>
+          <input class="field-input" type="text" value="Ava Lin" id="nameInput" oninput="syncPreview()">
+        </div>
+        <div class="form-field">
+          <div class="field-label">
+            用戶名稱
+            <span class="field-hint">fanhub.tw/@avalin</span>
+          </div>
+          <div style="position:relative">
+            <div style="
+              position:absolute;left:12px;top:50%;transform:translateY(-50%);
+              font-size:13px;color:var(--t3);pointer-events:none;
+            ">@</div>
+            <input class="field-input" type="text" value="avalin" style="padding-left:26px" oninput="syncPreview()">
+          </div>
+        </div>
+        <div class="form-field">
+          <div class="field-label">
+            個人簡介
+            <span class="field-char-count" id="bioCount">42 / 160</span>
+          </div>
+          <textarea class="field-textarea" id="bioInput" placeholder="介紹你自己，讓粉絲認識你…" oninput="syncBio(this)">健身教練 · 生活寫真 · 獨家內容每週更新
+在這裡分享最真實的自己，訂閱後解鎖全部內容。</textarea>
+        </div>
+        <div class="form-field">
+          <div class="field-label">所在地</div>
+          <input class="field-input" type="text" placeholder="台北，台灣" oninput="markUnsaved()">
+        </div>
+        <div class="form-field">
+          <div class="field-label">外部連結</div>
+          <input class="field-input" type="url" placeholder="https://instagram.com/..." oninput="markUnsaved()">
+        </div>
+      </div>
+
+      <!-- Categories -->
+      <div class="form-section">
+        <div class="form-section-head">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+          <div class="form-section-title">分類標籤</div>
+        </div>
+        <div class="form-field">
+          <div class="field-label">內容分類</div>
+          <select class="field-select" onchange="markUnsaved()">
+            <option>健身</option>
+            <option>生活風格</option>
+            <option>寫真攝影</option>
+            <option>料理</option>
+            <option>藝術創作</option>
+            <option>Cosplay</option>
+            <option>音樂</option>
+            <option>成人</option>
+          </select>
+        </div>
+        <div class="form-field">
+          <div class="field-label">
+            自訂標籤
+            <span class="field-hint">最多 5 個，按 Enter 新增</span>
+          </div>
+          <div class="tag-input-wrap" id="tagWrap" onclick="document.getElementById('tagInput').focus()">
+            <div class="tag-chip">健身<span class="tag-chip-x" onclick="event.stopPropagation();removeTag(this)">×</span></div>
+            <div class="tag-chip">生活<span class="tag-chip-x" onclick="event.stopPropagation();removeTag(this)">×</span></div>
+            <div class="tag-chip">寫真<span class="tag-chip-x" onclick="event.stopPropagation();removeTag(this)">×</span></div>
+            <input class="tag-input-field" id="tagInput" placeholder="新增標籤…" onkeydown="addTag(event)">
+          </div>
+        </div>
+      </div>
+
+      <!-- Subscription plan -->
+      <div class="form-section">
+        <div class="form-section-head">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          <div class="form-section-title">訂閱方案</div>
+        </div>
+        <div class="form-field">
+          <div class="field-label">月訂閱價格</div>
+          <div class="price-input-wrap">
+            <div class="price-prefix">NT$</div>
+            <input class="price-input" type="number" value="299" min="99" max="9999" id="priceInput" oninput="syncPrice()">
+            <div class="price-suffix">/月</div>
+          </div>
+          <div style="font-size:12px;color:var(--t3);margin-top:6px">最低 NT$99 · 建議 NT$99–999</div>
+        </div>
+        <div class="form-field">
+          <div class="field-label">訂閱包含內容</div>
+          <textarea class="field-textarea" placeholder="描述訂閱者可以獲得什麼…" style="min-height:64px" oninput="markUnsaved()" oninput="markUnsaved()">解鎖全部貼文 · 限定相簿 · 私訊 · 直播優先入場</textarea>
+        </div>
+        <div class="form-field">
+          <div class="toggle-field">
+            <div class="toggle-field-info">
+              <div class="toggle-field-label">提供年付優惠</div>
+              <div class="toggle-field-desc">年付訂閱者享 83 折優惠（約省 2 個月）</div>
+            </div>
+            <div class="toggle-sw on" onclick="this.classList.toggle('on')"><div class="toggle-sw-thumb"></div></div>
+          </div>
+        </div>
+        <div class="form-field">
+          <div class="toggle-field">
+            <div class="toggle-field-info">
+              <div class="toggle-field-label">開放免費試閱</div>
+              <div class="toggle-field-desc">讓訪客看到部分內容，增加訂閱意願</div>
+            </div>
+            <div class="toggle-sw on" onclick="this.classList.toggle('on')"><div class="toggle-sw-thumb"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Visibility -->
+      <div class="form-section">
+        <div class="form-section-head">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+          <div class="form-section-title">曝光設定</div>
+        </div>
+        <div class="form-field">
+          <div class="toggle-field">
+            <div class="toggle-field-info">
+              <div class="toggle-field-label">出現在探索頁面</div>
+              <div class="toggle-field-desc">讓平台推薦你給潛在訂閱者</div>
+            </div>
+            <div class="toggle-sw on" onclick="this.classList.toggle('on')"><div class="toggle-sw-thumb"></div></div>
+          </div>
+        </div>
+        <div class="form-field">
+          <div class="toggle-field">
+            <div class="toggle-field-info">
+              <div class="toggle-field-label">顯示訂閱者人數</div>
+              <div class="toggle-field-desc">在主頁公開顯示訂閱人數</div>
+            </div>
+            <div class="toggle-sw on" onclick="this.classList.toggle('on')"><div class="toggle-sw-thumb"></div></div>
+          </div>
+        </div>
+        <div class="form-field">
+          <div class="toggle-field">
+            <div class="toggle-field-info">
+              <div class="toggle-field-label">開放陌生人私訊</div>
+              <div class="toggle-field-desc">關閉後只有訂閱者可以傳訊息</div>
+            </div>
+            <div class="toggle-sw" onclick="this.classList.toggle('on')"><div class="toggle-sw-thumb"></div></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- ── PREVIEW PANEL ──────────────────────────────── -->
+    <div class="preview-panel">
+      <div class="preview-label">
+        即時預覽
+        <div class="preview-device-toggle">
+          <div class="device-btn active" title="桌機">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          </div>
+          <div class="device-btn" title="手機">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2"/><line x1="12" y1="18" x2="12.01" y2="18"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Mini profile preview -->
+      <div class="mini-profile">
+        <div class="mini-cover">
+          <div class="mini-cover-bg"></div>
+        </div>
+        <div class="mini-avatar-wrap">
+          <div class="mini-avatar">A</div>
+          <button class="mini-sub-btn">訂閱</button>
+        </div>
+        <div class="mini-body">
+          <div class="mini-name" id="previewName">Ava Lin</div>
+          <div class="mini-handle">@avalin · 已驗證</div>
+          <div class="mini-bio-text" id="previewBio">健身教練 · 生活寫真 · 獨家內容每週更新<br>在這裡分享最真實的自己，訂閱後解鎖全部內容。</div>
+          <div class="mini-tags" id="previewTags">
+            <span class="mini-tag">健身</span>
+            <span class="mini-tag">生活</span>
+            <span class="mini-tag">寫真</span>
+          </div>
+          <div class="mini-stats">
+            <div class="mini-stat"><div class="mini-stat-num">12.4K</div><div class="mini-stat-lbl">粉絲</div></div>
+            <div class="mini-stat"><div class="mini-stat-num">248</div><div class="mini-stat-lbl">貼文</div></div>
+            <div class="mini-stat"><div class="mini-stat-num">4.9</div><div class="mini-stat-lbl">評分</div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Plan preview -->
+      <div class="plan-preview">
+        <div class="plan-preview-head">
+          <div class="plan-preview-name">訂閱方案</div>
+          <div class="plan-preview-badge">限定</div>
+        </div>
+        <div class="plan-preview-price" id="previewPrice">NT$299<span>/月</span></div>
+        <div class="plan-preview-perks">
+          <div class="plan-preview-perk">
+            <div class="perk-check-sm"><svg viewBox="0 0 10 10" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,5 4,7.5 8,2.5"/></svg></div>
+            全部內容解鎖
+          </div>
+          <div class="plan-preview-perk">
+            <div class="perk-check-sm"><svg viewBox="0 0 10 10" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,5 4,7.5 8,2.5"/></svg></div>
+            私訊創作者
+          </div>
+          <div class="plan-preview-perk">
+            <div class="perk-check-sm"><svg viewBox="0 0 10 10" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,5 4,7.5 8,2.5"/></svg></div>
+            限定動態 · 直播優先
+          </div>
+        </div>
+      </div>
+
+      <!-- Tips -->
+      <div style="
+        margin-top:16px;padding:12px 14px;
+        background:var(--ok-bg);border-radius:10px;
+        border:1px solid rgba(45,138,78,.15);
+      ">
+        <div style="font-size:12px;font-weight:600;color:var(--ok);margin-bottom:5px">優化建議</div>
+        <div style="font-size:12px;color:var(--ok);line-height:1.55;opacity:.85">
+          加入封面照片可讓主頁點擊率提升 2.3 倍。建議選用高解析度橫向照片。
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">
+  <div class="t-dot"></div>
+  <span id="toastMsg">已儲存</span>
+</div>
+
+<script>
+/* Theme */
+const root = document.documentElement;
+root.dataset.theme = 'light'; // demo: force light on load
+document.getElementById('themeBtn').addEventListener('click', () => {
+  const n = root.dataset.theme === 'light' ? 'dark' : 'light';
+  root.dataset.theme = n; localStorage.setItem('fh-theme', n);
+});
+
+/* Unsaved state */
+let hasUnsaved = false;
+function markUnsaved() {
+  hasUnsaved = true;
+  document.getElementById('unsavedBadge').style.display = 'inline-flex';
+}
+
+/* Sync name to preview */
+function syncPreview() {
+  const name = document.getElementById('nameInput').value || 'Ava Lin';
+  document.getElementById('previewName').textContent = name;
+  markUnsaved();
+}
+
+/* Sync bio to preview */
+function syncBio(el) {
+  const max = 160;
+  const len = el.value.length;
+  const counter = document.getElementById('bioCount');
+  counter.textContent = len + ' / ' + max;
+  counter.classList.toggle('warn', len > max * .85);
+  document.getElementById('previewBio').innerHTML = el.value.replace(/\n/g, '<br>');
+  markUnsaved();
+}
+
+/* Sync price to preview */
+function syncPrice() {
+  const price = document.getElementById('priceInput').value || '299';
+  document.getElementById('previewPrice').innerHTML = 'NT$' + price + '<span>/月</span>';
+  markUnsaved();
+}
+
+/* Tags */
+function removeTag(x) {
+  x.closest('.tag-chip').remove();
+  updateTagPreview();
+  markUnsaved();
+}
+function addTag(e) {
+  if (e.key !== 'Enter') return;
+  e.preventDefault();
+  const input = document.getElementById('tagInput');
+  const val = input.value.trim();
+  if (!val) return;
+  const chips = document.querySelectorAll('#tagWrap .tag-chip');
+  if (chips.length >= 5) { showToast('最多 5 個標籤'); return; }
+  const chip = document.createElement('div');
+  chip.className = 'tag-chip';
+  chip.innerHTML = val + '<span class="tag-chip-x" onclick="event.stopPropagation();removeTag(this)">×</span>';
+  document.getElementById('tagWrap').insertBefore(chip, input);
+  input.value = '';
+  updateTagPreview();
+  markUnsaved();
+}
+function updateTagPreview() {
+  const tags = [...document.querySelectorAll('#tagWrap .tag-chip')]
+    .map(c => c.textContent.replace('×','').trim());
+  document.getElementById('previewTags').innerHTML =
+    tags.map(t => `<span class="mini-tag">${t}</span>`).join('');
+}
+
+/* Save / discard */
+function saveAll() {
+  hasUnsaved = false;
+  document.getElementById('unsavedBadge').style.display = 'none';
+  showToast('已儲存並發布');
+}
+function discardChanges() {
+  if (!hasUnsaved) return;
+  if (!confirm('確定要捨棄所有未儲存的變更嗎？')) return;
+  hasUnsaved = false;
+  document.getElementById('unsavedBadge').style.display = 'none';
+  showToast('已捨棄變更');
+}
+
+/* Toast */
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  t.classList.add('show');
+  clearTimeout(window._tt);
+  window._tt = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+/* Warn before leaving with unsaved changes */
+window.addEventListener('beforeunload', e => {
+  if (hasUnsaved) e.preventDefault();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,931 @@
+<!DOCTYPE html>
+<html lang="zh-TW" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FANHUB · 探索你喜歡的創作者</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,600&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fdf9f6;
+  --surface:#ffffff;
+  --surface2:#faf3ef;
+  --surface3:#fdf0eb;
+  --p:#cc5e76;--ph:#b84d65;--p2:#8a3248;
+  --t1:#2e1118;--t2:#4a1e2a;--t3:#7a4858;
+  --bd:rgba(150,70,90,.25);--bd2:rgba(150,70,90,.42);
+  --tr:.3s cubic-bezier(.4,0,.2,1);
+}
+[data-theme=dark]{
+  --bg:#09060a;--surface:#120d14;--surface2:#1e1020;
+  --p:#d4718b;--ph:#e07d96;--p2:#9b4c6a;
+  --t1:#f8e0e8;--t2:#d8a8b8;--t3:#6a4858;
+  --bd:rgba(212,113,139,.1);--bd2:rgba(212,113,139,.2);
+}
+
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:'DM Sans',sans-serif;
+  font-size:16px;
+  background:var(--bg);color:var(--t1);
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+  transition:background var(--tr),color var(--tr);
+}
+button{font-family:inherit;cursor:pointer;border:none;outline:none;background:none}
+a{text-decoration:none;color:inherit}
+
+/* ── NAVBAR ─────────────────────────────────────── */
+.nav{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  height:56px;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 40px;
+  transition:background var(--tr),border-color var(--tr);
+}
+.nav.scrolled{
+  background:rgba(253,249,246,.95);
+  backdrop-filter:blur(20px) saturate(160%);
+  border-bottom:1px solid var(--bd);
+}
+[data-theme=dark] .nav.scrolled{background:rgba(9,6,10,.95)}
+.nav-logo{
+  font-family:'DM Sans',sans-serif;
+  font-size:18px;font-weight:500;
+  letter-spacing:.2em;color:var(--p);
+}
+.nav-logo em{font-style:normal;font-weight:400;opacity:.5}
+.nav-links{display:flex;gap:32px;list-style:none}
+.nav-links a{
+  font-size:18px;font-weight:400;letter-spacing:.06em;
+  color:var(--t2);transition:color .18s;
+}
+.nav-links a:hover{color:var(--t1)}
+.nav-right{display:flex;align-items:center;gap:12px}
+.btn-ghost{
+  font-size:18px;font-weight:400;letter-spacing:.06em;
+  padding:7px 18px;
+  border:1px solid var(--bd2);border-radius:0;
+  color:var(--t2);transition:all .18s;
+}
+.btn-ghost:hover{border-color:var(--p);color:var(--p)}
+.btn-fill{
+  font-size:18px;font-weight:500;letter-spacing:.08em;
+  padding:8px 20px;border-radius:0;
+  background:var(--t1);color:var(--bg);
+  transition:background .18s,color .18s;
+}
+.btn-fill:hover{background:var(--p);color:#fff}
+.theme-btn{
+  width:36px;height:20px;border-radius:10px;
+  background:var(--surface2);border:1px solid var(--bd2);
+  position:relative;cursor:pointer;padding:2px;
+  display:flex;align-items:center;
+  transition:background var(--tr),border-color var(--tr);
+}
+.theme-btn::after{
+  content:'';width:14px;height:14px;border-radius:50%;
+  background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);
+  transition:transform var(--tr);
+}
+[data-theme=dark] .theme-btn{background:var(--p);border-color:var(--p)}
+[data-theme=dark] .theme-btn::after{transform:translateX(16px)}
+@media(max-width:680px){
+  .nav-links,.btn-ghost{display:none}
+  .nav{padding:0 20px}
+}
+
+/* ── HERO ────────────────────────────────────────── */
+.hero{
+  min-height:100vh;
+  display:grid;
+  grid-template-columns:1fr 420px;
+  position:relative;overflow:hidden;
+}
+@media(max-width:900px){.hero{grid-template-columns:1fr;min-height:auto}}
+
+/* Left: editorial text */
+.hero-left{
+  display:flex;flex-direction:column;
+  justify-content:center;
+  padding:100px 60px 80px 40px;
+  position:relative;z-index:2;
+}
+@media(max-width:680px){.hero-left{padding:100px 24px 60px}}
+
+.hero-eyebrow{
+  font-size:18px;font-weight:400;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--p);
+  margin-bottom:28px;
+  opacity:0;animation:fadeUp .6s .1s forwards;
+}
+.hero-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(64px,9vw,110px);
+  font-weight:400;font-style:italic;
+  line-height:.88;letter-spacing:-.02em;
+  color:var(--t1);margin-bottom:20px;
+  opacity:0;animation:fadeUp .7s .2s forwards;
+  transition:color var(--tr);
+}
+.hero-title strong{
+  font-weight:600;font-style:normal;
+  color:var(--p);display:block;
+}
+.hero-title em{font-weight:400;font-style:italic}
+
+/* Horizontal rule with text */
+.hero-rule{
+  display:flex;align-items:center;gap:16px;
+  margin-bottom:28px;
+  opacity:0;animation:fadeUp .6s .35s forwards;
+}
+.hero-rule-line{flex:0 0 48px;height:1px;background:var(--t3)}
+.hero-rule-text{
+  font-size:18px;color:var(--t3);letter-spacing:.08em;
+  transition:color var(--tr);
+}
+
+.hero-sub{
+  font-size:17px;font-weight:400;
+  color:var(--t2);line-height:1.7;
+  max-width:400px;margin-bottom:44px;
+  opacity:0;animation:fadeUp .6s .42s forwards;
+  transition:color var(--tr);
+}
+
+.hero-ctas{
+  display:flex;align-items:center;gap:14px;
+  opacity:0;animation:fadeUp .6s .52s forwards;
+}
+.cta-primary{
+  font-size:17px;font-weight:500;letter-spacing:.08em;
+  padding:14px 36px;
+  background:var(--t1);color:var(--bg);
+  border:none;
+  transition:background .2s,transform .15s;
+}
+.cta-primary:hover{background:var(--p);transform:translateY(-1px)}
+.cta-secondary{
+  font-size:18px;font-weight:400;letter-spacing:.06em;
+  color:var(--t2);
+  display:flex;align-items:center;gap:6px;
+  transition:color .18s;
+}
+.cta-secondary:hover{color:var(--p)}
+.cta-secondary svg{width:14px;height:14px;transition:transform .18s}
+.cta-secondary:hover svg{transform:translateX(3px)}
+
+/* Stats strip */
+.hero-stats{
+  display:flex;gap:36px;margin-top:56px;
+  padding-top:32px;border-top:1px solid var(--bd);
+  opacity:0;animation:fadeUp .6s .62s forwards;
+  transition:border-color var(--tr);
+}
+.hero-stat{}
+.hero-stat-num{
+  font-family:'Cormorant Garamond',serif;
+  font-size:32px;font-weight:600;font-style:italic;
+  color:var(--t1);line-height:1;
+  transition:color var(--tr);
+}
+.hero-stat-lbl{
+  font-size:18px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--t3);margin-top:3px;
+  transition:color var(--tr);
+}
+
+/* Right: scrolling creator strip */
+.hero-right{
+  position:relative;overflow:hidden;
+  background:var(--surface2);
+  border-left:1px solid var(--bd);
+  opacity:0;animation:fadeIn .8s .3s forwards;
+  transition:background var(--tr),border-color var(--tr);
+}
+@media(max-width:900px){
+  .hero-right{height:300px;border-left:none;border-top:1px solid var(--bd)}
+}
+.creator-strip{
+  display:flex;flex-direction:column;gap:3px;
+  padding:3px;
+  animation:stripScroll 22s linear infinite;
+  will-change:transform;
+}
+.creator-strip:hover{animation-play-state:paused}
+@keyframes stripScroll{
+  0%{transform:translateY(0)}
+  100%{transform:translateY(-50%)}
+}
+.strip-card{
+  position:relative;overflow:hidden;
+  height:160px;flex-shrink:0;border-radius:2px;
+}
+.strip-card-bg{
+  width:100%;height:100%;
+  transition:transform .4s;
+}
+.strip-card:hover .strip-card-bg{transform:scale(1.04)}
+.strip-card-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(9,6,10,.75) 0%,transparent 55%);
+}
+.strip-card-info{
+  position:absolute;bottom:0;left:0;right:0;
+  padding:12px 14px;
+}
+.strip-card-name{
+  font-family:'Cormorant Garamond',serif;
+  font-size:18px;font-weight:600;color:#fff;
+  margin-bottom:1px;
+}
+.strip-card-tags{font-size:18px;color:rgba(255,255,255,.55)}
+.strip-lock{
+  position:absolute;top:10px;right:10px;
+  width:26px;height:26px;border-radius:50%;
+  background:rgba(204,94,118,.8);
+  display:flex;align-items:center;justify-content:center;
+}
+.strip-lock svg{width:11px;height:11px;stroke:#fff}
+
+/* Right gradient fade */
+.hero-right::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:120px;
+  background:linear-gradient(to top,var(--bg),transparent);
+  z-index:1;pointer-events:none;
+  transition:background var(--tr);
+}
+.hero-right::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:80px;
+  background:linear-gradient(to bottom,var(--bg),transparent);
+  z-index:1;pointer-events:none;
+  transition:background var(--tr);
+}
+
+/* ── HOW IT WORKS ────────────────────────────────── */
+.how{
+  padding:120px 40px;
+  max-width:1100px;margin:0 auto;
+}
+@media(max-width:680px){.how{padding:80px 24px}}
+.section-eyebrow{
+  font-size:18px;font-weight:400;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--p);
+  margin-bottom:16px;
+}
+.section-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(36px,5vw,56px);
+  font-weight:400;font-style:italic;
+  color:var(--t1);line-height:1.05;
+  margin-bottom:56px;
+  transition:color var(--tr);
+}
+.section-title strong{font-weight:600;font-style:normal;color:var(--p)}
+
+.steps{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:1px;
+  background:var(--bd);
+  border:1px solid var(--bd);
+  transition:background var(--tr),border-color var(--tr);
+}
+@media(max-width:680px){.steps{grid-template-columns:1fr}}
+
+.step{
+  background:var(--bg);
+  padding:36px 32px;
+  transition:background var(--tr);
+  position:relative;
+}
+.step-num{
+  font-family:'Cormorant Garamond',serif;
+  font-size:64px;font-weight:400;font-style:italic;
+  color:var(--bd2);line-height:1;
+  margin-bottom:16px;
+  transition:color var(--tr);
+}
+.step-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:22px;font-weight:600;
+  color:var(--t1);margin-bottom:10px;
+  transition:color var(--tr);
+}
+.step-desc{
+  font-size:17px;color:var(--t2);line-height:1.7;
+  transition:color var(--tr);
+}
+.step-icon{
+  width:40px;height:40px;
+  border:1px solid var(--bd2);
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:20px;color:var(--p);
+  transition:border-color var(--tr),color var(--tr);
+}
+.step-icon svg{width:18px;height:18px}
+
+/* ── FEATURED CREATORS ───────────────────────────── */
+.featured{
+  padding:0 40px 120px;
+  max-width:1100px;margin:0 auto;
+}
+@media(max-width:680px){.featured{padding:0 24px 80px}}
+
+.featured-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:10px;
+  margin-top:0;
+}
+@media(max-width:900px){.featured-grid{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:480px){.featured-grid{grid-template-columns:1fr 1fr}}
+
+.f-card{
+  border-radius:4px;overflow:hidden;
+  position:relative;cursor:pointer;
+  border:1px solid var(--bd);
+  transition:transform .22s,box-shadow .22s,border-color .22s;
+}
+.f-card:hover{transform:translateY(-3px);box-shadow:0 12px 36px rgba(15,10,13,.1);border-color:var(--bd2)}
+.f-cover{
+  height:200px;position:relative;overflow:hidden;
+}
+.f-cover-bg{width:100%;height:100%;transition:transform .38s}
+.f-card:hover .f-cover-bg{transform:scale(1.06)}
+.f-cover-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(9,6,10,.78) 0%,transparent 55%);
+}
+.f-cover-text{
+  position:absolute;bottom:0;left:0;right:0;padding:14px;
+}
+.f-name{
+  font-family:'Cormorant Garamond',serif;
+  font-size:18px;font-weight:600;color:#fff;
+  margin-bottom:2px;
+}
+.f-handle{font-size:18px;color:rgba(255,255,255,.55)}
+.f-body{
+  padding:12px 14px;background:var(--surface);
+  transition:background var(--tr);
+}
+.f-tags{font-size:18px;color:var(--t3);margin-bottom:8px;transition:color var(--tr)}
+.f-bottom{display:flex;align-items:center;justify-content:space-between}
+.f-price{font-size:18px;font-weight:500;color:var(--t2);transition:color var(--tr)}
+.f-btn{
+  font-size:18px;font-weight:500;letter-spacing:.06em;
+  padding:5px 12px;background:var(--t1);color:var(--bg);
+  transition:background .18s,color .18s;
+}
+.f-btn:hover{background:var(--p);color:#fff}
+
+/* View all link */
+.view-all{
+  display:flex;align-items:center;gap:8px;
+  font-size:18px;letter-spacing:.06em;color:var(--t2);
+  margin-top:28px;cursor:pointer;transition:color .18s;
+  width:fit-content;
+}
+.view-all:hover{color:var(--p)}
+.view-all::after{content:'→';transition:transform .18s}
+.view-all:hover::after{transform:translateX(4px)}
+
+/* ── FOR CREATORS SECTION ────────────────────────── */
+.creator-section{
+  background:var(--t1);
+  padding:100px 40px;
+  position:relative;overflow:hidden;
+  transition:background var(--tr);
+}
+@media(max-width:680px){.creator-section{padding:72px 24px}}
+
+.creator-section-inner{
+  max-width:1100px;margin:0 auto;
+  display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:center;
+}
+@media(max-width:720px){.creator-section-inner{grid-template-columns:1fr;gap:40px}}
+
+/* Decorative bg element */
+.creator-section-deco{
+  position:absolute;right:-100px;top:-100px;
+  width:400px;height:400px;border-radius:50%;
+  border:1px solid rgba(212,113,139,.08);
+  pointer-events:none;
+}
+.creator-section-deco::after{
+  content:'';position:absolute;
+  inset:40px;border-radius:50%;
+  border:1px solid rgba(212,113,139,.06);
+}
+
+.creator-eyebrow{
+  font-size:18px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--p);margin-bottom:16px;
+}
+.creator-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(38px,5vw,60px);
+  font-weight:400;font-style:italic;
+  color:#fff;line-height:1.05;margin-bottom:20px;
+}
+.creator-title strong{font-weight:600;font-style:normal;color:var(--p)}
+.creator-desc{
+  font-size:18px;font-weight:400;
+  color:rgba(255,255,255,.6);line-height:1.75;margin-bottom:36px;
+}
+.creator-cta{
+  font-size:17px;font-weight:500;letter-spacing:.08em;
+  padding:13px 32px;
+  background:var(--p);color:#fff;
+  transition:background .18s,transform .15s;
+  display:inline-block;
+}
+.creator-cta:hover{background:var(--ph);transform:translateY(-1px)}
+
+/* Feature list */
+.creator-features{display:flex;flex-direction:column;gap:0}
+.creator-feat{
+  display:flex;align-items:flex-start;gap:16px;
+  padding:20px 0;
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+.creator-feat:first-child{padding-top:0}
+.creator-feat:last-child{border-bottom:none}
+.creator-feat-icon{
+  width:36px;height:36px;
+  border:1px solid rgba(212,113,139,.3);
+  display:flex;align-items:center;justify-content:center;
+  flex-shrink:0;color:var(--p);
+}
+.creator-feat-icon svg{width:16px;height:16px}
+.creator-feat-title{
+  font-size:17px;font-weight:500;color:#fff;
+  margin-bottom:3px;
+}
+.creator-feat-desc{font-size:18px;color:rgba(255,255,255,.5);line-height:1.55}
+
+/* ── TESTIMONIALS ────────────────────────────────── */
+.testimonials{
+  padding:100px 40px;max-width:1100px;margin:0 auto;
+}
+@media(max-width:680px){.testimonials{padding:72px 24px}}
+.testi-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:1px;
+  background:var(--bd);border:1px solid var(--bd);
+  transition:background var(--tr),border-color var(--tr);
+}
+@media(max-width:720px){.testi-grid{grid-template-columns:1fr}}
+.testi{
+  background:var(--bg);padding:32px;
+  transition:background var(--tr);
+}
+.testi-quote{
+  font-family:'Cormorant Garamond',serif;
+  font-size:18px;font-weight:400;font-style:italic;
+  color:var(--t1);line-height:1.55;margin-bottom:20px;
+  transition:color var(--tr);
+}
+.testi-quote::before{
+  content:'\201C';font-size:48px;color:var(--p);
+  line-height:0;vertical-align:-.4em;margin-right:4px;
+  font-style:normal;
+}
+.testi-author{display:flex;align-items:center;gap:10px}
+.testi-avatar{
+  width:32px;height:32px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Cormorant Garamond',serif;
+  font-size:17px;font-weight:600;color:#fff;flex-shrink:0;
+}
+.testi-name{font-size:18px;font-weight:500;color:var(--t1);transition:color var(--tr)}
+.testi-role{font-size:18px;color:var(--t3);letter-spacing:.04em;transition:color var(--tr)}
+
+/* ── FINAL CTA ───────────────────────────────────── */
+.final-cta{
+  padding:120px 40px;text-align:center;
+  border-top:1px solid var(--bd);
+  transition:border-color var(--tr);
+}
+.final-cta-label{
+  font-size:18px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--p);margin-bottom:20px;
+}
+.final-cta-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(48px,7vw,88px);
+  font-weight:400;font-style:italic;
+  color:var(--t1);line-height:.95;margin-bottom:36px;
+  transition:color var(--tr);
+}
+.final-cta-title strong{font-weight:600;font-style:normal;display:block;color:var(--p)}
+.final-cta-btns{
+  display:flex;align-items:center;justify-content:center;gap:14px;
+  flex-wrap:wrap;
+}
+.final-btn-primary{
+  font-size:17px;font-weight:500;letter-spacing:.1em;
+  padding:15px 48px;
+  background:var(--t1);color:var(--bg);
+  transition:background .2s,transform .15s;
+}
+.final-btn-primary:hover{background:var(--p);transform:translateY(-1px)}
+.final-btn-ghost{
+  font-size:18px;letter-spacing:.08em;
+  padding:15px 32px;
+  border:1px solid var(--bd2);color:var(--t2);
+  transition:all .18s;
+}
+.final-btn-ghost:hover{border-color:var(--p);color:var(--p)}
+
+/* ── FOOTER ──────────────────────────────────────── */
+.footer{
+  padding:40px;
+  border-top:1px solid var(--bd);
+  display:flex;align-items:center;justify-content:space-between;
+  gap:20px;flex-wrap:wrap;
+  transition:border-color var(--tr);
+}
+@media(max-width:680px){.footer{padding:28px 24px;flex-direction:column;text-align:center}}
+.footer-logo{
+  font-family:'DM Sans',sans-serif;
+  font-size:18px;font-weight:500;
+  letter-spacing:.2em;color:var(--p);
+}
+.footer-logo em{font-style:normal;font-weight:400;opacity:.5}
+.footer-links{display:flex;gap:24px;flex-wrap:wrap}
+.footer-links a{font-size:17px;color:var(--t3);transition:color .18s;letter-spacing:.04em}
+.footer-links a:hover{color:var(--p)}
+.footer-copy{font-size:18px;color:var(--t3);letter-spacing:.04em;transition:color var(--tr)}
+
+/* ── SCROLL REVEAL ───────────────────────────────── */
+.reveal{opacity:0;transform:translateY(20px);transition:opacity .7s,transform .7s}
+.reveal.visible{opacity:1;transform:translateY(0)}
+
+/* ── ANIMATIONS ──────────────────────────────────── */
+@keyframes fadeUp{
+  from{opacity:0;transform:translateY(20px)}
+  to{opacity:1;transform:translateY(0)}
+}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="nav" id="nav">
+  <div class="nav-logo">FAN<em>HUB</em></div>
+  <ul class="nav-links">
+    <li><a href="#how">關於</a></li>
+    <li><a href="#featured">探索創作者</a></li>
+    <li><a href="#creator">成為創作者</a></li>
+  </ul>
+  <div class="nav-right">
+    <div class="theme-btn" id="themeBtn"></div>
+    <button class="btn-ghost" onclick="window.location.href='fanhub-auth.html'">登入</button>
+    <button class="btn-fill" onclick="window.location.href='fanhub-auth.html'">免費加入</button>
+  </div>
+</nav>
+
+<!-- ── HERO ──────────────────────────────────────── -->
+<section class="hero">
+  <div class="hero-left">
+    <div class="hero-eyebrow">台灣最大創作者平台</div>
+    <h1 class="hero-title">
+      探索<br>
+      <em>你從未</em><br>
+      <strong>見過的她</strong>
+    </h1>
+    <div class="hero-rule">
+      <div class="hero-rule-line"></div>
+      <div class="hero-rule-text">訂閱 · 解鎖 · 支持</div>
+    </div>
+    <p class="hero-sub">
+      超過 1,200 位創作者在這裡分享最真實的自己。<br>
+      訂閱你喜歡的創作者，解鎖只屬於你的專屬內容。
+    </p>
+    <div class="hero-ctas">
+      <button class="cta-primary" onclick="window.location.href='fanhub-auth.html'">立即免費加入</button>
+      <button class="cta-secondary" onclick="window.location.href='fanhub-explore.html'">
+        先瀏覽看看
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </button>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="hero-stat-num">85%</div>
+        <div class="hero-stat-lbl">創作者實拿</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">隨時</div>
+        <div class="hero-stat-lbl">可取消訂閱</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-num">免費</div>
+        <div class="hero-stat-lbl">加入，永不收費</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Scrolling creator strip -->
+  <div class="hero-right">
+    <div class="creator-strip" id="strip">
+      <!-- Cards duplicated for seamless loop -->
+      <div class="strip-card">
+        <div class="strip-card-bg" style="background:linear-gradient(155deg,#d4a8b4,#c08898,#a87080)"></div>
+        <div class="strip-card-overlay"></div>
+        <div class="strip-lock"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor"/><path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="currentColor"/></svg></div>
+        <div class="strip-card-info"><div class="strip-card-name">Ava Lin</div><div class="strip-card-tags">健身 · 生活寫真</div></div>
+      </div>
+      <div class="strip-card">
+        <div class="strip-card-bg" style="background:linear-gradient(155deg,#a4b8d8,#8898c0,#6a7ca8)"></div>
+        <div class="strip-card-overlay"></div>
+        <div class="strip-lock"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor"/><path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="currentColor"/></svg></div>
+        <div class="strip-card-info"><div class="strip-card-name">Mia Chen</div><div class="strip-card-tags">攝影 · 生活</div></div>
+      </div>
+      <div class="strip-card">
+        <div class="strip-card-bg" style="background:linear-gradient(155deg,#9ec8a0,#7aac7c,#5c9060)"></div>
+        <div class="strip-card-overlay"></div>
+        <div class="strip-card-info"><div class="strip-card-name">Sara Wu</div><div class="strip-card-tags">健身 · 教學</div></div>
+      </div>
+      <div class="strip-card">
+        <div class="strip-card-bg" style="background:linear-gradient(155deg,#90c4cc,#6aa8b4,#508090)"></div>
+        <div class="strip-card-overlay"></div>
+        <div class="strip-lock"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor"/><path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="currentColor"/></svg></div>
+        <div class="strip-card-info"><div class="strip-card-name">Roxy Hsu</div><div class="strip-card-tags">藝術 · 攝影</div></div>
+      </div>
+      <div class="strip-card">
+        <div class="strip-card-bg" style="background:linear-gradient(155deg,#d8b888,#c09860,#a07840)"></div>
+        <div class="strip-card-overlay"></div>
+        <div class="strip-lock"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor"/><path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="currentColor"/></svg></div>
+        <div class="strip-card-info"><div class="strip-card-name">Luna Kao</div><div class="strip-card-tags">料理 · 生活</div></div>
+      </div>
+      <div class="strip-card">
+        <div class="strip-card-bg" style="background:linear-gradient(155deg,#c4a0d8,#a880c0,#8c60a4)"></div>
+        <div class="strip-card-overlay"></div>
+        <div class="strip-card-info"><div class="strip-card-name">Yuki Lin</div><div class="strip-card-tags">Cosplay · 寫真</div></div>
+      </div>
+      <!-- Duplicate for seamless loop -->
+      <div class="strip-card">
+        <div class="strip-card-bg" style="background:linear-gradient(155deg,#d4a8b4,#c08898,#a87080)"></div>
+        <div class="strip-card-overlay"></div>
+        <div class="strip-lock"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor"/><path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="currentColor"/></svg></div>
+        <div class="strip-card-info"><div class="strip-card-name">Ava Lin</div><div class="strip-card-tags">健身 · 生活寫真</div></div>
+      </div>
+      <div class="strip-card">
+        <div class="strip-card-bg" style="background:linear-gradient(155deg,#a4b8d8,#8898c0,#6a7ca8)"></div>
+        <div class="strip-card-overlay"></div>
+        <div class="strip-lock"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor"/><path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="currentColor"/></svg></div>
+        <div class="strip-card-info"><div class="strip-card-name">Mia Chen</div><div class="strip-card-tags">攝影 · 生活</div></div>
+      </div>
+      <div class="strip-card">
+        <div class="strip-card-bg" style="background:linear-gradient(155deg,#9ec8a0,#7aac7c,#5c9060)"></div>
+        <div class="strip-card-overlay"></div>
+        <div class="strip-card-info"><div class="strip-card-name">Sara Wu</div><div class="strip-card-tags">健身 · 教學</div></div>
+      </div>
+      <div class="strip-card">
+        <div class="strip-card-bg" style="background:linear-gradient(155deg,#90c4cc,#6aa8b4,#508090)"></div>
+        <div class="strip-card-overlay"></div>
+        <div class="strip-lock"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor"/><path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="currentColor"/></svg></div>
+        <div class="strip-card-info"><div class="strip-card-name">Roxy Hsu</div><div class="strip-card-tags">藝術 · 攝影</div></div>
+      </div>
+      <div class="strip-card">
+        <div class="strip-card-bg" style="background:linear-gradient(155deg,#d8b888,#c09860,#a07840)"></div>
+        <div class="strip-card-overlay"></div>
+        <div class="strip-lock"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor"/><path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="currentColor"/></svg></div>
+        <div class="strip-card-info"><div class="strip-card-name">Luna Kao</div><div class="strip-card-tags">料理 · 生活</div></div>
+      </div>
+      <div class="strip-card">
+        <div class="strip-card-bg" style="background:linear-gradient(155deg,#c4a0d8,#a880c0,#8c60a4)"></div>
+        <div class="strip-card-overlay"></div>
+        <div class="strip-card-info"><div class="strip-card-name">Yuki Lin</div><div class="strip-card-tags">Cosplay · 寫真</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── HOW IT WORKS ──────────────────────────────── -->
+<section class="how reveal" id="how">
+  <div class="section-eyebrow">為什麼選擇 FANHUB</div>
+  <div class="section-title">她在等你，<strong>你在等什麼</strong></div>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">01</div>
+      <div class="step-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      </div>
+      <div class="step-title">不需要算計，直接喜歡</div>
+      <div class="step-desc">不用猶豫、不用比較。在 FANHUB，你只需要找到讓你心動的那個人，然後按下訂閱。</div>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <div class="step-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+      </div>
+      <div class="step-title">只屬於你的專屬內容</div>
+      <div class="step-desc">她把最真實的自己留給訂閱者。你所看到的，是她選擇給你看的——不是給所有人的。</div>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <div class="step-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8h2a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-2v4l-4-4H9a2 2 0 0 1-2-2v-1"/><path d="M15 3H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2v4l4-4h4a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2z"/></svg>
+      </div>
+      <div class="step-title">真實的距離，直接連結</div>
+      <div class="step-desc">私訊她，告訴她你想看什麼。這裡沒有演算法的過濾，只有你和她之間的直接對話。</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FEATURED CREATORS ─────────────────────────── -->
+<section class="featured reveal" id="featured">
+  <div class="section-eyebrow">精選創作者</div>
+  <div class="section-title">今天，<strong>探索誰</strong></div>
+  <div class="featured-grid">
+    <div class="f-card" onclick="window.location.href='fanhub-creator-profile.html'">
+      <div class="f-cover">
+        <div class="f-cover-bg" style="background:linear-gradient(155deg,#d4a8b4,#a87080)"></div>
+        <div class="f-cover-overlay"></div>
+        <div class="f-cover-text"><div class="f-name">Ava Lin</div><div class="f-handle">@avalin · 12.4K 粉絲</div></div>
+      </div>
+      <div class="f-body">
+        <div class="f-tags">健身 · 生活 · 寫真</div>
+        <div class="f-bottom"><div class="f-price">NT$299 起</div><button class="f-btn" onclick="event.stopPropagation();window.location.href='fanhub-subscribe-modal.html'">訂閱</button></div>
+      </div>
+    </div>
+    <div class="f-card">
+      <div class="f-cover">
+        <div class="f-cover-bg" style="background:linear-gradient(155deg,#9ec8a0,#5c9060)"></div>
+        <div class="f-cover-overlay"></div>
+        <div class="f-cover-text"><div class="f-name">Sara Wu</div><div class="f-handle">@sarawu · 21K 粉絲</div></div>
+      </div>
+      <div class="f-body">
+        <div class="f-tags">健身 · 教學</div>
+        <div class="f-bottom"><div class="f-price">NT$149 起</div><button class="f-btn" onclick="event.stopPropagation()">訂閱</button></div>
+      </div>
+    </div>
+    <div class="f-card">
+      <div class="f-cover">
+        <div class="f-cover-bg" style="background:linear-gradient(155deg,#90c4cc,#508090)"></div>
+        <div class="f-cover-overlay"></div>
+        <div class="f-cover-text"><div class="f-name">Roxy Hsu</div><div class="f-handle">@roxyhsu · 9.6K 粉絲</div></div>
+      </div>
+      <div class="f-body">
+        <div class="f-tags">藝術 · 攝影</div>
+        <div class="f-bottom"><div class="f-price">NT$199 起</div><button class="f-btn" onclick="event.stopPropagation()">訂閱</button></div>
+      </div>
+    </div>
+    <div class="f-card">
+      <div class="f-cover">
+        <div class="f-cover-bg" style="background:linear-gradient(155deg,#c4a0d8,#8c60a4)"></div>
+        <div class="f-cover-overlay"></div>
+        <div class="f-cover-text"><div class="f-name">Yuki Lin</div><div class="f-handle">@yukilin · 3.2K 粉絲</div></div>
+      </div>
+      <div class="f-body">
+        <div class="f-tags">Cosplay · 寫真</div>
+        <div class="f-bottom"><div class="f-price">NT$249 起</div><button class="f-btn" onclick="event.stopPropagation()">訂閱</button></div>
+      </div>
+    </div>
+  </div>
+  <div class="view-all reveal" onclick="window.location.href='fanhub-explore.html'">查看全部創作者</div>
+</section>
+
+<!-- ── FOR CREATORS ──────────────────────────────── -->
+<section class="creator-section" id="creator">
+  <div class="creator-section-deco"></div>
+  <div class="creator-section-inner">
+    <div>
+      <div class="creator-eyebrow">給創作者</div>
+      <div class="creator-title">開始創作，<strong>開始獲益</strong></div>
+      <div class="creator-desc">
+        設定你的訂閱方案，發布獨家內容，直接與真正喜歡你的人連結。
+        平台透明運作，你專注創作就好。
+      </div>
+      <button class="creator-cta" onclick="window.location.href='fanhub-auth.html'">立即申請成為創作者</button>
+    </div>
+    <div class="creator-features">
+      <div class="creator-feat">
+        <div class="creator-feat-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+        </div>
+        <div>
+          <div class="creator-feat-title">每月穩定入帳</div>
+          <div class="creator-feat-desc">訂閱制收入每月自動結算，穩定可預期。</div>
+        </div>
+      </div>
+      <div class="creator-feat">
+        <div class="creator-feat-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <div>
+          <div class="creator-feat-title">直接與粉絲互動</div>
+          <div class="creator-feat-desc">私訊、付費訊息、客製內容——與真正支持你的人建立連結。</div>
+        </div>
+      </div>
+      <div class="creator-feat">
+        <div class="creator-feat-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        </div>
+        <div>
+          <div class="creator-feat-title">單篇付費，彈性收益</div>
+          <div class="creator-feat-desc">除了訂閱，也可以設定單篇解鎖，多一條收入來源。</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── TESTIMONIALS ──────────────────────────────── -->
+<section class="testimonials reveal">
+  <div class="section-eyebrow">真實聲音</div>
+  <div class="section-title">他們這樣<strong>說</strong></div>
+  <div class="testi-grid">
+    <div class="testi">
+      <div class="testi-quote">加入 FANHUB 之後，我終於覺得有一個地方是真的為創作者設計的。</div>
+      <div class="testi-author">
+        <div class="testi-avatar" style="background:linear-gradient(135deg,#cc5e76,#8a3248)">A</div>
+        <div>
+          <div class="testi-name">Ava Lin</div>
+          <div class="testi-role">健身創作者 · 已加入 8 個月</div>
+        </div>
+      </div>
+    </div>
+    <div class="testi">
+      <div class="testi-quote">介面很好用，訂閱流程也很順，最重要的是我喜歡的創作者都在這裡。</div>
+      <div class="testi-author">
+        <div class="testi-avatar" style="background:linear-gradient(135deg,#5eaab8,#306878)">K</div>
+        <div>
+          <div class="testi-name">Kevin L.</div>
+          <div class="testi-role">訂閱者 · 已訂閱 4 位創作者</div>
+        </div>
+      </div>
+    </div>
+    <div class="testi">
+      <div class="testi-quote">私訊功能很好，我可以直接跟粉絲溝通，感覺比其他平台更親近。</div>
+      <div class="testi-author">
+        <div class="testi-avatar" style="background:linear-gradient(135deg,#5faa6e,#387a45)">S</div>
+        <div>
+          <div class="testi-name">Sara Wu</div>
+          <div class="testi-role">健身創作者 · 已加入 5 個月</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FINAL CTA ──────────────────────────────────── -->
+<section class="final-cta reveal">
+  <div class="final-cta-label">立即開始</div>
+  <div class="final-cta-title">
+    今天就<br>
+    <strong>加入她們</strong>
+  </div>
+  <div class="final-cta-btns">
+    <button class="final-btn-primary" onclick="window.location.href='fanhub-auth.html'">免費註冊</button>
+    <button class="final-btn-ghost" onclick="window.location.href='fanhub-explore.html'">先瀏覽看看</button>
+  </div>
+</section>
+
+<!-- ── FOOTER ─────────────────────────────────────── -->
+<footer class="footer">
+  <div class="footer-logo">FAN<em>HUB</em></div>
+  <div class="footer-links">
+    <a href="#">隱私政策</a>
+    <a href="#">服務條款</a>
+    <a href="#">18+ 聲明</a>
+    <a href="#">客服中心</a>
+    <a href="#">成為創作者</a>
+  </div>
+  <div class="footer-copy">© 2025 FANHUB · Taiwan</div>
+</footer>
+
+<script>
+/* Theme */
+const root = document.documentElement;
+root.dataset.theme = 'light'; // demo: force light on load
+document.getElementById('themeBtn').addEventListener('click', () => {
+  const n = root.dataset.theme === 'light' ? 'dark' : 'light';
+  root.dataset.theme = n; localStorage.setItem('fh-theme', n);
+});
+
+/* Navbar scroll */
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 40);
+}, {passive:true});
+
+/* Scroll reveal */
+const observer = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      observer.unobserve(e.target);
+    }
+  });
+}, {threshold:.12});
+document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>

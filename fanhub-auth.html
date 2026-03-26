@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="zh-TW" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>登入 · FANHUB</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fdf9f6;--surface:#ffffff;--surface2:#faf3ef;--surface3:#fdf0eb;
+  --p:#cc5e76;--ph:#b84d65;--p2:#8a3248;
+  --t1:#2e1118;--t2:#4a1e2a;--t3:#7a4858;
+  --bd:rgba(150,70,90,.25);--bd2:rgba(150,70,90,.42);
+  --err:#c0392b;--err-bg:#fdf0ef;
+  --ok:#27800a;--ok-bg:#eaf3de;
+  --tr:.24s cubic-bezier(.4,0,.2,1);
+  --nav:rgba(253,249,246,.94);
+}
+[data-theme=dark]{
+  --bg:#080508;--surface:#1e1016;--surface2:#2a1820;--surface3:#382030;
+  --p:#d4718b;--ph:#e07d96;--p2:#9b4c6a;
+  --t1:#f8e0e8;--t2:#d8a8b8;--t3:#a87888;
+  --bd:rgba(212,113,139,.13);--bd2:rgba(212,113,139,.28);
+  --err:#e57373;--err-bg:#2d1010;
+  --ok:#81c784;--ok-bg:#0d2010;
+  --nav:rgba(8,5,8,.96);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:'DM Sans',sans-serif;
+  font-size:16px;
+  background:var(--bg);color:var(--t1);
+  -webkit-font-smoothing:antialiased;
+  transition:background var(--tr),color var(--tr);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Crect width='1' height='1' x='0' y='0' fill='rgba(180,100,110,.025)'/%3E%3Crect width='1' height='1' x='2' y='2' fill='rgba(180,100,110,.018)'/%3E%3C/svg%3E");
+  min-height:100vh;
+}
+[data-theme=dark] body{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Crect width='1' height='1' x='0' y='0' fill='rgba(212,113,139,.04)'/%3E%3Crect width='1' height='1' x='2' y='2' fill='rgba(212,113,139,.025)'/%3E%3C/svg%3E");
+}
+button{font-family:inherit;cursor:pointer;border:none;outline:none;background:none}
+input{font-family:inherit}
+a{color:var(--p);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* ── NAVBAR ─────────────────────────────────────── */
+.nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  height:52px;
+  background:var(--nav);
+  backdrop-filter:blur(20px) saturate(160%);
+  -webkit-backdrop-filter:blur(20px) saturate(160%);
+  border-bottom:1px solid var(--bd);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 28px;
+  transition:background var(--tr);
+}
+.nav-logo{
+  font-family:'DM Sans',sans-serif;
+  font-size:17px;font-weight:500;
+  letter-spacing:.18em;color:var(--p);
+  transition:color var(--tr);
+  cursor:pointer;
+}
+.nav-logo em{font-style:normal;font-weight:400;opacity:.55}
+.theme-btn{
+  width:38px;height:22px;border-radius:11px;
+  background:var(--surface2);border:1.5px solid var(--bd2);
+  position:relative;cursor:pointer;padding:2px;
+  display:flex;align-items:center;
+  transition:background var(--tr),border-color var(--tr);
+}
+.theme-btn::after{
+  content:'';width:16px;height:16px;border-radius:50%;
+  background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.18);
+  transition:transform var(--tr);
+}
+[data-theme=dark] .theme-btn{background:var(--p);border-color:var(--p)}
+[data-theme=dark] .theme-btn::after{transform:translateX(16px)}
+
+/* ── LAYOUT ─────────────────────────────────────── */
+.page{
+  min-height:100vh;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+}
+@media(max-width:740px){.page{grid-template-columns:1fr}.side-art{display:none}}
+
+/* ── LEFT: CREATOR CAROUSEL ─────────────────────── */
+.side-art{
+  position:relative;overflow:hidden;
+  min-height:100vh;
+  display:flex;flex-direction:column;
+  justify-content:flex-end;
+  transition:background var(--tr);
+}
+
+/* Each slide */
+.slide{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;justify-content:flex-end;
+  opacity:0;
+  transition:opacity .9s ease;
+  pointer-events:none;
+}
+.slide.active{opacity:1;pointer-events:auto}
+
+.slide-bg{
+  position:absolute;inset:0;
+  transition:transform 8s ease;
+}
+.slide.active .slide-bg{transform:scale(1.06)}
+
+.slide-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(
+    to top,
+    rgba(10,5,8,.88) 0%,
+    rgba(10,5,8,.4) 45%,
+    rgba(10,5,8,.1) 100%
+  );
+}
+
+.slide-content{
+  position:relative;z-index:1;
+  padding:32px 36px 44px;
+}
+.slide-tag{
+  display:inline-block;
+  font-size:17px;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;
+  padding:3px 10px;border-radius:6px;
+  background:var(--p);color:#fff;
+  margin-bottom:14px;
+}
+.slide-avatar-row{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+.slide-avatar{
+  width:44px;height:44px;border-radius:50%;
+  border:2px solid rgba(255,255,255,.3);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Cormorant Garamond',serif;
+  font-size:17px;font-weight:600;color:#fff;
+  flex-shrink:0;
+}
+.slide-name{
+  font-family:'Cormorant Garamond',serif;
+  font-size:24px;font-weight:600;
+  color:#fff;line-height:1.1;
+}
+.slide-handle{font-size:17px;color:rgba(255,255,255,.55);margin-top:1px}
+.slide-bio{
+  font-size:18px;color:rgba(255,255,255,.7);
+  line-height:1.6;margin-bottom:16px;
+  max-width:280px;
+}
+.slide-stats{display:flex;gap:20px;margin-bottom:20px}
+.slide-stat{display:flex;flex-direction:column;gap:1px}
+.slide-num{
+  font-family:'Cormorant Garamond',serif;
+  font-size:20px;font-weight:600;color:#fff;
+}
+.slide-lbl{font-size:17px;color:rgba(255,255,255,.5);letter-spacing:.05em}
+.slide-cta{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:18px;font-weight:600;
+  padding:9px 20px;border-radius:20px;
+  background:rgba(255,255,255,.15);
+  border:1px solid rgba(255,255,255,.25);
+  color:#fff;
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
+  transition:background .2s;
+  cursor:pointer;
+}
+.slide-cta:hover{background:rgba(255,255,255,.25)}
+.slide-cta svg{width:13px;height:13px}
+
+/* Dots nav */
+.carousel-dots{
+  position:absolute;bottom:18px;right:20px;z-index:10;
+  display:flex;gap:5px;align-items:center;
+}
+.cdot{
+  width:6px;height:6px;border-radius:3px;
+  background:rgba(255,255,255,.3);
+  cursor:pointer;transition:all .3s;
+}
+.cdot.active{width:18px;background:rgba(255,255,255,.9)}
+
+/* Progress bar */
+.carousel-progress{
+  position:absolute;top:0;left:0;right:0;z-index:10;
+  height:2px;background:rgba(255,255,255,.1);
+}
+.carousel-progress-fill{
+  height:100%;background:var(--p);
+  width:0%;transition:none;
+}
+.carousel-progress-fill.running{
+  transition:width 5s linear;
+  width:100%;
+}
+
+/* ── RIGHT: FORM PANEL ──────────────────────────── */
+.side-form{
+  display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  padding:80px 48px 48px;
+  min-height:100vh;
+}
+@media(max-width:480px){.side-form{padding:80px 24px 40px}}
+
+.form-box{width:100%;max-width:360px}
+
+/* Tab switcher */
+.tabs{
+  display:flex;
+  background:var(--surface2);
+  border-radius:12px;padding:4px;
+  margin-bottom:32px;
+  transition:background var(--tr);
+}
+.tab-btn{
+  flex:1;font-size:17px;font-weight:500;
+  padding:8px 0;border-radius:9px;
+  color:var(--t3);
+  transition:all .2s;
+}
+.tab-btn.active{
+  background:var(--surface);color:var(--t1);
+  box-shadow:0 1px 6px rgba(0,0,0,.08);
+}
+
+/* Form title */
+.form-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:28px;font-weight:600;
+  color:var(--t1);margin-bottom:6px;
+  transition:color var(--tr);
+}
+.form-sub{font-size:17px;color:var(--t3);margin-bottom:28px;transition:color var(--tr);line-height:1.5}
+.form-sub a{color:var(--p)}
+
+/* Role picker */
+.role-pick{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:24px}
+.role-card{
+  border:1.5px solid var(--bd2);border-radius:12px;
+  padding:14px 12px;cursor:pointer;
+  transition:all .2s;
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+  background:var(--surface);
+}
+.role-card:hover{border-color:var(--p)}
+.role-card.selected{
+  border-color:var(--p);
+  background:var(--surface3);
+}
+.role-icon{
+  width:36px;height:36px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--surface2);
+  transition:background var(--tr);
+}
+.role-card.selected .role-icon{background:var(--p)}
+.role-icon svg{width:18px;height:18px;stroke:var(--t2);transition:stroke .2s}
+.role-card.selected .role-icon svg{stroke:#fff}
+.role-label{font-size:18px;font-weight:500;color:var(--t2);transition:color .2s}
+.role-card.selected .role-label{color:var(--p2)}
+.role-desc{font-size:18px;color:var(--t3);text-align:center;line-height:1.55;transition:color var(--tr)}
+
+/* Input group */
+.field{margin-bottom:16px}
+.field-label{
+  font-size:15.5px;font-weight:500;
+  color:var(--t2);margin-bottom:6px;
+  display:flex;align-items:center;justify-content:space-between;
+  transition:color var(--tr);
+}
+.field-label a{font-size:17px}
+.field-wrap{
+  position:relative;
+  display:flex;align-items:center;
+}
+.field-input{
+  width:100%;height:44px;
+  padding:0 14px;
+  background:var(--surface);
+  border:1.5px solid var(--bd2);
+  border-radius:10px;
+  font-size:18px;color:var(--t1);
+  outline:none;
+  transition:border-color .2s,box-shadow .2s,background var(--tr),color var(--tr);
+}
+.field-input::placeholder{color:var(--t3);font-size:17px}
+.field-input:focus{
+  border-color:var(--p);
+  box-shadow:0 0 0 3px rgba(204,94,118,.1);
+}
+.field-input.has-icon{padding-left:40px}
+.field-input.has-eye{padding-right:42px}
+.field-icon{
+  position:absolute;left:13px;
+  color:var(--t3);pointer-events:none;
+}
+.field-icon svg{width:16px;height:16px}
+.eye-btn{
+  position:absolute;right:12px;
+  color:var(--t3);padding:4px;
+  transition:color .2s;
+}
+.eye-btn:hover{color:var(--p)}
+.eye-btn svg{width:16px;height:16px}
+
+/* Error state */
+.field-input.error{border-color:var(--err)}
+.field-error{
+  font-size:17px;color:var(--err);
+  margin-top:5px;display:flex;align-items:center;gap:4px;
+}
+.field-error svg{width:12px;height:12px;flex-shrink:0}
+
+/* Password strength */
+.pw-strength{margin-top:7px}
+.pw-bars{display:flex;gap:4px;margin-bottom:4px}
+.pw-bar{
+  height:3px;border-radius:2px;flex:1;
+  background:var(--bd2);transition:background .3s;
+}
+.pw-bar.filled-weak{background:#e24b4a}
+.pw-bar.filled-ok{background:#ef9f27}
+.pw-bar.filled-strong{background:#639922}
+.pw-hint{font-size:18px;color:var(--t3);transition:color var(--tr)}
+
+/* Checkbox */
+.check-row{
+  display:flex;align-items:flex-start;gap:9px;
+  margin-bottom:20px;cursor:pointer;
+}
+.check-row input[type=checkbox]{
+  width:16px;height:16px;
+  border:1.5px solid var(--bd2);border-radius:4px;
+  cursor:pointer;flex-shrink:0;margin-top:2px;
+  accent-color:var(--p);
+}
+.check-label{font-size:18px;color:var(--t2);line-height:1.55;transition:color var(--tr)}
+
+/* Submit btn */
+.submit-btn{
+  width:100%;height:46px;
+  background:var(--p);color:#fff;
+  border-radius:12px;
+  font-size:18px;font-weight:600;
+  letter-spacing:.03em;
+  transition:background .2s,transform .15s,box-shadow .2s;
+  box-shadow:0 4px 16px rgba(204,94,118,.28);
+  margin-bottom:20px;
+  position:relative;overflow:hidden;
+}
+.submit-btn:hover{background:var(--ph);transform:translateY(-1px);box-shadow:0 6px 22px rgba(204,94,118,.36)}
+.submit-btn:active{transform:translateY(0)}
+/* Shimmer on btn */
+.submit-btn::after{
+  content:'';
+  position:absolute;top:0;left:-100%;width:60%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.15),transparent);
+  transition:left .5s;
+}
+.submit-btn:hover::after{left:140%}
+
+/* Divider */
+.or-divider{
+  display:flex;align-items:center;gap:12px;
+  margin-bottom:20px;
+}
+.or-line{flex:1;height:1px;background:var(--bd);transition:background var(--tr)}
+.or-text{font-size:17px;color:var(--t3);flex-shrink:0;transition:color var(--tr)}
+
+/* Social login */
+.social-btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:24px}
+.social-btn{
+  height:40px;border:1.5px solid var(--bd2);border-radius:10px;
+  display:flex;align-items:center;justify-content:center;gap:7px;
+  font-size:18px;font-weight:500;color:var(--t2);
+  background:var(--surface);
+  transition:all .2s;
+}
+.social-btn:hover{border-color:var(--p);color:var(--p)}
+.social-btn svg{width:16px;height:16px;flex-shrink:0}
+
+/* Footer note */
+.form-footer{font-size:17px;color:var(--t3);text-align:center;line-height:1.6;transition:color var(--tr)}
+.form-footer a{color:var(--p)}
+
+/* Step indicator (for signup) */
+.steps{
+  display:flex;align-items:center;justify-content:center;
+  gap:6px;margin-bottom:28px;
+}
+.step-dot{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--bd2);transition:all .25s;
+}
+.step-dot.active{width:22px;border-radius:4px;background:var(--p)}
+.step-dot.done{background:var(--p);opacity:.4}
+
+/* Success state */
+.success-box{
+  text-align:center;padding:32px 0 16px;
+  display:none;
+}
+.success-icon{
+  width:56px;height:56px;border-radius:50%;
+  background:var(--ok-bg);
+  border:1.5px solid var(--ok);
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 16px;
+}
+.success-icon svg{width:24px;height:24px;stroke:var(--ok)}
+.success-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:22px;font-weight:600;color:var(--t1);
+  margin-bottom:8px;transition:color var(--tr);
+}
+.success-msg{font-size:17px;color:var(--t2);line-height:1.6;transition:color var(--tr)}
+
+/* Panel visibility */
+.panel{display:none}
+.panel.active{display:block}
+
+/* Entrance animation */
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+.form-box{animation:fadeUp .45s .05s both}
+.side-art .art-content{animation:fadeUp .5s .1s both}
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="nav">
+  <div class="nav-logo" onclick="window.location.href='fanhub-explore.html'">FAN<em>HUB</em></div>
+  <div class="theme-btn" id="themeBtn" title="切換深淺色"></div>
+</nav>
+
+<!-- PAGE -->
+<div class="page">
+
+  <!-- CREATOR CAROUSEL -->
+  <div class="side-art" id="carousel">
+
+    <div class="carousel-progress"><div class="carousel-progress-fill" id="progressFill"></div></div>
+
+    <!-- Slide 1: Ava Lin -->
+    <div class="slide active" id="slide0">
+      <div class="slide-bg" style="background:linear-gradient(155deg,#2a1018 0%,#4a1828 40%,#3a1020 100%)">
+        <!-- Simulated photo texture via CSS pattern -->
+        <div style="position:absolute;inset:0;background-image:radial-gradient(ellipse 80% 70% at 35% 40%,rgba(204,94,118,.35) 0%,transparent 60%),radial-gradient(ellipse 50% 60% at 75% 70%,rgba(138,50,72,.25) 0%,transparent 55%)"></div>
+      </div>
+      <div class="slide-overlay"></div>
+      <div class="slide-content">
+        <div class="slide-tag">本週精選</div>
+        <div class="slide-avatar-row">
+          <div class="slide-avatar" style="background:linear-gradient(135deg,#cc5e76,#8a3248)">A</div>
+          <div>
+            <div class="slide-name">Ava Lin</div>
+            <div class="slide-handle">@avalin · 已驗證</div>
+          </div>
+        </div>
+        <div class="slide-bio">健身教練 · 生活寫真 · 每日更新<br>訂閱解鎖獨家專屬內容</div>
+        <div class="slide-stats">
+          <div class="slide-stat"><span class="slide-num">12.4K</span><span class="slide-lbl">粉絲</span></div>
+          <div class="slide-stat"><span class="slide-num">248</span><span class="slide-lbl">貼文</span></div>
+          <div class="slide-stat"><span class="slide-num">4.9</span><span class="slide-lbl">評分</span></div>
+        </div>
+        <div class="slide-cta" onclick="window.location.href='fanhub-creator-profile.html'">
+          查看主頁
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 2: Sara Wu -->
+    <div class="slide" id="slide1">
+      <div class="slide-bg" style="background:linear-gradient(155deg,#0a1a10 0%,#1a3a20 40%,#0d2515 100%)">
+        <div style="position:absolute;inset:0;background-image:radial-gradient(ellipse 70% 60% at 40% 35%,rgba(95,170,110,.3) 0%,transparent 60%),radial-gradient(ellipse 50% 55% at 70% 65%,rgba(56,122,69,.2) 0%,transparent 55%)"></div>
+      </div>
+      <div class="slide-overlay"></div>
+      <div class="slide-content">
+        <div class="slide-tag">人氣創作者</div>
+        <div class="slide-avatar-row">
+          <div class="slide-avatar" style="background:linear-gradient(135deg,#5faa6e,#387a45)">S</div>
+          <div>
+            <div class="slide-name">Sara Wu</div>
+            <div class="slide-handle">@sarawu · 已驗證</div>
+          </div>
+        </div>
+        <div class="slide-bio">健身教學 · 營養知識 · 居家訓練<br>每週三次直播，與你一起進步</div>
+        <div class="slide-stats">
+          <div class="slide-stat"><span class="slide-num">21K</span><span class="slide-lbl">粉絲</span></div>
+          <div class="slide-stat"><span class="slide-num">410</span><span class="slide-lbl">貼文</span></div>
+          <div class="slide-stat"><span class="slide-num">4.8</span><span class="slide-lbl">評分</span></div>
+        </div>
+        <div class="slide-cta">
+          查看主頁
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Slide 3: Roxy Hsu -->
+    <div class="slide" id="slide2">
+      <div class="slide-bg" style="background:linear-gradient(155deg,#0a1520 0%,#152535 40%,#0d1e2e 100%)">
+        <div style="position:absolute;inset:0;background-image:radial-gradient(ellipse 75% 60% at 35% 40%,rgba(94,170,184,.28) 0%,transparent 60%),radial-gradient(ellipse 45% 55% at 72% 65%,rgba(48,104,120,.2) 0%,transparent 55%)"></div>
+      </div>
+      <div class="slide-overlay"></div>
+      <div class="slide-content">
+        <div class="slide-tag">新進熱門</div>
+        <div class="slide-avatar-row">
+          <div class="slide-avatar" style="background:linear-gradient(135deg,#5eaab8,#306878)">R</div>
+          <div>
+            <div class="slide-name">Roxy Hsu</div>
+            <div class="slide-handle">@roxyhsu · 已驗證</div>
+          </div>
+        </div>
+        <div class="slide-bio">攝影師 · 藝術創作者<br>光線與人像的交會，每週獨家攝影集</div>
+        <div class="slide-stats">
+          <div class="slide-stat"><span class="slide-num">9.6K</span><span class="slide-lbl">粉絲</span></div>
+          <div class="slide-stat"><span class="slide-num">312</span><span class="slide-lbl">作品</span></div>
+          <div class="slide-stat"><span class="slide-num">4.9</span><span class="slide-lbl">評分</span></div>
+        </div>
+        <div class="slide-cta">
+          查看主頁
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dot nav -->
+    <div class="carousel-dots">
+      <div class="cdot active" onclick="goSlide(0)"></div>
+      <div class="cdot" onclick="goSlide(1)"></div>
+      <div class="cdot" onclick="goSlide(2)"></div>
+    </div>
+
+  </div>
+
+  <!-- RIGHT FORM PANEL -->
+  <div class="side-form">
+    <div class="form-box">
+
+      <!-- TAB SWITCHER -->
+      <div class="tabs">
+        <button class="tab-btn active" id="tabLogin" onclick="switchTab('login')">登入</button>
+        <button class="tab-btn" id="tabRegister" onclick="switchTab('register')">免費註冊</button>
+      </div>
+
+      <!-- ── LOGIN PANEL ── -->
+      <div class="panel active" id="panelLogin">
+        <h1 class="form-title">歡迎回來</h1>
+        <p class="form-sub">還沒有帳號？<a href="#" onclick="switchTab('register');return false">免費註冊</a></p>
+
+        <div class="field">
+          <div class="field-label">電子郵件</div>
+          <div class="field-wrap">
+            <div class="field-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            </div>
+            <input type="email" class="field-input has-icon" id="loginEmail" placeholder="your@email.com" oninput="clearError('loginEmail')">
+          </div>
+          <div class="field-error" id="loginEmailErr" style="display:none">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <span></span>
+          </div>
+        </div>
+
+        <div class="field">
+          <div class="field-label">
+            密碼
+            <a href="#">忘記密碼？</a>
+          </div>
+          <div class="field-wrap">
+            <div class="field-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            </div>
+            <input type="password" class="field-input has-icon has-eye" id="loginPw" placeholder="輸入密碼">
+            <button class="eye-btn" onclick="toggleEye('loginPw',this)" type="button" tabindex="-1">
+              <svg id="eyeLogin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+            </button>
+          </div>
+          <div class="field-error" id="loginPwErr" style="display:none">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            <span></span>
+          </div>
+        </div>
+
+        <label class="check-row">
+          <input type="checkbox" checked>
+          <span class="check-label">記住我（30 天）</span>
+        </label>
+
+        <button class="submit-btn" onclick="doLogin()">登入</button>
+
+        <div class="or-divider">
+          <div class="or-line"></div>
+          <div class="or-text">或使用</div>
+          <div class="or-line"></div>
+        </div>
+
+        <div class="social-btns" style="opacity:.45;pointer-events:none;position:relative">
+          <button class="social-btn" disabled>
+            <svg viewBox="0 0 24 24" fill="none"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+            Google
+          </button>
+          <button class="social-btn" disabled>
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.8-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M13 3.5c.73-.83 1.94-1.46 2.94-1.5.13 1.17-.34 2.35-1.04 3.19-.69.85-1.83 1.51-2.95 1.42-.15-1.15.41-2.35 1.05-3.11z"/></svg>
+            Apple
+          </button>
+          <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:13px;font-weight:600;letter-spacing:.06em;color:var(--t3);background:var(--surface);padding:2px 10px;border-radius:8px;border:1px solid var(--bd2);white-space:nowrap">即將推出</div>
+        </div>
+
+        <div class="form-footer">
+          登入即表示同意 <a href="fanhub-legal.html">服務條款</a> 及 <a href="fanhub-legal.html">隱私政策</a>
+        </div>
+      </div>
+
+      <!-- ── REGISTER PANEL ── -->
+      <div class="panel" id="panelRegister">
+        <!-- Step dots (2 steps now) -->
+        <div class="steps" id="stepDots">
+          <div class="step-dot active" id="dot0"></div>
+          <div class="step-dot" id="dot1"></div>
+        </div>
+
+        <!-- Step 1: Account info -->
+        <div id="step1">
+          <h1 class="form-title">建立帳號</h1>
+          <p class="form-sub">填寫基本資料</p>
+
+          <div class="field">
+            <div class="field-label">電子郵件</div>
+            <div class="field-wrap">
+              <div class="field-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg></div>
+              <input type="email" class="field-input has-icon" id="regEmail" placeholder="your@email.com" oninput="clearError('regEmail')">
+            </div>
+            <div class="field-error" id="regEmailErr" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span></span></div>
+          </div>
+
+          <div class="field">
+            <div class="field-label">設定密碼</div>
+            <div class="field-wrap">
+              <div class="field-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+              <input type="password" class="field-input has-icon has-eye" id="regPw" placeholder="至少 8 個字元" oninput="checkPwStrength(this.value)">
+              <button class="eye-btn" onclick="toggleEye('regPw',this)" type="button" tabindex="-1">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </div>
+            <div class="pw-strength" id="pwStrength" style="display:none">
+              <div class="pw-bars">
+                <div class="pw-bar" id="bar0"></div>
+                <div class="pw-bar" id="bar1"></div>
+                <div class="pw-bar" id="bar2"></div>
+                <div class="pw-bar" id="bar3"></div>
+              </div>
+              <div class="pw-hint" id="pwHint"></div>
+            </div>
+          </div>
+
+          <label class="check-row">
+            <input type="checkbox" id="agreeTerms">
+            <span class="check-label">我同意 <a href="#">服務條款</a>，並確認年齡已滿 18 歲</span>
+          </label>
+
+          <button class="submit-btn" onclick="nextStep('done')">繼續</button>
+          <button style="width:100%;font-size:12px;color:var(--t3);margin-top:-8px;padding:8px" onclick="nextStep(0)">← 返回</button>
+        </div>
+
+        <!-- Step 2: Profile -->
+        <div id="step2" style="display:none">
+          <h1 class="form-title">建立你的檔案</h1>
+          <p class="form-sub">讓其他人認識你</p>
+
+          <div class="field">
+            <div class="field-label">顯示名稱</div>
+            <div class="field-wrap">
+              <div class="field-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+              <input type="text" class="field-input has-icon" id="regName" placeholder="你想讓大家怎麼稱呼你？" oninput="clearError('regName')">
+            </div>
+            <div class="field-error" id="regNameErr" style="display:none"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg><span></span></div>
+          </div>
+
+          <div class="field">
+            <div class="field-label">
+              用戶名稱
+              <span id="handleStatus" style="font-size:12px;color:var(--t3)"></span>
+            </div>
+            <div class="field-wrap">
+              <div class="field-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M14.31 8l5.74 9.69M9.69 8h11.48M7.38 12l5.74-9.69M9.69 16L3.95 6.31M14.31 16H2.83M16.62 12l-5.74 9.69"/></svg></div>
+              <input type="text" class="field-input has-icon" id="regHandle" placeholder="@yourname" oninput="checkHandle(this.value)">
+            </div>
+          </div>
+
+          <button class="submit-btn" onclick="doRegister()">完成註冊</button>
+          <button style="width:100%;font-size:12px;color:var(--t3);margin-top:-8px;padding:8px" onclick="nextStep(1)">← 返回</button>
+        </div>
+
+        <!-- Success -->
+        <div class="success-box" id="regSuccess">
+          <div class="success-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="success-title">歡迎加入！</div>
+          <p class="success-msg" style="margin-bottom:24px">你的帳號已建立成功。<br>開始探索你喜歡的創作者吧。</p>
+          <button class="submit-btn" style="max-width:200px;margin:0 auto" onclick="window.location.href='fanhub-explore.html'">前往探索</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+/* Theme */
+const root = document.documentElement;
+root.dataset.theme = 'light'; // demo: force light on load
+document.getElementById('themeBtn').addEventListener('click', () => {
+  const n = root.dataset.theme === 'light' ? 'dark' : 'light';
+  root.dataset.theme = n;
+  localStorage.setItem('fh-theme', n);
+});
+
+/* Tab switch */
+function switchTab(tab) {
+  document.getElementById('panelLogin').classList.toggle('active', tab === 'login');
+  document.getElementById('panelRegister').classList.toggle('active', tab === 'register');
+  document.getElementById('tabLogin').classList.toggle('active', tab === 'login');
+  document.getElementById('tabRegister').classList.toggle('active', tab === 'register');
+}
+
+/* Role picker */
+let currentRole = 'fan';
+function pickRole(role) {
+  currentRole = role;
+  document.getElementById('roleFan').classList.toggle('selected', role === 'fan');
+  document.getElementById('roleCreator').classList.toggle('selected', role === 'creator');
+}
+
+/* Step navigation */
+let currentStep = 0;
+function nextStep(step) {
+  if (step === 1) {
+    if (!validateStep1()) return;
+  }
+  if (step === 2) {
+    if (!validateStep2()) return;
+  }
+  ['step0','step1','step2'].forEach((s,i) => {
+    document.getElementById(s).style.display = i === step ? 'block' : 'none';
+  });
+  ['dot0','dot1','dot2'].forEach((d,i) => {
+    const el = document.getElementById(d);
+    el.classList.remove('active','done');
+    if (i === step) el.classList.add('active');
+    else if (i < step) el.classList.add('done');
+  });
+  currentStep = step;
+}
+
+/* Validation helpers */
+function showError(id, msg) {
+  const el = document.getElementById(id);
+  const input = document.getElementById(id.replace('Err',''));
+  if (el) { el.style.display = 'flex'; el.querySelector('span').textContent = msg; }
+  if (input) input.classList.add('error');
+}
+function clearError(id) {
+  const err = document.getElementById(id + 'Err');
+  const input = document.getElementById(id);
+  if (err) err.style.display = 'none';
+  if (input) input.classList.remove('error');
+}
+
+function validateStep1() {
+  let ok = true;
+  const email = document.getElementById('regEmail').value.trim();
+  if (!email || !/\S+@\S+\.\S+/.test(email)) {
+    showError('regEmail','請輸入有效的電子郵件地址'); ok = false;
+  }
+  const pw = document.getElementById('regPw').value;
+  if (pw.length < 8) {
+    ok = false;
+  }
+  if (!document.getElementById('agreeTerms').checked) {
+    alert('請先同意服務條款並確認年齡');
+    ok = false;
+  }
+  return ok;
+}
+
+function validateStep2() {
+  let ok = true;
+  const name = document.getElementById('regName').value.trim();
+  if (!name) { showError('regName','請輸入顯示名稱'); ok = false; }
+  return ok;
+}
+
+/* Password strength */
+function checkPwStrength(pw) {
+  const wrap = document.getElementById('pwStrength');
+  wrap.style.display = pw.length ? 'block' : 'none';
+  const score = [pw.length >= 8, /[A-Z]/.test(pw), /[0-9]/.test(pw), /[^A-Za-z0-9]/.test(pw)].filter(Boolean).length;
+  const cls = score <= 1 ? 'filled-weak' : score <= 2 ? 'filled-ok' : 'filled-strong';
+  const labels = ['','弱','普通','強','非常強'];
+  ['bar0','bar1','bar2','bar3'].forEach((b,i) => {
+    const el = document.getElementById(b);
+    el.className = 'pw-bar' + (i < score ? ' ' + cls : '');
+  });
+  document.getElementById('pwHint').textContent = '密碼強度：' + (labels[score] || '');
+}
+
+/* Handle check */
+const handleStatus = document.getElementById('handleStatus');
+let handleTimer;
+function checkHandle(val) {
+  clearTimeout(handleTimer);
+  if (!val) { handleStatus.textContent = ''; return; }
+  handleStatus.style.color = 'var(--t3)';
+  handleStatus.textContent = '檢查中…';
+  handleTimer = setTimeout(() => {
+    const taken = ['ava','mia','sara','luna','yuki','roxy','nina','eva'].some(n => val.toLowerCase().includes(n));
+    if (taken) {
+      handleStatus.style.color = 'var(--err)';
+      handleStatus.textContent = '此名稱已被使用';
+    } else {
+      handleStatus.style.color = 'var(--ok)';
+      handleStatus.textContent = '可以使用！';
+    }
+  }, 600);
+}
+
+/* Eye toggle */
+function toggleEye(fieldId, btn) {
+  const inp = document.getElementById(fieldId);
+  const isHidden = inp.type === 'password';
+  inp.type = isHidden ? 'text' : 'password';
+  btn.style.color = isHidden ? 'var(--p)' : 'var(--t3)';
+}
+
+/* Carousel */
+const totalSlides = 3;
+let cur = 0;
+let autoTimer, progressTimer;
+
+function goSlide(n) {
+  document.getElementById('slide' + cur).classList.remove('active');
+  document.querySelectorAll('.cdot')[cur].classList.remove('active');
+  cur = n;
+  document.getElementById('slide' + cur).classList.add('active');
+  document.querySelectorAll('.cdot')[cur].classList.add('active');
+  resetProgress();
+}
+
+function resetProgress() {
+  const fill = document.getElementById('progressFill');
+  fill.classList.remove('running');
+  fill.style.transition = 'none';
+  fill.style.width = '0%';
+  clearTimeout(progressTimer);
+  progressTimer = setTimeout(() => {
+    fill.style.transition = '';
+    fill.classList.add('running');
+  }, 30);
+}
+
+function nextSlide() { goSlide((cur + 1) % totalSlides); }
+
+function startAuto() {
+  clearInterval(autoTimer);
+  autoTimer = setInterval(nextSlide, 5000);
+}
+
+resetProgress();
+startAuto();
+
+/* Pause on hover */
+document.getElementById('carousel').addEventListener('mouseenter', () => {
+  clearInterval(autoTimer);
+  clearTimeout(progressTimer);
+  document.getElementById('progressFill').classList.remove('running');
+});
+document.getElementById('carousel').addEventListener('mouseleave', () => {
+  resetProgress();
+  startAuto();
+});
+
+
+function doLogin() {
+  let ok = true;
+  const email = document.getElementById('loginEmail').value.trim();
+  if (!email || !/\S+@\S+\.\S+/.test(email)) {
+    showError('loginEmail','請輸入有效的電子郵件'); ok = false;
+  }
+  const pw = document.getElementById('loginPw').value;
+  if (!pw) { showError('loginPw','請輸入密碼'); ok = false; }
+  if (ok) window.location.href = 'fanhub-explore.html';
+}
+
+/* Register submit */
+function doRegister() {
+  if (!validateStep2()) return;
+  ['step0','step1','step2'].forEach(s => document.getElementById(s).style.display = 'none');
+  document.getElementById('stepDots').style.display = 'none';
+  document.getElementById('regSuccess').style.display = 'block';
+}
+</script>
+</body>
+</html>

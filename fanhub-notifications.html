@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="zh-TW" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>通知 · FANHUB</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ── TOKENS ────────────────────────────────────────
+   Light  : bg=#fdf9f6  surface=#ffffff  surface2=#faf3ef  surface3=#fdf0eb  p=#cc5e76  t1=#2e1118
+   Dark   : bg=#0f0a0d  surface=#1a0f14  surface2=#2d1822  surface3=#3d2230  p=#d4718b  t1=#f0c0cf
+   nav-bg : light=rgba(253,249,246,.94)  dark=rgba(15,10,13,.94)
+─────────────────────────────────────────────────── */
+:root{
+  --bg:#fdf9f6;--surface:#ffffff;--surface2:#faf3ef;--surface3:#fdf0eb;
+  --p:#cc5e76;--ph:#b84d65;--p2:#8a3248;
+  --t1:#2e1118;--t2:#4a1e2a;--t3:#7a4858;
+  --bd:rgba(150,70,90,.25);--bd2:rgba(150,70,90,.42);
+  --nav:rgba(253,249,246,.94);
+  --ok:#2d8a4e;--ok-bg:#eaf6ee;
+  --tr:.22s cubic-bezier(.4,0,.2,1);
+}
+[data-theme=dark]{
+  --bg:#080508;--surface:#1e1016;--surface2:#2a1820;--surface3:#382030;
+  --p:#d4718b;--ph:#e07d96;--p2:#9b4c6a;
+  --t1:#f8e0e8;--t2:#d8a8b8;--t3:#a87888;
+  --bd:rgba(200,120,150,.22);--bd2:rgba(200,120,150,.42);
+  --nav:rgba(8,5,8,.96);
+  --ok:#5eca7a;--ok-bg:#0d2518;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'DM Sans',sans-serif;
+  font-size:16px;
+  background:var(--bg);color:var(--t1);
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+  transition:background var(--tr),color var(--tr);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Crect width='1' height='1' x='0' y='0' fill='rgba(180,100,110,.025)'/%3E%3Crect width='1' height='1' x='2' y='2' fill='rgba(180,100,110,.018)'/%3E%3C/svg%3E");
+}
+[data-theme=dark] body{
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Crect width='1' height='1' x='0' y='0' fill='rgba(212,113,139,.04)'/%3E%3Crect width='1' height='1' x='2' y='2' fill='rgba(212,113,139,.025)'/%3E%3C/svg%3E");
+}
+button{font-family:inherit;cursor:pointer;border:none;outline:none;background:none}
+
+/* ── NAVBAR ──────────────────────────────────────── */
+.nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  height:52px;background:var(--nav);
+  backdrop-filter:blur(20px) saturate(160%);
+  -webkit-backdrop-filter:blur(20px) saturate(160%);
+  border-bottom:1px solid var(--bd);
+  display:grid;grid-template-columns:1fr auto 1fr;
+  align-items:center;padding:0 24px;
+  transition:background var(--tr),border-color var(--tr);
+}
+.nav-logo{font-size:17px;font-weight:500;letter-spacing:.18em;color:var(--p);cursor:pointer;transition:color var(--tr)}
+.nav-logo em{font-style:normal;font-weight:400;opacity:.55}
+.nav-tabs{display:flex;gap:2px}
+.nav-tab{font-size:17px;font-weight:400;letter-spacing:.05em;color:var(--t3);padding:6px 14px;border-radius:16px;cursor:pointer;transition:all .18s}
+.nav-tab:hover{color:var(--t2)}
+.nav-tab.active{background:var(--surface2);color:var(--p)}
+.nav-right{display:flex;align-items:center;gap:10px;justify-content:flex-end}
+.theme-btn{
+  width:38px;height:22px;border-radius:11px;
+  background:var(--surface2);border:1.5px solid var(--bd2);
+  position:relative;cursor:pointer;padding:2px;display:flex;align-items:center;
+  transition:background var(--tr),border-color var(--tr);
+}
+.theme-btn::after{
+  content:'';width:16px;height:16px;border-radius:50%;
+  background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.18);transition:transform var(--tr);
+}
+[data-theme=dark] .theme-btn{background:var(--p);border-color:var(--p)}
+[data-theme=dark] .theme-btn::after{transform:translateX(16px)}
+
+/* ── PAGE ────────────────────────────────────────── */
+.page{max-width:680px;margin:0 auto;padding:72px 24px 60px}
+
+/* ── MASTHEAD ────────────────────────────────────── */
+.masthead{
+  display:flex;align-items:flex-end;justify-content:space-between;
+  padding:28px 0 0;margin-bottom:4px;
+}
+.masthead-left{}
+.page-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:32px;font-weight:600;color:var(--t1);line-height:1.1;
+  transition:color var(--tr);
+}
+.page-title em{font-style:italic;color:var(--p)}
+.unread-count{
+  font-size:18px;font-weight:500;color:var(--t3);
+  margin-top:3px;transition:color var(--tr);
+}
+.mark-all-btn{
+  font-size:18px;font-weight:500;color:var(--p);
+  padding:6px 14px;border-radius:16px;
+  border:1px solid var(--bd2);
+  transition:all .18s;
+}
+.mark-all-btn:hover{background:var(--surface3);border-color:var(--p)}
+
+/* ── FILTER TABS ─────────────────────────────────── */
+.filter-row{
+  display:flex;align-items:center;gap:6px;
+  padding:16px 0 0;
+  overflow-x:auto;scrollbar-width:none;
+  margin-bottom:20px;
+}
+.filter-row::-webkit-scrollbar{display:none}
+.f-pill{
+  font-size:17px;font-weight:500;
+  padding:5px 14px;border-radius:16px;
+  border:1px solid var(--bd2);color:var(--t2);
+  background:var(--surface);white-space:nowrap;
+  transition:all .18s;flex-shrink:0;
+}
+.f-pill:hover{border-color:var(--p);color:var(--p)}
+.f-pill.active{background:var(--p);color:#fff;border-color:var(--p)}
+
+/* ── NOTIF GROUP ─────────────────────────────────── */
+.notif-group{margin-bottom:28px}
+.group-label{
+  font-size:18px;font-weight:500;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--t3);
+  margin-bottom:10px;transition:color var(--tr);
+}
+
+/* ── NOTIF ITEM ──────────────────────────────────── */
+.notif-item{
+  display:flex;align-items:flex-start;gap:12px;
+  padding:14px 16px;
+  background:var(--surface);
+  border:1px solid var(--bd);
+  border-radius:14px;
+  margin-bottom:8px;
+  cursor:pointer;
+  transition:background .18s,border-color .18s,transform .15s;
+  position:relative;
+}
+.notif-item:hover{background:var(--surface2);border-color:var(--bd2);transform:translateX(2px)}
+.notif-item.unread{border-left:3px solid var(--p)}
+.notif-item.unread{background:var(--surface)}
+
+/* Unread dot */
+.unread-dot{
+  position:absolute;top:16px;right:16px;
+  width:8px;height:8px;border-radius:50%;
+  background:var(--p);flex-shrink:0;
+  transition:background var(--tr);
+}
+
+/* Avatar area */
+.notif-avatar-wrap{position:relative;flex-shrink:0}
+.notif-avatar{
+  width:44px;height:44px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Cormorant Garamond',serif;
+  font-size:17px;font-weight:600;color:#fff;
+}
+.notif-icon-badge{
+  position:absolute;bottom:-2px;right:-2px;
+  width:18px;height:18px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  border:2px solid var(--surface);
+  transition:border-color var(--tr);
+}
+.notif-icon-badge svg{width:9px;height:9px}
+
+/* Content */
+.notif-content{flex:1;min-width:0}
+.notif-text{
+  font-size:17px;color:var(--t1);line-height:1.5;
+  margin-bottom:5px;transition:color var(--tr);
+}
+.notif-text strong{font-weight:600;color:var(--t1)}
+.notif-time{font-size:18px;color:var(--t3);transition:color var(--tr)}
+
+/* Preview thumbnail */
+.notif-thumb{
+  width:48px;height:48px;border-radius:9px;
+  flex-shrink:0;overflow:hidden;position:relative;
+}
+.notif-thumb-lock{
+  position:absolute;inset:0;
+  background:rgba(15,10,13,.35);
+  display:flex;align-items:center;justify-content:center;
+}
+.notif-thumb-lock svg{width:12px;height:12px;stroke:rgba(255,255,255,.85)}
+
+/* CTA within notif */
+.notif-cta{
+  display:inline-block;margin-top:8px;
+  font-size:17px;font-weight:600;
+  padding:5px 13px;border-radius:8px;
+  background:var(--p);color:#fff;
+  transition:background .18s;
+}
+.notif-cta:hover{background:var(--ph)}
+.notif-cta-ghost{
+  display:inline-block;margin-top:8px;margin-left:6px;
+  font-size:17px;font-weight:500;
+  padding:5px 12px;border-radius:8px;
+  border:1px solid var(--bd2);color:var(--t2);
+  transition:all .18s;
+}
+.notif-cta-ghost:hover{border-color:var(--p);color:var(--p)}
+
+/* ── EMPTY STATE ─────────────────────────────────── */
+.empty-state{
+  display:none;flex-direction:column;align-items:center;
+  padding:72px 0;gap:12px;text-align:center;
+}
+.empty-state.show{display:flex}
+.empty-icon{
+  width:56px;height:56px;border-radius:50%;
+  background:var(--surface2);
+  display:flex;align-items:center;justify-content:center;
+  transition:background var(--tr);
+}
+.empty-icon svg{width:24px;height:24px;stroke:var(--t3)}
+.empty-title{font-size:17px;font-weight:500;color:var(--t2);transition:color var(--tr)}
+.empty-sub{font-size:18px;color:var(--t3);line-height:1.6;max-width:220px;transition:color var(--tr)}
+
+/* ── TOAST ───────────────────────────────────────── */
+.toast{
+  position:fixed;bottom:28px;left:50%;
+  transform:translateX(-50%) translateY(8px);
+  background:var(--t1);color:var(--bg);
+  font-size:14.5px;font-weight:500;
+  padding:9px 20px;border-radius:22px;
+  white-space:nowrap;opacity:0;pointer-events:none;
+  transition:opacity .22s,transform .22s;z-index:300;
+  display:flex;align-items:center;gap:7px;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.t-dot{width:6px;height:6px;border-radius:50%;background:var(--p);flex-shrink:0}
+
+/* ── ANIMATIONS ──────────────────────────────────── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.notif-item{animation:fadeUp .35s both}
+.notif-group:nth-child(1) .notif-item:nth-child(1){animation-delay:.06s}
+.notif-group:nth-child(1) .notif-item:nth-child(2){animation-delay:.10s}
+.notif-group:nth-child(1) .notif-item:nth-child(3){animation-delay:.14s}
+.notif-group:nth-child(2) .notif-item:nth-child(1){animation-delay:.18s}
+.notif-group:nth-child(2) .notif-item:nth-child(2){animation-delay:.22s}
+.notif-group:nth-child(3) .notif-item:nth-child(1){animation-delay:.26s}
+.notif-group:nth-child(3) .notif-item:nth-child(2){animation-delay:.30s}
+.notif-group:nth-child(3) .notif-item:nth-child(3){animation-delay:.34s}
+
+@media(max-width:600px){
+  .page{padding:68px 16px 48px}
+  .nav{padding:0 16px}
+  .nav-tabs{display:none}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-logo" onclick="window.location.href='fanhub-explore.html'">FAN<em>HUB</em></div>
+  <div class="nav-tabs">
+    <button class="nav-tab" onclick="window.location.href='fanhub-explore.html'">探索</button>
+    <button class="nav-tab" onclick="window.location.href='fanhub-favorites.html'">收藏</button>
+    <button class="nav-tab active">通知</button>
+    <button class="nav-tab" onclick="window.location.href='fanhub-messages.html'">私訊</button>
+  </div>
+  <div class="nav-right">
+    <div class="theme-btn" id="themeBtn"></div>
+  </div>
+</nav>
+
+<div class="page">
+
+  <!-- Masthead -->
+  <div class="masthead">
+    <div class="masthead-left">
+      <h1 class="page-title">通知<em>中心</em></h1>
+      <div class="unread-count" id="unreadCount">5 則未讀</div>
+    </div>
+    <button class="mark-all-btn" onclick="markAllRead()">全部標為已讀</button>
+  </div>
+
+  <!-- Filter -->
+  <div class="filter-row">
+    <button class="f-pill active" onclick="filterNotif(this,'all')">全部</button>
+    <button class="f-pill" onclick="filterNotif(this,'new-post')">新貼文</button>
+    <button class="f-pill" onclick="filterNotif(this,'sub')">訂閱</button>
+    <button class="f-pill" onclick="filterNotif(this,'msg')">私訊</button>
+    <button class="f-pill" onclick="filterNotif(this,'pay')">付款</button>
+    <button class="f-pill" onclick="filterNotif(this,'system')">系統</button>
+  </div>
+
+  <!-- TODAY -->
+  <div class="notif-group" id="group-today">
+    <div class="group-label">今天</div>
+
+    <!-- New post (unread) -->
+    <div class="notif-item unread" data-type="new-post" onclick="readItem(this);window.location.href='fanhub-creator-profile.html'">
+      <div class="unread-dot"></div>
+      <div class="notif-avatar-wrap">
+        <div class="notif-avatar" style="background:linear-gradient(135deg,#cc5e76,#8a3248)">A</div>
+        <div class="notif-icon-badge" style="background:#fdf0eb">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--p)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+        </div>
+      </div>
+      <div class="notif-content">
+        <div class="notif-text"><strong>Ava Lin</strong> 發布了新的限定貼文「週三健身日記 #48」</div>
+        <div><button class="notif-cta" onclick="event.stopPropagation();window.location.href='fanhub-unlock-modal.html'">立即查看</button></div>
+        <div class="notif-time">3 小時前</div>
+      </div>
+      <div class="notif-thumb">
+        <div style="width:100%;height:100%;background:linear-gradient(145deg,#f2ddd4,#e8c4c0)"></div>
+        <div class="notif-thumb-lock">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor"/><path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="currentColor"/></svg>
+        </div>
+      </div>
+    </div>
+
+    <!-- New subscriber (unread) -->
+    <div class="notif-item unread" data-type="sub" onclick="readItem(this)">
+      <div class="unread-dot"></div>
+      <div class="notif-avatar-wrap">
+        <div class="notif-avatar" style="background:linear-gradient(135deg,#5eaab8,#306878)">K</div>
+        <div class="notif-icon-badge" style="background:#eaf6ee">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--ok)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </div>
+      </div>
+      <div class="notif-content">
+        <div class="notif-text"><strong>Kevin L.</strong> 訂閱了你的頻道 · NT$299/月</div>
+        <div class="notif-time">5 小時前</div>
+      </div>
+    </div>
+
+    <!-- Private message (unread) -->
+    <div class="notif-item unread" data-type="msg" onclick="readItem(this);window.location.href='fanhub-messages.html'">
+      <div class="unread-dot"></div>
+      <div class="notif-avatar-wrap">
+        <div class="notif-avatar" style="background:linear-gradient(135deg,#a05ec0,#70368a)">Y</div>
+        <div class="notif-icon-badge" style="background:var(--surface2)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--p)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </div>
+      </div>
+      <div class="notif-content">
+        <div class="notif-text"><strong>Yuki Lin</strong> 傳了一則私訊給你：「你好！我有一個問題想…」</div>
+        <div><button class="notif-cta" onclick="event.stopPropagation();window.location.href='fanhub-messages.html'">回覆</button></div>
+        <div class="notif-time">7 小時前</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- YESTERDAY -->
+  <div class="notif-group" id="group-yesterday">
+    <div class="group-label">昨天</div>
+
+    <!-- Payment success (unread) -->
+    <div class="notif-item unread" data-type="pay" onclick="readItem(this);window.location.href='fanhub-payout.html'">
+      <div class="unread-dot"></div>
+      <div class="notif-avatar-wrap">
+        <div class="notif-avatar" style="background:linear-gradient(135deg,#2d8a4e,#1a5a30)">$</div>
+        <div class="notif-icon-badge" style="background:#eaf6ee">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--ok)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+        </div>
+      </div>
+      <div class="notif-content">
+        <div class="notif-text">你的 <strong>3 月份收益</strong> NT$36,480 已結算，將於 4 月 1 日提領</div>
+        <div class="notif-time">昨天 · 18:30</div>
+      </div>
+    </div>
+
+    <!-- Unlock purchase (unread) -->
+    <div class="notif-item unread" data-type="pay" onclick="readItem(this);window.location.href='fanhub-payout.html'">
+      <div class="unread-dot"></div>
+      <div class="notif-avatar-wrap">
+        <div class="notif-avatar" style="background:linear-gradient(135deg,#d4a05e,#a87230)">M</div>
+        <div class="notif-icon-badge" style="background:var(--surface2)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--p)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        </div>
+      </div>
+      <div class="notif-content">
+        <div class="notif-text"><strong>Mike C.</strong> 解鎖了你的貼文「獨家寫真集 Vol.12」· NT$280</div>
+        <div class="notif-time">昨天 · 14:22</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- EARLIER -->
+  <div class="notif-group" id="group-earlier">
+    <div class="group-label">更早以前</div>
+
+    <!-- New album (read) -->
+    <div class="notif-item" data-type="new-post" onclick="window.location.href='fanhub-creator-profile.html'">
+      <div class="notif-avatar-wrap">
+        <div class="notif-avatar" style="background:linear-gradient(135deg,#5faa6e,#387a45)">S</div>
+        <div class="notif-icon-badge" style="background:var(--surface2)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--t3)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        </div>
+      </div>
+      <div class="notif-content">
+        <div class="notif-text"><strong>Sara Wu</strong> 上傳了新的相簿合集「居家訓練 Week 8」· 共 12 張</div>
+        <div class="notif-time">3 天前</div>
+      </div>
+      <div class="notif-thumb">
+        <div style="width:100%;height:100%;background:linear-gradient(145deg,#c8e8c0,#a4d09c)"></div>
+      </div>
+    </div>
+
+    <!-- Tip received (read) -->
+    <div class="notif-item" data-type="pay" onclick="window.location.href='fanhub-messages.html'">
+      <div class="notif-avatar-wrap">
+        <div class="notif-avatar" style="background:linear-gradient(135deg,#8a5ec0,#5a3090)">J</div>
+        <div class="notif-icon-badge" style="background:var(--surface2)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--t3)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+        </div>
+      </div>
+      <div class="notif-content">
+        <div class="notif-text"><strong>Jason W.</strong> 打賞了你 NT$500 並留言：「繼續加油！」</div>
+        <div class="notif-time">4 天前</div>
+      </div>
+    </div>
+
+    <!-- System: subscription renewal (read) -->
+    <div class="notif-item" data-type="system" onclick="window.location.href='fanhub-settings.html'">
+      <div class="notif-avatar-wrap">
+        <div class="notif-avatar" style="background:linear-gradient(135deg,#888780,#5f5e5a);font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600">F</div>
+        <div class="notif-icon-badge" style="background:var(--surface2)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="var(--t3)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        </div>
+      </div>
+      <div class="notif-content">
+        <div class="notif-text">你對 <strong>Sara Wu</strong> 的訂閱將於 <strong>4 月 18 日</strong> 到期，記得更新付款方式</div>
+        <div><button class="notif-cta-ghost" onclick="event.stopPropagation();window.location.href='fanhub-settings.html'">管理訂閱</button></div>
+        <div class="notif-time">5 天前</div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Empty state -->
+  <div class="empty-state" id="emptyState">
+    <div class="empty-icon">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+    </div>
+    <div class="empty-title">此分類沒有通知</div>
+    <div class="empty-sub">換個篩選條件，或等待新的活動通知</div>
+  </div>
+
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast">
+  <div class="t-dot"></div>
+  <span id="toastMsg">已標為已讀</span>
+</div>
+
+<script>
+/* Theme */
+const root = document.documentElement;
+root.dataset.theme = 'light'; // demo: force light on load
+document.getElementById('themeBtn').addEventListener('click', () => {
+  const n = root.dataset.theme === 'light' ? 'dark' : 'light';
+  root.dataset.theme = n; localStorage.setItem('fh-theme', n);
+});
+
+/* Count unread */
+function updateUnreadCount() {
+  const n = document.querySelectorAll('.notif-item.unread').length;
+  document.getElementById('unreadCount').textContent =
+    n > 0 ? n + ' 則未讀' : '全部已讀';
+}
+
+/* Read single item */
+function readItem(el) {
+  el.classList.remove('unread');
+  const dot = el.querySelector('.unread-dot');
+  if (dot) dot.remove();
+  updateUnreadCount();
+}
+
+/* Mark all read */
+function markAllRead() {
+  document.querySelectorAll('.notif-item.unread').forEach(el => readItem(el));
+  showToast('全部已標為已讀');
+}
+
+/* Filter */
+function filterNotif(btn, type) {
+  document.querySelectorAll('.f-pill').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  let anyVisible = false;
+  document.querySelectorAll('.notif-item').forEach(item => {
+    const show = type === 'all' || item.dataset.type === type;
+    item.style.display = show ? '' : 'none';
+    if (show) anyVisible = true;
+  });
+  /* Hide group headers if all items in group are hidden */
+  document.querySelectorAll('.notif-group').forEach(g => {
+    const visible = [...g.querySelectorAll('.notif-item')].some(i => i.style.display !== 'none');
+    g.style.display = visible ? '' : 'none';
+  });
+  document.getElementById('emptyState').classList.toggle('show', !anyVisible);
+}
+
+/* Toast */
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  t.classList.add('show');
+  clearTimeout(window._tt);
+  window._tt = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+updateUnreadCount();
+</script>
+</body>
+</html>

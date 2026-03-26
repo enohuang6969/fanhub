@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FANHUB · 設計原型導覽</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'DM Sans',sans-serif;
+  background:#fdf9f6;color:#2e1118;
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+}
+
+/* Header */
+.header{
+  text-align:center;
+  padding:60px 24px 40px;
+  border-bottom:1px solid rgba(180,100,110,.13);
+}
+.logo{
+  font-size:18px;font-weight:500;letter-spacing:.2em;color:#cc5e76;
+  margin-bottom:16px;
+}
+.logo em{font-style:normal;font-weight:400;opacity:.55}
+.header-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(32px,5vw,52px);font-weight:600;
+  color:#2e1118;line-height:1.1;margin-bottom:12px;
+}
+.header-sub{font-size:18px;color:#7a4050;line-height:1.6;max-width:480px;margin:0 auto 24px}
+.prototype-badge{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:17px;font-weight:600;letter-spacing:.06em;
+  padding:5px 14px;border-radius:20px;
+  background:rgba(204,94,118,.1);color:#8a3248;
+  border:1px solid rgba(204,94,118,.2);
+}
+.prototype-badge::before{content:'';width:6px;height:6px;border-radius:50%;background:#cc5e76}
+
+/* Main */
+.main{max-width:900px;margin:0 auto;padding:40px 24px 80px}
+
+/* Section */
+.section{margin-bottom:40px}
+.section-label{
+  font-size:18px;font-weight:500;letter-spacing:.14em;
+  text-transform:uppercase;color:#b08090;
+  margin-bottom:14px;
+  display:flex;align-items:center;gap:10px;
+}
+.section-label::after{content:'';flex:1;height:1px;background:rgba(180,100,110,.15)}
+
+/* Grid */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:12px}
+
+/* Card */
+.card{
+  background:#fff;border:1px solid rgba(180,100,110,.13);
+  border-radius:14px;overflow:hidden;
+  text-decoration:none;color:inherit;
+  transition:transform .2s,box-shadow .2s,border-color .2s;
+  display:block;
+}
+.card:hover{
+  transform:translateY(-3px);
+  box-shadow:0 8px 28px rgba(204,94,118,.1);
+  border-color:rgba(204,94,118,.3);
+}
+.card-preview{
+  height:120px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:36px;
+  position:relative;overflow:hidden;
+}
+.card-preview::after{
+  content:'';position:absolute;inset:0;
+  background:linear-gradient(to bottom,transparent 40%,rgba(0,0,0,.06));
+}
+.card-body{padding:14px 16px}
+.card-title{font-size:18px;font-weight:600;color:#2e1118;margin-bottom:4px}
+.card-desc{font-size:17px;color:#b08090;line-height:1.5}
+.card-tag{
+  display:inline-block;
+  font-size:17px;font-weight:600;letter-spacing:.06em;
+  padding:2px 8px;border-radius:6px;
+  margin-top:8px;
+}
+.tag-new{background:#eaf6ee;color:#2d8a4e;border:1px solid rgba(45,138,78,.2)}
+.tag-updated{background:rgba(204,94,118,.08);color:#8a3248;border:1px solid rgba(204,94,118,.15)}
+.tag-creator{background:#faf3ef;color:#7a4050;border:1px solid rgba(180,100,110,.2)}
+
+/* Arrow */
+.card-arrow{
+  position:absolute;top:12px;right:12px;z-index:1;
+  width:26px;height:26px;border-radius:50%;
+  background:rgba(255,255,255,.9);
+  display:flex;align-items:center;justify-content:center;
+  opacity:0;transition:opacity .2s;
+}
+.card:hover .card-arrow{opacity:1}
+.card-arrow svg{width:12px;height:12px;color:#cc5e76}
+.card-preview{position:relative}
+
+/* Tips */
+.tips{
+  background:#fff;border:1px solid rgba(180,100,110,.13);
+  border-radius:14px;padding:20px 24px;
+  margin-bottom:32px;
+}
+.tips-title{
+  font-size:17px;font-weight:600;color:#2e1118;
+  margin-bottom:10px;display:flex;align-items:center;gap:7px;
+}
+.tips-title svg{width:15px;height:15px;color:#cc5e76}
+.tips-list{display:flex;flex-direction:column;gap:6px}
+.tips-item{font-size:18px;color:#7a4050;display:flex;align-items:flex-start;gap:8px;line-height:1.5}
+.tips-item::before{content:'→';color:#cc5e76;flex-shrink:0;font-weight:600}
+
+/* Footer */
+.footer{
+  text-align:center;padding:24px;
+  border-top:1px solid rgba(180,100,110,.1);
+  font-size:17px;color:#b08090;
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">FAN<em>HUB</em></div>
+  <h1 class="header-title">設計原型導覽</h1>
+  <p class="header-sub">這是 FANHUB 平台的互動式原型。點擊任何頁面可直接體驗，所有按鈕和連結都可以點擊。</p>
+  <div class="prototype-badge">設計原型 · 非正式版本</div>
+</div>
+
+<div class="main">
+
+  <!-- Tips -->
+  <div class="tips">
+    <div class="tips-title">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      瀏覽提示
+    </div>
+    <div class="tips-list">
+      <div class="tips-item">每個頁面右上角有深色/淺色切換，可以看兩種主題效果</div>
+      <div class="tips-item">頁面間的連結大多互相串聯，可以模擬真實使用流程</div>
+      <div class="tips-item">創作者個人頁有 v1（原版）和 v2（升級版）兩個版本可以比較</div>
+      <div class="tips-item">所有數字和內容都是示範用假資料</div>
+    </div>
+  </div>
+
+  <!-- 訂閱者體驗 -->
+  <div class="section">
+    <div class="section-label">訂閱者體驗</div>
+    <div class="grid">
+
+      <a href="fanhub-landing.html" class="card">
+        <div class="card-preview" style="background:linear-gradient(135deg,#fdf0eb,#f0d8d0)">
+          🏠
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+        </div>
+        <div class="card-body">
+          <div class="card-title">Landing Page</div>
+          <div class="card-desc">平台首頁，訪客進入的第一個畫面。包含 Hero、三步驟說明、創作者輪播、口碑區塊。</div>
+          <span class="card-tag tag-updated">已更新</span>
+        </div>
+      </a>
+
+      <a href="fanhub-explore.html" class="card">
+        <div class="card-preview" style="background:linear-gradient(135deg,#faf3ef,#f0e4dc)">
+          🔍
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+        </div>
+        <div class="card-body">
+          <div class="card-title">探索頁</div>
+          <div class="card-desc">Bento 格創作者列表，有時間感篩選（今日精選、剛上線、本週最熱）和分類標籤。</div>
+          <span class="card-tag tag-updated">已更新</span>
+        </div>
+      </a>
+
+      <a href="fanhub-creator-profile.html" class="card">
+        <div class="card-preview" style="background:linear-gradient(135deg,#f8e8e0,#e8c8c0)">
+          👤
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+        </div>
+        <div class="card-body">
+          <div class="card-title">創作者個人頁 v1</div>
+          <div class="card-desc">原始版本。單一訂閱方案 + 月付年付切換。</div>
+          <span class="card-tag tag-updated">已更新</span>
+        </div>
+      </a>
+
+      <a href="fanhub-creator-profile-v2.html" class="card">
+        <div class="card-preview" style="background:linear-gradient(135deg,#e8d0c8,#d4b0a8,#c090a0)">
+          ✨
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+        </div>
+        <div class="card-body">
+          <div class="card-title">創作者個人頁 v2</div>
+          <div class="card-desc">升級版。加入創作者的話、精選時刻、里程碑徽章、關於頁深化。IP 履歷概念。</div>
+          <span class="card-tag tag-new">新版本</span>
+        </div>
+      </a>
+
+      <a href="fanhub-auth.html" class="card">
+        <div class="card-preview" style="background:linear-gradient(135deg,#fdf9f6,#f5eae4)">
+          🔐
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+        </div>
+        <div class="card-body">
+          <div class="card-title">登入 / 註冊</div>
+          <div class="card-desc">左側創作者輪播 + 右側表單。直接進帳號建立，移除身分選擇步驟。</div>
+          <span class="card-tag tag-updated">已更新</span>
+        </div>
+      </a>
+
+      <a href="fanhub-subscribe-modal.html" class="card">
+        <div class="card-preview" style="background:linear-gradient(135deg,#fdf0eb,#f5ddd5)">
+          💳
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+        </div>
+        <div class="card-body">
+          <div class="card-title">訂閱付費視窗</div>
+          <div class="card-desc">點擊「訂閱 Ava Lin」觸發 Modal。月付/年付切換，「省 17%」常態顯示。</div>
+          <span class="card-tag tag-updated">已更新</span>
+        </div>
+      </a>
+
+      <a href="fanhub-unlock-modal.html" class="card">
+        <div class="card-preview" style="background:linear-gradient(135deg,#fdf9f6,#eedcd4)">
+          🔓
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+        </div>
+        <div class="card-body">
+          <div class="card-title">單篇解鎖視窗</div>
+          <div class="card-desc">付費解鎖個別貼文的彈出視窗。</div>
+          <span class="card-tag tag-creator">功能頁</span>
+        </div>
+      </a>
+
+      <a href="fanhub-messages.html" class="card">
+        <div class="card-preview" style="background:linear-gradient(135deg,#f8f0ea,#ecddd5)">
+          💬
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+        </div>
+        <div class="card-body">
+          <div class="card-title">私訊</div>
+          <div class="card-desc">左側對話列表 + 右側聊天區。付費訊息解鎖後有影片預覽縮圖。</div>
+          <span class="card-tag tag-updated">已更新</span>
+        </div>
+      </a>
+
+      <a href="fanhub-favorites.html" class="card">
+        <div class="card-preview" style="background:linear-gradient(135deg,#fdf5f0,#f0e0d8)">
+          ❤️
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+        </div>
+        <div class="card-body">
+          <div class="card-title">收藏清單</div>
+          <div class="card-desc">雜誌風格卡片列表，篩選在線上 / 有新貼文 / 已訂閱。</div>
+          <span class="card-tag tag-updated">已更新</span>
+        </div>
+      </a>
+
+      <a href="fanhub-notifications.html" class="card">
+        <div class="card-preview" style="background:linear-gradient(135deg,#faf3ef,#eeddd5)">
+          🔔
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+        </div>
+        <div class="card-body">
+          <div class="card-title">通知中心</div>
+          <div class="card-desc">分群組顯示（今天/昨天/更早），有新貼文、私訊、付款、系統通知。</div>
+          <span class="card-tag tag-updated">已更新</span>
+        </div>
+      </a>
+
+      <a href="fanhub-settings.html" class="card">
+        <div class="card-preview" style="background:linear-gradient(135deg,#fdf9f6,#f5eae4)">
+          ⚙️
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+        </div>
+        <div class="card-body">
+          <div class="card-title">用戶設定</div>
+          <div class="card-desc">個人資料、帳號安全、通知偏好、訂閱管理、成為創作者入口。</div>
+          <span class="card-tag tag-updated">已更新</span>
+        </div>
+      </a>
+
+    </div>
+  </div>
+
+  <!-- 創作者後台 -->
+  <div class="section">
+    <div class="section-label">創作者後台</div>
+    <div class="grid">
+
+      <a href="fanhub-dashboard.html" class="card">
+        <div class="card-preview" style="background:linear-gradient(135deg,#1a0f14,#2d1822)">
+          <span style="font-size:36px">📊</span>
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+        </div>
+        <div class="card-body">
+          <div class="card-title">儀表板</div>
+          <div class="card-desc">收益英雄區塊、數據卡片、收益走勢圖、最新訂閱者、快速操作。</div>
+          <span class="card-tag tag-creator">創作者專屬</span>
+          <span class="card-tag tag-updated" style="margin-left:4px">已更新</span>
+        </div>
+      </a>
+
+      <a href="fanhub-post-create.html" class="card">
+        <div class="card-preview" style="background:linear-gradient(135deg,#fdf0eb,#f5ddd5)">
+          ✏️
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+        </div>
+        <div class="card-body">
+          <div class="card-title">發布貼文</div>
+          <div class="card-desc">文字、圖片、影片貼文編輯。設定觀看權限（免費/訂閱者/單篇付費）。</div>
+          <span class="card-tag tag-creator">創作者專屬</span>
+        </div>
+      </a>
+
+      <a href="fanhub-subscribers.html" class="card">
+        <div class="card-preview" style="background:linear-gradient(135deg,#faf3ef,#f0e4dc)">
+          👥
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+        </div>
+        <div class="card-body">
+          <div class="card-title">訂閱者列表</div>
+          <div class="card-desc">數據總覽、搜尋篩選、群發私訊 Modal（可選發送對象）。</div>
+          <span class="card-tag tag-creator">創作者專屬</span>
+          <span class="card-tag tag-new" style="margin-left:4px">群發功能</span>
+        </div>
+      </a>
+
+      <a href="fanhub-payout.html" class="card">
+        <div class="card-preview" style="background:linear-gradient(135deg,#eaf6ee,#d0ecd8)">
+          💰
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+        </div>
+        <div class="card-body">
+          <div class="card-title">收益提領</div>
+          <div class="card-desc">待提領金額、收益明細、銀行帳戶管理、申請提領流程。</div>
+          <span class="card-tag tag-creator">創作者專屬</span>
+        </div>
+      </a>
+
+      <a href="fanhub-creator-settings.html" class="card">
+        <div class="card-preview" style="background:linear-gradient(135deg,#fdf9f6,#f5eae4)">
+          🎨
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+        </div>
+        <div class="card-body">
+          <div class="card-title">編輯個人頁</div>
+          <div class="card-desc">封面、頭貼、簡介、分類標籤、訂閱定價，即時預覽面板。</div>
+          <span class="card-tag tag-creator">創作者專屬</span>
+          <span class="card-tag tag-updated" style="margin-left:4px">已更新</span>
+        </div>
+      </a>
+
+    </div>
+  </div>
+
+  <!-- 其他 -->
+  <div class="section">
+    <div class="section-label">其他頁面</div>
+    <div class="grid">
+
+      <a href="fanhub-legal.html" class="card">
+        <div class="card-preview" style="background:linear-gradient(135deg,#fdf9f6,#f5f0ec)">
+          📄
+          <div class="card-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg></div>
+        </div>
+        <div class="card-body">
+          <div class="card-title">服務條款 / 隱私政策</div>
+          <div class="card-desc">左側快速導航 + 重點摘要卡 + 完整條文，Tab 切換兩份文件。</div>
+          <span class="card-tag tag-creator">法律文件</span>
+        </div>
+      </a>
+
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  FANHUB 設計原型 · 所有內容為示範用假資料 · 版本 1.0
+</div>
+
+</body>
+</html>

@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="zh-TW" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>解鎖貼文 · FANHUB</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fdf9f6;--surface:#ffffff;--surface2:#faf3ef;--surface3:#fdf0eb;
+  --p:#cc5e76;--ph:#b84d65;--p2:#8a3248;
+  --t1:#2e1118;--t2:#4a1e2a;--t3:#7a4858;
+  --bd:rgba(150,70,90,.25);--bd2:rgba(150,70,90,.42);
+  --ok:#2d8a4e;--ok-bg:#eaf6ee;
+  --tr:.22s cubic-bezier(.4,0,.2,1);
+}
+[data-theme=dark]{
+  --bg:#080508;--surface:#1e1016;--surface2:#2a1820;--surface3:#382030;
+  --p:#d4718b;--ph:#e07d96;--p2:#9b4c6a;
+  --t1:#f8e0e8;--t2:#d8a8b8;--t3:#a87888;
+  --bd:rgba(200,120,150,.22);--bd2:rgba(200,120,150,.42);
+  --ok:#5eca7a;--ok-bg:#0d2518;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'DM Sans',sans-serif;
+  font-size:16px;
+  background:var(--bg);color:var(--t1);
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+  transition:background var(--tr),color var(--tr);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Crect width='1' height='1' x='0' y='0' fill='rgba(180,100,110,.025)'/%3E%3Crect width='1' height='1' x='2' y='2' fill='rgba(180,100,110,.018)'/%3E%3C/svg%3E");
+}
+[data-theme=dark] body{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Crect width='1' height='1' x='0' y='0' fill='rgba(212,113,139,.04)'/%3E%3Crect width='1' height='1' x='2' y='2' fill='rgba(212,113,139,.025)'/%3E%3C/svg%3E")}
+button{font-family:inherit;cursor:pointer;border:none;outline:none;background:none}
+input{font-family:inherit;outline:none}
+
+/* ── NAVBAR ─────────────────────────────────────── */
+.nav{
+  position:fixed;top:0;left:0;right:0;z-index:10;
+  height:52px;background:rgba(253,249,246,.94);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--bd);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 24px;transition:background var(--tr);
+}
+[data-theme=dark] .nav{background:rgba(15,10,13,.94)}
+.nav-logo{font-size:17px;font-weight:500;letter-spacing:.18em;color:var(--p)}
+.nav-logo em{font-style:normal;font-weight:400;opacity:.55}
+.theme-btn{
+  width:38px;height:22px;border-radius:11px;
+  background:var(--surface2);border:1.5px solid var(--bd2);
+  position:relative;cursor:pointer;padding:2px;
+  display:flex;align-items:center;
+  transition:background var(--tr),border-color var(--tr);
+}
+.theme-btn::after{
+  content:'';width:16px;height:16px;border-radius:50%;
+  background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.18);
+  transition:transform var(--tr);
+}
+[data-theme=dark] .theme-btn{background:var(--p);border-color:var(--p)}
+[data-theme=dark] .theme-btn::after{transform:translateX(16px)}
+
+/* ── DEMO ────────────────────────────────────────── */
+.demo-wrap{
+  padding:90px 24px 48px;
+  display:flex;flex-direction:column;align-items:center;gap:10px;
+}
+.demo-label{font-size:18px;color:var(--t3);margin-bottom:4px}
+.demo-btns{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.demo-btn{
+  font-size:17px;font-weight:500;padding:9px 20px;border-radius:20px;
+  border:1.5px solid var(--bd2);color:var(--t2);background:var(--surface);
+  transition:all .18s;
+}
+.demo-btn:hover{border-color:var(--p);color:var(--p)}
+.demo-btn.primary{background:var(--p);color:#fff;border-color:var(--p)}
+.demo-btn.primary:hover{background:var(--ph)}
+
+/* ── OVERLAY ─────────────────────────────────────── */
+.overlay{
+  position:fixed;inset:0;z-index:200;
+  background:rgba(15,10,13,.52);
+  backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px);
+  display:flex;align-items:center;justify-content:center;
+  padding:16px;
+  opacity:0;pointer-events:none;
+  transition:opacity .26s;
+}
+.overlay.open{opacity:1;pointer-events:auto}
+
+/* ── MODAL ───────────────────────────────────────── */
+.modal{
+  background:var(--surface);
+  border-radius:20px;border:1px solid var(--bd);
+  width:100%;max-width:400px;
+  overflow:hidden;
+  transform:translateY(14px) scale(.98);
+  transition:transform .3s cubic-bezier(.34,1.26,.64,1);
+  position:relative;
+}
+.overlay.open .modal{transform:translateY(0) scale(1)}
+
+.modal-close{
+  position:absolute;top:12px;right:12px;z-index:2;
+  width:28px;height:28px;border-radius:50%;
+  background:var(--surface2);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--t3);transition:all .18s;
+}
+.modal-close:hover{background:var(--surface3);color:var(--t1)}
+.modal-close svg{width:13px;height:13px}
+
+/* ── CONTENT PREVIEW ─────────────────────────────── */
+.content-preview{
+  position:relative;overflow:hidden;height:200px;cursor:default;
+}
+.preview-bg{
+  width:100%;height:100%;
+  transition:filter .3s;
+}
+/* Blur overlay — creates the "teaser" effect */
+.preview-blur{
+  position:absolute;inset:0;
+  backdrop-filter:blur(18px) brightness(.7) saturate(.6);
+  -webkit-backdrop-filter:blur(18px) brightness(.7) saturate(.6);
+}
+/* Gradient fade at bottom */
+.preview-fade{
+  position:absolute;inset:0;
+  background:linear-gradient(to bottom,rgba(15,10,13,.05) 0%,rgba(15,10,13,.75) 100%);
+}
+/* Teaser content visible area (top portion peeking through) */
+.preview-peek{
+  position:absolute;top:0;left:0;right:0;height:48px;
+  backdrop-filter:none;-webkit-backdrop-filter:none;
+  overflow:hidden;
+}
+.preview-peek-img{
+  width:100%;height:200px;object-fit:cover;
+}
+/* Fade edge of peek */
+.preview-peek::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:24px;
+  background:linear-gradient(to bottom,transparent,rgba(15,10,13,.5));
+}
+/* Lock center */
+.preview-lock{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:8px;
+}
+.lock-ring{
+  width:48px;height:48px;border-radius:50%;
+  background:rgba(255,255,255,.12);border:1.5px solid rgba(255,255,255,.25);
+  display:flex;align-items:center;justify-content:center;
+  backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
+}
+.lock-ring svg{width:20px;height:20px;stroke:rgba(255,255,255,.9)}
+.lock-label{font-size:18px;font-weight:500;color:rgba(255,255,255,.85);letter-spacing:.04em}
+
+/* Post type badge */
+.post-type-badge{
+  position:absolute;top:12px;left:12px;
+  display:flex;align-items:center;gap:5px;
+  font-size:17px;font-weight:700;letter-spacing:.08em;
+  padding:3px 10px;border-radius:8px;
+  background:rgba(15,10,13,.5);color:rgba(255,255,255,.85);
+  backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);
+}
+.post-type-badge svg{width:10px;height:10px}
+
+/* ── MODAL BODY ──────────────────────────────────── */
+.modal-body{padding:18px 20px}
+
+/* Creator row */
+.creator-row{
+  display:flex;align-items:center;gap:10px;margin-bottom:14px;
+}
+.creator-avatar{
+  width:36px;height:36px;border-radius:50%;
+  background:linear-gradient(135deg,var(--p),var(--p2));
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;color:#fff;
+  flex-shrink:0;
+}
+.creator-name{font-size:17px;font-weight:500;color:var(--t1);transition:color var(--tr)}
+.creator-handle{font-size:18px;color:var(--t3);transition:color var(--tr)}
+.vcheck{
+  width:12px;height:12px;border-radius:50%;background:var(--p);
+  display:inline-flex;align-items:center;justify-content:center;margin-left:3px;
+}
+.vcheck svg{width:6px;height:6px}
+
+/* Post title */
+.post-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:18px;font-weight:600;color:var(--t1);
+  margin-bottom:5px;line-height:1.2;
+  transition:color var(--tr);
+}
+.post-meta{font-size:17px;color:var(--t3);margin-bottom:16px;transition:color var(--tr)}
+
+/* Price display */
+.price-block{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:14px 16px;
+  background:var(--surface2);border-radius:12px;
+  margin-bottom:14px;
+  transition:background var(--tr);
+}
+.price-left{}
+.price-label{font-size:18px;color:var(--t3);margin-bottom:3px;transition:color var(--tr)}
+.price-amount{
+  font-family:'Cormorant Garamond',serif;
+  font-size:28px;font-weight:600;color:var(--t1);line-height:1;
+  transition:color var(--tr);
+}
+.price-right{text-align:right}
+.price-note{font-size:18px;color:var(--t3);line-height:1.5;transition:color var(--tr)}
+
+/* Subscribe nudge */
+.subscribe-nudge{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 14px;
+  background:var(--surface3);border-radius:10px;
+  border:1px solid var(--bd2);
+  margin-bottom:14px;
+  cursor:pointer;
+  transition:all .18s;
+}
+.subscribe-nudge:hover{border-color:var(--p)}
+.nudge-icon{
+  width:28px;height:28px;border-radius:8px;
+  background:var(--p);display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.nudge-icon svg{width:13px;height:13px;stroke:#fff}
+.nudge-text{}
+.nudge-title{font-size:17px;font-weight:600;color:var(--p2);transition:color var(--tr)}
+.nudge-sub{font-size:18px;color:var(--t3);transition:color var(--tr)}
+.nudge-arrow{color:var(--t3);font-size:18px;margin-left:auto;transition:transform .18s,color .18s}
+.subscribe-nudge:hover .nudge-arrow{transform:translateX(3px);color:var(--p)}
+
+/* Divider */
+.or-row{
+  display:flex;align-items:center;gap:10px;margin-bottom:14px;
+}
+.or-line{flex:1;height:1px;background:var(--bd);transition:background var(--tr)}
+.or-text{font-size:18px;color:var(--t3);transition:color var(--tr)}
+
+/* Unlock btn */
+.unlock-btn{
+  width:100%;height:48px;
+  background:var(--p);color:#fff;
+  border-radius:13px;
+  font-size:18px;font-weight:600;letter-spacing:.03em;
+  box-shadow:0 4px 16px rgba(204,94,118,.28);
+  transition:background .18s,transform .15s,box-shadow .18s;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  position:relative;overflow:hidden;
+  margin-bottom:12px;
+}
+.unlock-btn:hover{background:var(--ph);transform:translateY(-1px);box-shadow:0 6px 22px rgba(204,94,118,.36)}
+.unlock-btn::after{
+  content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.15),transparent);
+  transition:left .5s;
+}
+.unlock-btn:hover::after{left:140%}
+.unlock-btn svg{width:15px;height:15px}
+.unlock-btn.loading{pointer-events:none;opacity:.8}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spinner{width:18px;height:18px;border-radius:50%;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;animation:spin .7s linear infinite;display:none}
+.unlock-btn.loading .spinner{display:block}
+.unlock-btn.loading .btn-txt{display:none}
+
+/* Trust strip */
+.trust-strip{
+  display:flex;align-items:center;justify-content:center;gap:14px;
+}
+.ti{display:flex;align-items:center;gap:4px;font-size:18px;color:var(--t3);transition:color var(--tr)}
+.ti svg{width:11px;height:11px;flex-shrink:0}
+
+/* ── SUCCESS STATE ───────────────────────────────── */
+.success-panel{display:none;padding:32px 20px;text-align:center}
+.success-ring{
+  width:60px;height:60px;border-radius:50%;
+  border:2px solid var(--ok);background:var(--ok-bg);
+  display:flex;align-items:center;justify-content:center;
+  margin:0 auto 14px;
+}
+.success-ring svg{width:24px;height:24px;stroke:var(--ok)}
+.success-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:22px;font-weight:600;color:var(--t1);
+  margin-bottom:6px;transition:color var(--tr);
+}
+.success-msg{font-size:17px;color:var(--t2);line-height:1.6;margin-bottom:20px;transition:color var(--tr)}
+.success-preview{
+  width:100%;height:140px;border-radius:12px;overflow:hidden;
+  margin-bottom:18px;position:relative;
+}
+.success-preview-bg{width:100%;height:100%}
+.success-unlock-label{
+  position:absolute;top:10px;right:10px;
+  font-size:17px;font-weight:700;letter-spacing:.08em;
+  padding:3px 9px;border-radius:7px;
+  background:var(--ok-bg);color:var(--ok);
+  border:1px solid rgba(45,138,78,.2);
+}
+.view-content-btn{
+  width:100%;height:44px;border-radius:12px;
+  background:var(--p);color:#fff;
+  font-size:17px;font-weight:600;
+  transition:background .18s;
+}
+.view-content-btn:hover{background:var(--ph)}
+
+/* ── POST TYPE VARIANTS ──────────────────────────── */
+.type-image .preview-bg{background:linear-gradient(155deg,#e8c8c0,#d4aab0,#c090a0)}
+.type-video .preview-bg{background:linear-gradient(155deg,#1a1020,#2d1822,#140c18)}
+.type-album .preview-bg{
+  background:linear-gradient(155deg,#e8c8c0,#d4aab0,#c090a0);
+  display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:2px;
+}
+.album-cell{background:linear-gradient(145deg,#d4b0b8,#c09098)}
+.album-cell:nth-child(2){background:linear-gradient(145deg,#c8a0a8,#b88898)}
+.album-cell:nth-child(3){background:linear-gradient(145deg,#d0b8c0,#c0a0a8)}
+.album-cell:nth-child(4){background:linear-gradient(145deg,#bca0a8,#a88898)}
+[data-theme=dark] .album-cell{filter:brightness(.7)}
+
+/* Play icon for video */
+.video-play{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  width:44px;height:44px;border-radius:50%;
+  background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);
+  display:flex;align-items:center;justify-content:center;z-index:1;
+}
+.video-play svg{width:18px;height:18px;fill:rgba(255,255,255,.9);margin-left:3px}
+
+/* Album count badge */
+.album-count{
+  position:absolute;bottom:12px;right:12px;
+  font-size:17px;font-weight:600;color:#fff;
+  background:rgba(15,10,13,.55);backdrop-filter:blur(4px);
+  padding:3px 10px;border-radius:8px;z-index:2;
+}
+
+/* Duration badge */
+.duration-badge{
+  position:absolute;bottom:12px;right:12px;
+  font-size:17px;color:rgba(255,255,255,.8);
+  background:rgba(15,10,13,.55);backdrop-filter:blur(4px);
+  padding:3px 10px;border-radius:8px;z-index:2;
+}
+
+/* Animations */
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.modal-body{animation:fadeUp .35s both}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-logo">FAN<em>HUB</em></div>
+  <div class="theme-btn" id="themeBtn"></div>
+</nav>
+
+<div class="demo-wrap">
+  <div class="demo-label">選擇內容類型，點擊觸發解鎖視窗</div>
+  <div class="demo-btns">
+    <button class="demo-btn primary" onclick="openModal('image')">圖片貼文</button>
+    <button class="demo-btn" onclick="openModal('album')">相簿合集</button>
+    <button class="demo-btn" onclick="openModal('video')">影片</button>
+  </div>
+</div>
+
+<!-- OVERLAY -->
+<div class="overlay" id="overlay" onclick="handleOverlayClick(event)">
+<div class="modal" id="modal">
+
+  <button class="modal-close" onclick="closeModal()">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+  </button>
+
+  <!-- Main unlock view -->
+  <div id="mainContent">
+
+    <!-- Content preview with blur -->
+    <div class="content-preview" id="contentPreview">
+      <!-- type-specific content injected by JS -->
+    </div>
+
+    <div class="modal-body">
+
+      <!-- Creator -->
+      <div class="creator-row">
+        <div class="creator-avatar">A</div>
+        <div>
+          <div class="creator-name">
+            Ava Lin
+            <span class="vcheck"><svg viewBox="0 0 12 12" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,6 5,9 10,3"/></svg></span>
+          </div>
+          <div class="creator-handle">@avalin</div>
+        </div>
+      </div>
+
+      <!-- Post title & meta -->
+      <div class="post-title" id="postTitle">週三健身日記 #48</div>
+      <div class="post-meta" id="postMeta">限定貼文 · 3 小時前 · 可永久觀看</div>
+
+      <!-- Price -->
+      <div class="price-block">
+        <div class="price-left">
+          <div class="price-label">單次解鎖價格</div>
+          <div class="price-amount" id="priceDisplay">NT$150</div>
+        </div>
+        <div class="price-right">
+          <div class="price-note">一次付費<br>永久觀看</div>
+        </div>
+      </div>
+
+      <!-- Subscribe nudge -->
+      <div class="subscribe-nudge" onclick="closeModal();window.location.href='fanhub-subscribe-modal.html'">
+        <div class="nudge-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        </div>
+        <div class="nudge-text">
+          <div class="nudge-title">訂閱更划算 · NT$299/月解鎖全部</div>
+          <div class="nudge-sub">包含此貼文 + 全部 248 則專屬內容</div>
+        </div>
+        <div class="nudge-arrow">›</div>
+      </div>
+
+      <div class="or-row">
+        <div class="or-line"></div>
+        <div class="or-text">或單次解鎖</div>
+        <div class="or-line"></div>
+      </div>
+
+      <!-- Unlock button -->
+      <button class="unlock-btn" id="unlockBtn" onclick="doUnlock()">
+        <span class="btn-txt" style="display:flex;align-items:center;gap:8px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          立即解鎖 · <span id="btnPrice">NT$150</span>
+        </span>
+        <div class="spinner"></div>
+      </button>
+
+      <!-- Trust -->
+      <div class="trust-strip">
+        <div class="ti">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          SSL 加密
+        </div>
+        <div class="ti">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          永久觀看
+        </div>
+        <div class="ti">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+          安全付款
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Success state -->
+  <div class="success-panel" id="successPanel">
+    <div class="success-ring">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <div class="success-title">解鎖成功！</div>
+    <p class="success-msg">你已解鎖這則專屬內容。<br>感謝支持 Ava Lin 的創作。</p>
+    <div class="success-preview">
+      <div class="success-preview-bg" id="successPreviewBg" style="background:linear-gradient(155deg,#e8c8c0,#d4aab0,#c090a0)"></div>
+      <div class="success-unlock-label">已解鎖</div>
+    </div>
+    <button class="view-content-btn" onclick="closeModal()">查看內容</button>
+  </div>
+
+</div>
+</div>
+
+<script>
+/* Theme */
+const root = document.documentElement;
+root.dataset.theme = 'light'; // demo: force light on load
+document.getElementById('themeBtn').addEventListener('click', () => {
+  const n = root.dataset.theme === 'light' ? 'dark' : 'light';
+  root.dataset.theme = n; localStorage.setItem('fh-theme', n);
+});
+
+/* Post type configs */
+const postTypes = {
+  image: {
+    price: 'NT$150',
+    title: '週三健身日記 #48',
+    meta: '限定圖片 · 3 小時前 · 可永久觀看',
+    badge: '限定圖片',
+    badgeIcon: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>`,
+    preview: `
+      <div class="preview-bg" style="background:linear-gradient(155deg,#e8c8c0,#d4aab0,#c090a0);height:100%"></div>
+      <div class="preview-blur"></div>
+      <div class="preview-fade"></div>
+      <div class="post-type-badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" style="width:10px;height:10px"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        限定圖片
+      </div>
+      <div class="preview-lock">
+        <div class="lock-ring"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor"/><path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="currentColor"/></svg></div>
+        <div class="lock-label">解鎖查看完整圖片</div>
+      </div>`,
+    successBg: 'background:linear-gradient(155deg,#e8c8c0,#d4aab0,#c090a0)',
+  },
+  album: {
+    price: 'NT$280',
+    title: '獨家寫真集 Vol.12',
+    meta: '限定相簿 · 共 18 張 · 昨天發布',
+    badge: '相簿合集',
+    preview: `
+      <div class="preview-bg" style="height:100%;display:grid;grid-template-columns:1fr 1fr;grid-template-rows:1fr 1fr;gap:2px">
+        <div style="background:linear-gradient(145deg,#d4b0b8,#c09098)"></div>
+        <div style="background:linear-gradient(145deg,#c8a0a8,#b88898)"></div>
+        <div style="background:linear-gradient(145deg,#d0b8c0,#c0a0a8)"></div>
+        <div style="background:linear-gradient(145deg,#bca0a8,#a88898)"></div>
+      </div>
+      <div class="preview-blur"></div>
+      <div class="preview-fade"></div>
+      <div class="post-type-badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" style="width:10px;height:10px"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        相簿合集 · 18 張
+      </div>
+      <div class="album-count">18 張</div>
+      <div class="preview-lock">
+        <div class="lock-ring"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor"/><path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="currentColor"/></svg></div>
+        <div class="lock-label">解鎖查看全部 18 張</div>
+      </div>`,
+    successBg: 'background:linear-gradient(155deg,#d4b0b8,#c09098)',
+  },
+  video: {
+    price: 'NT$350',
+    title: '完整健身課程 · 48 分鐘',
+    meta: '限定影片 · 48:32 · 3 天前發布',
+    badge: '限定影片',
+    preview: `
+      <div class="preview-bg" style="background:linear-gradient(155deg,#1a1020,#2d1822,#140c18);height:100%"></div>
+      <div class="preview-blur" style="backdrop-filter:blur(12px) brightness(.5);-webkit-backdrop-filter:blur(12px) brightness(.5)"></div>
+      <div class="preview-fade"></div>
+      <div class="post-type-badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" style="width:10px;height:10px"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+        限定影片
+      </div>
+      <div class="duration-badge">48:32</div>
+      <div class="video-play">
+        <svg viewBox="0 0 24 24" style="width:18px;height:18px;fill:rgba(255,255,255,.9);margin-left:3px"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      </div>
+      <div class="preview-lock" style="margin-top:28px">
+        <div class="lock-label">解鎖觀看完整影片</div>
+      </div>`,
+    successBg: 'background:linear-gradient(155deg,#2d1822,#1a1020)',
+  }
+};
+
+let currentType = 'image';
+
+function openModal(type) {
+  currentType = type;
+  const cfg = postTypes[type];
+  document.getElementById('contentPreview').innerHTML = cfg.preview;
+  document.getElementById('postTitle').textContent = cfg.title;
+  document.getElementById('postMeta').textContent = cfg.meta;
+  document.getElementById('priceDisplay').textContent = cfg.price;
+  document.getElementById('btnPrice').textContent = cfg.price;
+  document.getElementById('mainContent').style.display = '';
+  document.getElementById('successPanel').style.display = 'none';
+  document.getElementById('unlockBtn').classList.remove('loading');
+  document.getElementById('overlay').classList.add('open');
+}
+
+function closeModal() {
+  document.getElementById('overlay').classList.remove('open');
+}
+function handleOverlayClick(e) {
+  if (e.target === document.getElementById('overlay')) closeModal();
+}
+
+function doUnlock() {
+  const btn = document.getElementById('unlockBtn');
+  btn.classList.add('loading');
+  setTimeout(() => {
+    btn.classList.remove('loading');
+    document.getElementById('mainContent').style.display = 'none';
+    const sp = document.getElementById('successPanel');
+    sp.style.display = 'block';
+    document.getElementById('successPreviewBg').style = postTypes[currentType].successBg;
+  }, 1600);
+}
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+</script>
+</body>
+</html>

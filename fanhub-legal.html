@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="zh-TW" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>服務條款與隱私政策 · FANHUB</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ── TOKENS ──
+   Light: bg=#fdf9f6 surface=#ffffff surface2=#faf3ef surface3=#fdf0eb p=#cc5e76 t1=#2e1118 nav=rgba(253,249,246,.94)
+   Dark : bg=#0f0a0d surface=#1a0f14 surface2=#2d1822 surface3=#3d2230 p=#d4718b t1=#f0c0cf nav=rgba(15,10,13,.94)
+*/
+:root{
+  --bg:#fdf9f6;--surface:#ffffff;--surface2:#faf3ef;--surface3:#fdf0eb;
+  --p:#cc5e76;--ph:#b84d65;--p2:#8a3248;
+  --t1:#2e1118;--t2:#4a1e2a;--t3:#7a4858;
+  --bd:rgba(150,70,90,.25);--bd2:rgba(150,70,90,.42);
+  --nav:rgba(253,249,246,.94);
+  --ok:#2d8a4e;--ok-bg:#eaf6ee;
+  --tr:.22s cubic-bezier(.4,0,.2,1);
+}
+[data-theme=dark]{
+  --bg:#080508;--surface:#1e1016;--surface2:#2a1820;--surface3:#382030;
+  --p:#d4718b;--ph:#e07d96;--p2:#9b4c6a;
+  --t1:#f8e0e8;--t2:#d8a8b8;--t3:#a87888;
+  --bd:rgba(200,120,150,.22);--bd2:rgba(200,120,150,.42);
+  --nav:rgba(8,5,8,.96);
+  --ok:#5eca7a;--ok-bg:#0d2518;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:'DM Sans',sans-serif;
+  font-size:16px;
+  background:var(--bg);color:var(--t1);
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+  transition:background var(--tr),color var(--tr);
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Crect width='1' height='1' x='0' y='0' fill='rgba(180,100,110,.025)'/%3E%3Crect width='1' height='1' x='2' y='2' fill='rgba(180,100,110,.018)'/%3E%3C/svg%3E");
+}
+[data-theme=dark] body{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Crect width='1' height='1' x='0' y='0' fill='rgba(212,113,139,.04)'/%3E%3Crect width='1' height='1' x='2' y='2' fill='rgba(212,113,139,.025)'/%3E%3C/svg%3E")}
+button{font-family:inherit;cursor:pointer;border:none;outline:none;background:none}
+
+/* ── NAVBAR ─────────────────────────────────────── */
+.nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  height:52px;background:var(--nav);
+  backdrop-filter:blur(20px) saturate(160%);
+  -webkit-backdrop-filter:blur(20px) saturate(160%);
+  border-bottom:1px solid var(--bd);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 32px;
+  transition:background var(--tr),border-color var(--tr);
+}
+.nav-logo{font-size:17px;font-weight:500;letter-spacing:.18em;color:var(--p);cursor:pointer}
+.nav-logo em{font-style:normal;font-weight:400;opacity:.55}
+.nav-right{display:flex;align-items:center;gap:12px}
+.theme-btn{
+  width:38px;height:22px;border-radius:11px;
+  background:var(--surface2);border:1.5px solid var(--bd2);
+  position:relative;cursor:pointer;padding:2px;display:flex;align-items:center;
+  transition:background var(--tr),border-color var(--tr);
+}
+.theme-btn::after{
+  content:'';width:16px;height:16px;border-radius:50%;
+  background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.18);transition:transform var(--tr);
+}
+[data-theme=dark] .theme-btn{background:var(--p);border-color:var(--p)}
+[data-theme=dark] .theme-btn::after{transform:translateX(16px)}
+.back-link{
+  font-size:18px;color:var(--t3);
+  display:flex;align-items:center;gap:5px;
+  transition:color .18s;
+}
+.back-link:hover{color:var(--p)}
+.back-link svg{width:14px;height:14px}
+
+/* ── LAYOUT ──────────────────────────────────────── */
+.page{
+  max-width:1000px;margin:0 auto;
+  padding:76px 32px 80px;
+  display:grid;
+  grid-template-columns:220px 1fr;
+  gap:48px;
+  align-items:start;
+}
+@media(max-width:720px){
+  .page{grid-template-columns:1fr;padding:72px 20px 60px}
+  .sidebar-nav{display:none}
+}
+
+/* ── SIDEBAR NAV ─────────────────────────────────── */
+.sidebar-nav{
+  position:sticky;top:72px;
+  display:flex;flex-direction:column;gap:2px;
+}
+.sidenav-group{
+  font-size:17px;font-weight:500;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--t3);
+  padding:12px 10px 5px;transition:color var(--tr);
+}
+.sidenav-item{
+  display:flex;align-items:center;gap:7px;
+  padding:7px 10px;border-radius:8px;
+  font-size:18px;color:var(--t2);
+  cursor:pointer;transition:all .18s;
+}
+.sidenav-item:hover{background:var(--surface2);color:var(--t1)}
+.sidenav-item.active{background:var(--surface3);color:var(--p);font-weight:500}
+.sidenav-item::before{
+  content:'';width:3px;height:3px;border-radius:50%;
+  background:var(--bd2);flex-shrink:0;transition:background .18s;
+}
+.sidenav-item.active::before{background:var(--p)}
+.sidenav-updated{
+  margin-top:20px;padding:10px 12px;
+  background:var(--surface2);border-radius:10px;
+  border:1px solid var(--bd);
+  transition:background var(--tr),border-color var(--tr);
+}
+.sidenav-updated-label{font-size:17px;letter-spacing:.08em;text-transform:uppercase;color:var(--t3);margin-bottom:3px;transition:color var(--tr)}
+.sidenav-updated-date{font-size:18px;font-weight:500;color:var(--t2);transition:color var(--tr)}
+
+/* ── MAIN CONTENT ────────────────────────────────── */
+.main-content{}
+
+/* Doc header */
+.doc-header{margin-bottom:36px}
+.doc-eyebrow{
+  font-size:18px;font-weight:500;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--p);margin-bottom:10px;
+  transition:color var(--tr);
+}
+.doc-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(36px,5vw,52px);font-weight:600;
+  color:var(--t1);line-height:1.05;margin-bottom:12px;
+  transition:color var(--tr);
+}
+.doc-meta{
+  display:flex;align-items:center;gap:16px;
+  font-size:18px;color:var(--t3);
+  transition:color var(--tr);
+}
+.doc-meta-sep{width:1px;height:12px;background:var(--bd);transition:background var(--tr)}
+
+/* Tab switcher */
+.doc-tabs{
+  display:flex;gap:2px;
+  background:var(--surface2);border-radius:12px;padding:4px;
+  margin-bottom:32px;width:fit-content;
+  transition:background var(--tr);
+}
+.doc-tab{
+  font-size:17px;font-weight:500;padding:8px 20px;
+  border-radius:9px;color:var(--t3);cursor:pointer;transition:all .2s;
+}
+.doc-tab.active{background:var(--surface);color:var(--t1);box-shadow:0 1px 6px rgba(0,0,0,.07)}
+
+/* Summary cards */
+.summary-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:12px;
+  margin-bottom:36px;
+}
+@media(max-width:600px){.summary-grid{grid-template-columns:1fr}}
+.summary-card{
+  background:var(--surface);border:1px solid var(--bd);
+  border-radius:14px;padding:16px;
+  transition:background var(--tr),border-color var(--tr);
+}
+.summary-card-icon{
+  width:32px;height:32px;border-radius:9px;
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:10px;
+}
+.summary-card-icon svg{width:16px;height:16px}
+.icon-ok{background:var(--ok-bg);color:var(--ok)}
+.icon-p{background:var(--surface3);color:var(--p)}
+.icon-info{background:var(--surface2);color:var(--t2)}
+.summary-card-title{font-size:18px;font-weight:600;color:var(--t1);margin-bottom:5px;transition:color var(--tr)}
+.summary-card-desc{font-size:17px;color:var(--t3);line-height:1.55;transition:color var(--tr)}
+
+/* Section */
+.legal-section{
+  margin-bottom:36px;
+  scroll-margin-top:72px;
+}
+.legal-section-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:22px;font-weight:600;color:var(--t1);
+  margin-bottom:14px;padding-bottom:10px;
+  border-bottom:1px solid var(--bd);
+  display:flex;align-items:center;gap:10px;
+  transition:color var(--tr),border-color var(--tr);
+}
+.section-num{
+  font-size:18px;font-weight:400;color:var(--t3);
+  font-family:'DM Sans',sans-serif;
+  transition:color var(--tr);
+}
+.legal-p{
+  font-size:17px;color:var(--t2);line-height:1.8;
+  margin-bottom:12px;transition:color var(--tr);
+}
+.legal-p:last-child{margin-bottom:0}
+.legal-p strong{color:var(--t1);font-weight:600;transition:color var(--tr)}
+.legal-list{
+  list-style:none;display:flex;flex-direction:column;gap:8px;
+  margin-bottom:12px;
+}
+.legal-list li{
+  display:flex;align-items:flex-start;gap:8px;
+  font-size:17px;color:var(--t2);line-height:1.7;
+  transition:color var(--tr);
+}
+.legal-list li::before{
+  content:'';width:5px;height:5px;border-radius:50%;
+  background:var(--p);flex-shrink:0;margin-top:8px;
+  transition:background var(--tr);
+}
+
+/* Highlight box */
+.highlight-box{
+  padding:14px 16px;border-radius:11px;margin-bottom:14px;
+  border-left:3px solid var(--p);
+  background:var(--surface2);
+  transition:background var(--tr),border-color var(--tr);
+}
+.highlight-box p{font-size:17px;color:var(--t2);line-height:1.7;transition:color var(--tr)}
+
+/* Contact card */
+.contact-card{
+  background:var(--surface);border:1px solid var(--bd);
+  border-radius:14px;padding:20px;margin-top:32px;
+  display:flex;align-items:center;gap:16px;
+  transition:background var(--tr),border-color var(--tr);
+}
+.contact-icon{
+  width:44px;height:44px;border-radius:12px;
+  background:var(--surface3);border:1px solid var(--bd2);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--p);flex-shrink:0;transition:background var(--tr),border-color var(--tr);
+}
+.contact-icon svg{width:20px;height:20px}
+.contact-title{font-size:18px;font-weight:600;color:var(--t1);margin-bottom:3px;transition:color var(--tr)}
+.contact-desc{font-size:18px;color:var(--t3);transition:color var(--tr)}
+.contact-link{
+  margin-left:auto;font-size:18px;font-weight:600;
+  padding:8px 16px;border-radius:9px;
+  background:var(--p);color:#fff;flex-shrink:0;
+  transition:background .18s;
+}
+.contact-link:hover{background:var(--ph)}
+
+/* Animations */
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.doc-header{animation:fadeUp .45s .05s both}
+.doc-tabs{animation:fadeUp .45s .08s both}
+.summary-grid{animation:fadeUp .45s .12s both}
+.legal-section{animation:fadeUp .4s both}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-logo" onclick="window.location.href='fanhub-landing.html'">FAN<em>HUB</em></div>
+  <div class="nav-right">
+    <div class="back-link" onclick="window.location.href='fanhub-landing.html'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      返回首頁
+    </div>
+    <div class="theme-btn" id="themeBtn"></div>
+  </div>
+</nav>
+
+<div class="page">
+
+  <!-- ── SIDEBAR NAV ──────────────────────────────── -->
+  <div class="sidebar-nav">
+    <div class="sidenav-group">服務條款</div>
+    <div class="sidenav-item active" onclick="scrollTo('s1')">使用資格</div>
+    <div class="sidenav-item" onclick="scrollTo('s2')">帳號與安全</div>
+    <div class="sidenav-item" onclick="scrollTo('s3')">訂閱與付款</div>
+    <div class="sidenav-item" onclick="scrollTo('s4')">內容規範</div>
+    <div class="sidenav-item" onclick="scrollTo('s5')">智慧財產權</div>
+    <div class="sidenav-item" onclick="scrollTo('s6')">責任限制</div>
+
+    <div class="sidenav-group">隱私政策</div>
+    <div class="sidenav-item" onclick="scrollTo('p1')">蒐集的資料</div>
+    <div class="sidenav-item" onclick="scrollTo('p2')">資料使用方式</div>
+    <div class="sidenav-item" onclick="scrollTo('p3')">資料分享</div>
+    <div class="sidenav-item" onclick="scrollTo('p4')">你的權利</div>
+    <div class="sidenav-item" onclick="scrollTo('p5')">Cookie 政策</div>
+
+    <div class="sidenav-updated">
+      <div class="sidenav-updated-label">最後更新</div>
+      <div class="sidenav-updated-date">2025 年 1 月 1 日</div>
+    </div>
+  </div>
+
+  <!-- ── MAIN CONTENT ─────────────────────────────── -->
+  <div class="main-content">
+
+    <div class="doc-header">
+      <div class="doc-eyebrow">法律文件</div>
+      <h1 class="doc-title">服務條款與<br>隱私政策</h1>
+      <div class="doc-meta">
+        <span>生效日期：2025 年 1 月 1 日</span>
+        <div class="doc-meta-sep"></div>
+        <span>適用地區：台灣、香港、澳門</span>
+        <div class="doc-meta-sep"></div>
+        <span>版本 2.1</span>
+      </div>
+    </div>
+
+    <!-- Tab switcher -->
+    <div class="doc-tabs">
+      <div class="doc-tab active" id="tab-tos" onclick="switchDoc('tos')">服務條款</div>
+      <div class="doc-tab" id="tab-pp" onclick="switchDoc('pp')">隱私政策</div>
+    </div>
+
+    <!-- ── TERMS OF SERVICE ─────────────────────── -->
+    <div id="doc-tos">
+
+      <!-- Summary cards -->
+      <div class="summary-grid">
+        <div class="summary-card">
+          <div class="summary-card-icon icon-ok">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+          </div>
+          <div class="summary-card-title">你的內容，你的所有權</div>
+          <div class="summary-card-desc">創作者保有所有已上傳內容的完整著作權。FANHUB 僅取得必要的授權以提供平台服務。</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-card-icon icon-p">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </div>
+          <div class="summary-card-title">18 歲以上才能使用</div>
+          <div class="summary-card-desc">本平台僅供年滿 18 歲（或所在地法定成年年齡）的用戶使用。創作者需通過年齡驗證。</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-card-icon icon-info">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          </div>
+          <div class="summary-card-title">隨時可取消訂閱</div>
+          <div class="summary-card-desc">訂閱者可隨時在設定頁取消訂閱，不收違約金。取消後仍可存取至當期結束日。</div>
+        </div>
+      </div>
+
+      <!-- Section 1 -->
+      <div class="legal-section" id="s1">
+        <div class="legal-section-title"><span class="section-num">01</span>使用資格</div>
+        <div class="legal-p">使用 FANHUB 平台服務，你必須符合以下條件：</div>
+        <ul class="legal-list">
+          <li>年滿 18 歲，或達到你所在地區法律規定的成年年齡</li>
+          <li>具備與 FANHUB 締結具有法律效力合約的行為能力</li>
+          <li>未曾因違反本條款而被 FANHUB 停用帳號</li>
+          <li>遵守台灣及你所在地的所有適用法律法規</li>
+        </ul>
+        <div class="highlight-box">
+          <p><strong>關於成人內容：</strong>若創作者發布成人內容，除上述條件外，還需通過 FANHUB 的創作者身份驗證程序，並確保所有出現在內容中的人員均已成年且知情同意。</p>
+        </div>
+      </div>
+
+      <!-- Section 2 -->
+      <div class="legal-section" id="s2">
+        <div class="legal-section-title"><span class="section-num">02</span>帳號與安全</div>
+        <div class="legal-p">你有責任維護帳號安全，包括密碼保密與防止未授權存取。你需對帳號下的所有活動負責。</div>
+        <ul class="legal-list">
+          <li>每人只能持有一個帳號，禁止使用虛假身分或冒充他人</li>
+          <li>發現帳號遭未授權使用時，須立即通知 FANHUB 客服</li>
+          <li>FANHUB 不對因帳號安全疏失造成的損失負責</li>
+        </ul>
+      </div>
+
+      <!-- Section 3 -->
+      <div class="legal-section" id="s3">
+        <div class="legal-section-title"><span class="section-num">03</span>訂閱與付款</div>
+        <div class="legal-p">FANHUB 提供月付與年付兩種訂閱方案。所有費用均為新台幣計價，含稅。</div>
+        <ul class="legal-list">
+          <li><strong>自動續訂：</strong>除非提前取消，訂閱將於每個計費週期自動續約並扣款</li>
+          <li><strong>退款政策：</strong>已完成付款的訂閱費用原則上不予退款，但因平台技術問題導致服務中斷者除外</li>
+          <li><strong>價格變動：</strong>創作者若調整訂閱價格，現有訂閱者將於下一計費週期生效前收到通知</li>
+          <li><strong>平台手續費：</strong>FANHUB 向創作者收取收益的 15% 作為平台服務費，此費用已包含金流處理費</li>
+        </ul>
+        <div class="highlight-box">
+          <p>訂閱者取消訂閱後，仍可存取創作者內容至當前計費週期結束。期間結束後，內容存取權限將自動終止。</p>
+        </div>
+      </div>
+
+      <!-- Section 4 -->
+      <div class="legal-section" id="s4">
+        <div class="legal-section-title"><span class="section-num">04</span>內容規範</div>
+        <div class="legal-p">FANHUB 嚴禁以下內容，違者將立即移除帳號並保留法律追訴權：</div>
+        <ul class="legal-list">
+          <li>任何涉及未成年人的性相關內容</li>
+          <li>未經當事人同意發布的私密影像或照片</li>
+          <li>仇恨言論、歧視性內容、煽動暴力的內容</li>
+          <li>侵犯他人著作權或商標的內容</li>
+          <li>詐騙、釣魚或散布惡意軟體的行為</li>
+        </ul>
+        <div class="legal-p">成人內容創作者須確保所有參與者均已成年，並保存相關同意書備查。FANHUB 有權要求提供相關文件。</div>
+      </div>
+
+      <!-- Section 5 -->
+      <div class="legal-section" id="s5">
+        <div class="legal-section-title"><span class="section-num">05</span>智慧財產權</div>
+        <div class="legal-p">創作者保有其上傳至 FANHUB 的所有內容之著作權。透過上傳內容，你授予 FANHUB 非獨家的、全球性的授權，以提供、展示及傳輸你的內容給訂閱者。</div>
+        <div class="legal-p">FANHUB 的商標、標誌、平台設計及技術不得在未經授權的情況下使用或複製。</div>
+      </div>
+
+      <!-- Section 6 -->
+      <div class="legal-section" id="s6">
+        <div class="legal-section-title"><span class="section-num">06</span>責任限制</div>
+        <div class="legal-p">在法律允許的最大範圍內，FANHUB 對於因使用本平台所產生的間接、偶發、特殊或懲罰性損害不承擔責任，包括但不限於利潤損失、數據損失或業務中斷。</div>
+        <div class="legal-p">FANHUB 對任何單一索賠的最大責任以你在事件發生前三個月內支付給 FANHUB 的費用為上限。</div>
+      </div>
+
+    </div>
+
+    <!-- ── PRIVACY POLICY ────────────────────────── -->
+    <div id="doc-pp" style="display:none">
+
+      <div class="summary-grid">
+        <div class="summary-card">
+          <div class="summary-card-icon icon-ok">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          </div>
+          <div class="summary-card-title">不販售你的資料</div>
+          <div class="summary-card-desc">FANHUB 絕不將你的個人資料出售給第三方廣告商或任何商業目的的第三方。</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-card-icon icon-p">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          </div>
+          <div class="summary-card-title">你有權存取資料</div>
+          <div class="summary-card-desc">你可以隨時申請下載你在 FANHUB 上的所有個人資料，或要求刪除你的帳號與資料。</div>
+        </div>
+        <div class="summary-card">
+          <div class="summary-card-icon icon-info">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          </div>
+          <div class="summary-card-title">加密傳輸與儲存</div>
+          <div class="summary-card-desc">所有資料傳輸均使用 TLS 加密，敏感資料（如付款資訊）另外加密儲存。</div>
+        </div>
+      </div>
+
+      <div class="legal-section" id="p1">
+        <div class="legal-section-title"><span class="section-num">01</span>我們蒐集的資料</div>
+        <div class="legal-p">當你使用 FANHUB 時，我們會蒐集以下類型的資料：</div>
+        <ul class="legal-list">
+          <li><strong>帳號資料：</strong>電子郵件、顯示名稱、大頭照、個人簡介</li>
+          <li><strong>付款資料：</strong>信用卡後四碼、帳單地址（完整卡號由金流服務商加密處理，FANHUB 不儲存）</li>
+          <li><strong>使用記錄：</strong>瀏覽的頁面、訂閱記錄、解鎖的內容、私訊記錄</li>
+          <li><strong>裝置資料：</strong>IP 位址、瀏覽器類型、作業系統、裝置識別碼</li>
+          <li><strong>創作者資料：</strong>銀行帳戶資訊（用於提領）、身份驗證文件</li>
+        </ul>
+      </div>
+
+      <div class="legal-section" id="p2">
+        <div class="legal-section-title"><span class="section-num">02</span>資料使用方式</div>
+        <div class="legal-p">我們使用蒐集到的資料用於：</div>
+        <ul class="legal-list">
+          <li>提供、維護和改善 FANHUB 平台服務</li>
+          <li>處理訂閱付款及創作者提領</li>
+          <li>發送服務相關通知（如訂閱到期、付款確認）</li>
+          <li>偵測並防止詐騙、濫用及違規行為</li>
+          <li>改善平台推薦算法（使用去識別化的聚合數據）</li>
+        </ul>
+        <div class="highlight-box">
+          <p>我們<strong>不會</strong>使用你的個人資料進行行為廣告投放，也不會將你的瀏覽習慣分享給任何廣告平台。</p>
+        </div>
+      </div>
+
+      <div class="legal-section" id="p3">
+        <div class="legal-section-title"><span class="section-num">03</span>資料分享</div>
+        <div class="legal-p">我們只在以下情況分享你的資料：</div>
+        <ul class="legal-list">
+          <li><strong>金流服務商：</strong>為處理付款，必要的交易資料會傳送給合作的金流服務商</li>
+          <li><strong>法律要求：</strong>依法院命令、政府要求或適用法律規定必須揭露時</li>
+          <li><strong>安全防護：</strong>為保護 FANHUB、用戶或公眾安全而必要時</li>
+          <li><strong>企業轉讓：</strong>若 FANHUB 發生合併、收購或資產出售，資料可能移轉給繼承方</li>
+        </ul>
+      </div>
+
+      <div class="legal-section" id="p4">
+        <div class="legal-section-title"><span class="section-num">04</span>你的資料權利</div>
+        <div class="legal-p">根據台灣個人資料保護法，你享有以下權利：</div>
+        <ul class="legal-list">
+          <li><strong>查閱權：</strong>申請查看 FANHUB 持有的你的個人資料</li>
+          <li><strong>更正權：</strong>要求更正不正確的個人資料</li>
+          <li><strong>刪除權：</strong>要求刪除你的帳號及相關個人資料</li>
+          <li><strong>可攜權：</strong>申請以常見格式匯出你的資料</li>
+          <li><strong>停止處理：</strong>在特定情況下要求停止處理你的個人資料</li>
+        </ul>
+        <div class="legal-p">如需行使上述權利，請聯繫我們的客服中心，我們將於 30 個工作日內回應。</div>
+      </div>
+
+      <div class="legal-section" id="p5">
+        <div class="legal-section-title"><span class="section-num">05</span>Cookie 政策</div>
+        <div class="legal-p">FANHUB 使用 Cookie 及類似技術提供更好的使用體驗：</div>
+        <ul class="legal-list">
+          <li><strong>必要 Cookie：</strong>維持登入狀態、安全防護，無法關閉</li>
+          <li><strong>功能 Cookie：</strong>記住你的偏好設定（如深淺色主題），可在設定中關閉</li>
+          <li><strong>分析 Cookie：</strong>了解用戶如何使用平台，使用匿名化數據，可選擇退出</li>
+        </ul>
+        <div class="legal-p">我們不使用追蹤型廣告 Cookie。</div>
+      </div>
+
+    </div>
+
+    <!-- Contact -->
+    <div class="contact-card">
+      <div class="contact-icon">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+      </div>
+      <div>
+        <div class="contact-title">有任何疑問？</div>
+        <div class="contact-desc">聯繫我們的法務團隊，我們將於 3 個工作日內回覆</div>
+      </div>
+      <button class="contact-link" onclick="showToast('客服功能開發中')">聯繫我們</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- Toast -->
+<div style="position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(8px);background:var(--t1);color:var(--bg);font-size:12.5px;font-weight:500;padding:9px 20px;border-radius:22px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .22s,transform .22s;z-index:300;display:flex;align-items:center;gap:7px" id="toast">
+  <div style="width:6px;height:6px;border-radius:50%;background:var(--p);flex-shrink:0"></div>
+  <span id="toastMsg"></span>
+</div>
+
+<script>
+/* Theme */
+const root = document.documentElement;
+root.dataset.theme = 'light'; // demo: force light on load
+document.getElementById('themeBtn').addEventListener('click', () => {
+  const n = root.dataset.theme === 'light' ? 'dark' : 'light';
+  root.dataset.theme = n; localStorage.setItem('fh-theme', n);
+});
+
+/* Tab switch */
+function switchDoc(tab) {
+  document.getElementById('doc-tos').style.display = tab === 'tos' ? '' : 'none';
+  document.getElementById('doc-pp').style.display  = tab === 'pp'  ? '' : 'none';
+  document.getElementById('tab-tos').classList.toggle('active', tab === 'tos');
+  document.getElementById('tab-pp').classList.toggle('active',  tab === 'pp');
+}
+
+/* Sidebar scroll */
+function scrollTo(id) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  /* Auto-switch tab if needed */
+  if (['p1','p2','p3','p4','p5'].includes(id)) switchDoc('pp');
+  else switchDoc('tos');
+  setTimeout(() => el.scrollIntoView({behavior:'smooth',block:'start'}), 50);
+  document.querySelectorAll('.sidenav-item').forEach(i => i.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+}
+
+/* Scroll spy */
+const sections = ['s1','s2','s3','s4','s5','s6','p1','p2','p3','p4','p5'];
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(id => {
+    const el = document.getElementById(id);
+    if (el && el.getBoundingClientRect().top < 120) current = id;
+  });
+  if (current) {
+    document.querySelectorAll('.sidenav-item').forEach((item, i) => {
+      item.classList.toggle('active', item.getAttribute('onclick')?.includes("'"+current+"'"));
+    });
+  }
+}, {passive:true});
+
+/* Toast */
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  t.style.opacity='1'; t.style.transform='translateX(-50%) translateY(0)';
+  clearTimeout(window._tt);
+  window._tt = setTimeout(() => {
+    t.style.opacity='0'; t.style.transform='translateX(-50%) translateY(8px)';
+  }, 2200);
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,1079 @@
+<!DOCTYPE html>
+<html lang="zh-TW" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ava Lin · FANHUB</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ─── TOKENS ─────────────────────────────────────────── */
+:root {
+  --bg:        #fdf9f6;
+  --surface:   #ffffff;
+  --surface2:  #faf3ef;
+  --surface3:  #fdf0eb;
+  --primary:   #cc5e76;
+  --primary-h: #b84d65;
+  --primary2:  #8a3248;
+  --accent:    #ead5d0;
+  --text1:     #2e1118;
+  --text2:     #7a4050;
+  --text3:     #b08090;
+  --border:    rgba(150,70,90,.25);
+  --border2:   rgba(150,70,90,.42);
+  --nav-bg:    rgba(253,249,246,.94);
+  --shadow:    0 2px 20px rgba(204,94,118,.08);
+  --shadow-lg: 0 8px 40px rgba(204,94,118,.14);
+  --radius:    14px;
+  --radius-sm: 8px;
+  --transition: .28s cubic-bezier(.4,0,.2,1);
+}
+[data-theme="dark"] {
+  --bg:        #080508;
+  --surface:   #1e1016;
+  --surface2:  #2a1820;
+  --surface3:  #382030;
+  --primary:   #d4718b;
+  --primary-h: #e07d96;
+  --primary2:  #9b4c6a;
+  --accent:    #4a2535;
+  --text1:     #f0c0cf;
+  --text2:     #d8a8b8;
+  --text3:     #a87888;
+  --border:    rgba(200,120,150,.22);
+  --border2:   rgba(200,120,150,.42);
+  --nav-bg:    rgba(20,11,16,.92);
+  --shadow:    0 2px 20px rgba(0,0,0,.3);
+  --shadow-lg: 0 8px 40px rgba(0,0,0,.45);
+}
+
+/* ─── RESET & BASE ───────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: 'DM Sans', sans-serif;
+  background: var(--bg);
+  color: var(--text1);
+  min-height: 100vh;
+  transition: background var(--transition), color var(--transition);
+  -webkit-font-smoothing: antialiased;
+}
+button { font-family: inherit; cursor: pointer; border: none; outline: none; }
+a { text-decoration: none; color: inherit; }
+img { display: block; max-width: 100%; }
+
+/* ─── SCROLLBAR ──────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+/* ─── NAVBAR ─────────────────────────────────────────── */
+.navbar {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+  height: 58px;
+  background: var(--nav-bg);
+  backdrop-filter: blur(16px) saturate(180%);
+  -webkit-backdrop-filter: blur(16px) saturate(180%);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 0 24px;
+  transition: background var(--transition);
+}
+.nav-logo {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 18px; font-weight: 600;
+  letter-spacing: .12em;
+  color: var(--primary);
+  transition: color var(--transition);
+}
+.nav-logo span { font-weight:400; opacity: .7; }
+.nav-links {
+  display: flex; align-items: center; gap: 28px;
+  list-style: none;
+}
+.nav-links a {
+  font-size: 13px; font-weight: 400;
+  color: var(--text2);
+  transition: color .2s;
+  letter-spacing: .02em;
+}
+.nav-links a:hover { color: var(--primary); }
+.nav-right { display: flex; align-items: center; gap: 12px; }
+
+/* Theme toggle */
+.theme-toggle {
+  width: 42px; height: 24px;
+  background: var(--surface2);
+  border-radius: 12px;
+  border: 1.5px solid var(--border2);
+  position: relative; cursor: pointer;
+  transition: background var(--transition), border-color var(--transition);
+  display: flex; align-items: center; padding: 2px;
+}
+.theme-toggle::after {
+  content: '';
+  width: 18px; height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,.18);
+  transition: transform var(--transition);
+}
+[data-theme="dark"] .theme-toggle { background: var(--primary); border-color: var(--primary); }
+[data-theme="dark"] .theme-toggle::after { transform: translateX(18px); }
+.theme-icon { font-size: 11px; position: absolute; transition: opacity .2s; }
+.theme-icon.sun { left: 5px; opacity: 1; }
+.theme-icon.moon { right: 5px; opacity: 0; }
+[data-theme="dark"] .theme-icon.sun { opacity: 0; }
+[data-theme="dark"] .theme-icon.moon { opacity: 1; }
+
+.btn-login {
+  font-size: 13px; font-weight: 500;
+  padding: 7px 16px;
+  background: transparent;
+  border: 1px solid var(--border2);
+  border-radius: 20px;
+  color: var(--text2);
+  transition: all .2s;
+}
+.btn-login:hover { border-color: var(--primary); color: var(--primary); }
+.btn-join {
+  font-size: 13px; font-weight: 600;
+  padding: 7px 18px;
+  background: var(--primary);
+  border-radius: 20px;
+  color: #fff;
+  letter-spacing: .02em;
+  transition: background .2s, transform .15s;
+}
+.btn-join:hover { background: var(--primary-h); transform: translateY(-1px); }
+
+/* ─── COVER ──────────────────────────────────────────── */
+.cover-wrap {
+  height: 300px;
+  margin-top: 58px;
+  position: relative;
+  overflow: hidden;
+}
+.cover-bg {
+  width: 100%; height: 100%;
+  background: var(--surface2);
+  object-fit: cover;
+}
+/* Decorative SVG pattern on cover */
+.cover-pattern {
+  position: absolute; inset: 0;
+  background-image:
+    radial-gradient(circle at 20% 50%, rgba(204,94,118,.18) 0%, transparent 50%),
+    radial-gradient(circle at 80% 30%, rgba(138,50,72,.12) 0%, transparent 45%);
+  transition: opacity var(--transition);
+}
+[data-theme="dark"] .cover-pattern {
+  background-image:
+    radial-gradient(circle at 20% 50%, rgba(212,113,139,.22) 0%, transparent 50%),
+    radial-gradient(circle at 80% 30%, rgba(155,76,106,.15) 0%, transparent 45%);
+}
+.cover-gradient {
+  position: absolute; inset: 0;
+  background: linear-gradient(to bottom, transparent 55%, var(--bg) 100%);
+  transition: background var(--transition);
+}
+
+/* ─── PROFILE SECTION ────────────────────────────────── */
+.profile-section {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0 24px;
+}
+.profile-top {
+  display: flex; align-items: flex-end;
+  justify-content: space-between;
+  margin-top: -44px;
+  margin-bottom: 20px;
+}
+.avatar-wrap { position: relative; }
+.avatar {
+  width: 100px; height: 100px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--primary2));
+  border: 4px solid var(--bg);
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 38px; font-weight: 600;
+  color: #fff;
+  box-shadow: var(--shadow);
+  transition: border-color var(--transition);
+  position: relative; z-index: 1;
+}
+.avatar-verified {
+  position: absolute; bottom: 4px; right: 4px;
+  width: 22px; height: 22px;
+  background: var(--primary);
+  border-radius: 50%;
+  border: 2px solid var(--bg);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 2;
+}
+.avatar-verified svg { width: 11px; height: 11px; }
+
+.profile-actions { display: flex; gap: 10px; align-items: center; padding-bottom: 6px; }
+.btn-message {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text2);
+  transition: all .2s;
+}
+.btn-message:hover { border-color: var(--primary); color: var(--primary); }
+.btn-message svg { width: 16px; height: 16px; }
+.btn-tip {
+  font-size: 12px; font-weight: 500;
+  padding: 8px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: 20px;
+  color: var(--text2);
+  transition: all .2s;
+}
+.btn-tip:hover { border-color: var(--primary); color: var(--primary); }
+.btn-subscribe {
+  font-size: 13px; font-weight: 600;
+  padding: 9px 22px;
+  background: var(--primary);
+  border-radius: 22px;
+  color: #fff;
+  letter-spacing: .03em;
+  transition: background .2s, transform .15s, box-shadow .2s;
+  box-shadow: 0 4px 16px rgba(204,94,118,.3);
+}
+.btn-subscribe:hover {
+  background: var(--primary-h);
+  transform: translateY(-1px);
+  box-shadow: 0 6px 20px rgba(204,94,118,.4);
+}
+
+/* ── Save / Bookmark button ── */
+.btn-save {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text2);
+  transition: all .22s;
+  position: relative;
+}
+.btn-save:hover { border-color: var(--primary); color: var(--primary); }
+.btn-save svg { width: 16px; height: 16px; transition: transform .22s; }
+.btn-save.saved {
+  background: var(--surface3);
+  border-color: var(--primary);
+  color: var(--primary);
+}
+.btn-save.saved svg { transform: scale(1.15); }
+
+/* Pulse ring on save */
+@keyframes saveRing {
+  0%   { box-shadow: 0 0 0 0 rgba(204,94,118,.45); }
+  70%  { box-shadow: 0 0 0 10px rgba(204,94,118,0); }
+  100% { box-shadow: 0 0 0 0 rgba(204,94,118,0); }
+}
+.btn-save.pulse { animation: saveRing .5s ease-out; }
+
+/* Toast notification */
+.toast {
+  position: fixed; bottom: 88px; left: 50%; transform: translateX(-50%) translateY(12px);
+  background: var(--text1); color: var(--bg);
+  font-size: 13px; font-weight: 500;
+  padding: 10px 20px; border-radius: 24px;
+  white-space: nowrap;
+  opacity: 0; pointer-events: none;
+  transition: opacity .25s, transform .25s;
+  z-index: 200;
+  display: flex; align-items: center; gap: 8px;
+}
+.toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+.toast-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--primary); flex-shrink: 0;
+}
+
+/* Sticky save btn */
+.sticky-save {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: var(--surface2);
+  border: 1px solid var(--border2);
+  display: flex; align-items: center; justify-content: center;
+  color: var(--text2);
+  transition: all .2s;
+  flex-shrink: 0;
+}
+.sticky-save:hover { border-color: var(--primary); color: var(--primary); }
+.sticky-save svg { width: 15px; height: 15px; transition: transform .22s; }
+.sticky-save.saved { background: var(--surface3); border-color: var(--primary); color: var(--primary); }
+.sticky-save.saved svg { transform: scale(1.15); }
+.sticky-right { display: flex; align-items: center; gap: 8px; }
+
+/* Bio */
+.creator-name {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 28px; font-weight: 600;
+  color: var(--text1);
+  line-height: 1.15;
+  margin-bottom: 2px;
+  transition: color var(--transition);
+}
+.creator-handle {
+  font-size: 13px; color: var(--text3);
+  margin-bottom: 12px;
+  transition: color var(--transition);
+}
+.creator-handle em {
+  font-style: normal; color: var(--primary);
+  background: var(--surface3);
+  padding: 1px 7px; border-radius: 6px;
+  font-size: 11px; font-weight: 500; margin-left: 6px;
+  transition: background var(--transition), color var(--transition);
+}
+.creator-bio {
+  font-size: 14px; line-height: 1.65;
+  color: var(--text2); max-width: 500px;
+  margin-bottom: 16px;
+  transition: color var(--transition);
+}
+
+/* Stats */
+.stats-row {
+  display: flex; gap: 28px;
+  margin-bottom: 16px;
+}
+.stat { display: flex; flex-direction: column; }
+.stat-num {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 22px; font-weight: 600;
+  color: var(--text1); line-height: 1.2;
+  transition: color var(--transition);
+}
+.stat-lbl {
+  font-size: 11px; color: var(--text3);
+  letter-spacing: .04em;
+  transition: color var(--transition);
+}
+
+/* Tags */
+.tags-row {
+  display: flex; flex-wrap: wrap; gap: 6px;
+  margin-bottom: 28px;
+}
+.tag {
+  font-size: 11px; font-weight: 500;
+  padding: 4px 12px; border-radius: 20px;
+  background: var(--surface3);
+  color: var(--primary2);
+  border: 1px solid var(--border);
+  transition: all .2s, background var(--transition), color var(--transition);
+  cursor: default;
+}
+.tag:hover { background: var(--primary); color: #fff; border-color: var(--primary); }
+
+/* ─── SECTION DIVIDER ────────────────────────────────── */
+.section-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 0 0 28px;
+  transition: background var(--transition);
+}
+
+/* ─── TABS ───────────────────────────────────────────── */
+.content-tabs {
+  display: flex; gap: 2px;
+  margin-bottom: 24px;
+  border-bottom: 1px solid var(--border);
+  transition: border-color var(--transition);
+}
+.content-tab {
+  font-size: 13px; font-weight: 500;
+  padding: 10px 18px;
+  color: var(--text3);
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: color .2s, border-color .2s;
+  background: none;
+  margin-bottom: -1px;
+}
+.content-tab.active { color: var(--primary); border-bottom-color: var(--primary); }
+.content-tab:hover:not(.active) { color: var(--text2); }
+
+/* ─── SUBSCRIPTION PLANS ─────────────────────────────── */
+.plans-section { margin-bottom: 36px; }
+.section-label {
+  font-size: 11px; font-weight: 500;
+  letter-spacing: .08em; text-transform: uppercase;
+  color: var(--text3); margin-bottom: 14px;
+  transition: color var(--transition);
+}
+.plans-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.plan-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 20px;
+  position: relative;
+  transition: all .25s, background var(--transition), border-color var(--transition);
+  cursor: pointer;
+}
+.plan-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+.plan-card.featured {
+  border-color: var(--primary);
+  border-width: 1.5px;
+  box-shadow: var(--shadow);
+}
+.plan-badge {
+  position: absolute; top: -11px; left: 50%; transform: translateX(-50%);
+  background: var(--primary); color: #fff;
+  font-size: 10px; font-weight: 600;
+  padding: 3px 12px; border-radius: 10px;
+  white-space: nowrap; letter-spacing: .04em;
+}
+.plan-name {
+  font-size: 11px; font-weight: 500;
+  color: var(--text3); text-transform: uppercase;
+  letter-spacing: .06em; margin-bottom: 8px;
+  transition: color var(--transition);
+}
+.plan-price {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 30px; font-weight: 600;
+  color: var(--text1); line-height: 1;
+  margin-bottom: 4px;
+  transition: color var(--transition);
+}
+.plan-price sub {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px; font-weight: 400;
+  color: var(--text3); vertical-align: baseline;
+  transition: color var(--transition);
+}
+.plan-period {
+  font-size: 11px; color: var(--text3);
+  margin-bottom: 16px;
+  transition: color var(--transition);
+}
+.plan-divider { height: 1px; background: var(--border); margin-bottom: 14px; transition: background var(--transition); }
+.plan-perks { display: flex; flex-direction: column; gap: 8px; }
+.plan-perk {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 12px; color: var(--text2);
+  transition: color var(--transition);
+}
+.perk-check {
+  width: 16px; height: 16px; border-radius: 50%;
+  background: var(--surface3); border: 1px solid var(--border2);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  transition: background var(--transition);
+}
+.plan-card.featured .perk-check { background: var(--primary); border-color: var(--primary); }
+.perk-check svg { width: 8px; height: 8px; }
+.plan-card.featured .perk-check svg { stroke: #fff; }
+.plan-btn {
+  width: 100%; margin-top: 18px;
+  font-size: 13px; font-weight: 600;
+  padding: 10px 0; border-radius: 10px;
+  border: 1.5px solid var(--border2);
+  background: transparent; color: var(--primary2);
+  transition: all .2s, border-color var(--transition);
+}
+.plan-card.featured .plan-btn {
+  background: var(--primary); color: #fff; border-color: var(--primary);
+}
+.plan-btn:hover { opacity: .85; transform: translateY(-1px); }
+
+/* ─── POSTS GRID ─────────────────────────────────────── */
+.posts-section { margin-bottom: 48px; }
+.posts-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.post-card {
+  aspect-ratio: 1;
+  border-radius: var(--radius-sm);
+  background: var(--surface2);
+  position: relative; overflow: hidden;
+  cursor: pointer;
+  transition: transform .2s, box-shadow .2s;
+}
+.post-card:hover { transform: scale(1.015); box-shadow: var(--shadow); }
+.post-card .post-bg {
+  width: 100%; height: 100%;
+  transition: transform .3s;
+}
+.post-card:hover .post-bg { transform: scale(1.04); }
+
+/* Post colour fills (simulating images) */
+.post-c1 { background: linear-gradient(135deg, #f2ddd4 0%, #e8c4c0 100%); }
+.post-c2 { background: linear-gradient(135deg, #f5e6e0 0%, #ead5cf 100%); }
+.post-c3 { background: linear-gradient(145deg, #f0d8d0 0%, #e2c4bc 100%); }
+[data-theme="dark"] .post-c1 { background: linear-gradient(135deg, #2d1822 0%, #3d2230 100%); }
+[data-theme="dark"] .post-c2 { background: linear-gradient(135deg, #241018 0%, #341828 100%); }
+[data-theme="dark"] .post-c3 { background: linear-gradient(145deg, #1e0e14 0%, #2a1420 100%); }
+
+/* Free badge */
+.post-free-badge {
+  position: absolute; bottom: 8px; left: 8px;
+  font-size: 9px; font-weight: 700;
+  background: var(--primary); color: #fff;
+  padding: 2px 7px; border-radius: 6px;
+  letter-spacing: .05em;
+}
+
+/* Lock overlay */
+.post-lock-overlay {
+  position: absolute; inset: 0;
+  background: rgba(15,10,13,.45);
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 5px;
+  opacity: 0;
+  transition: opacity .22s;
+}
+.post-card:hover .post-lock-overlay { opacity: 1; }
+.post-card.locked .post-lock-overlay { opacity: 1; background: rgba(15,10,13,.35); }
+.lock-icon svg { width: 22px; height: 22px; stroke: rgba(255,255,255,.9); }
+.lock-cta {
+  font-size: 10px; font-weight: 600;
+  color: rgba(255,255,255,.85); letter-spacing: .05em;
+}
+
+/* Post meta (hover) */
+.post-meta {
+  position: absolute; bottom: 0; left: 0; right: 0;
+  background: linear-gradient(to top, rgba(15,10,13,.7), transparent);
+  padding: 18px 10px 8px;
+  display: flex; align-items: center; gap: 10px;
+  opacity: 0; transition: opacity .22s;
+}
+.post-card.free:hover .post-meta { opacity: 1; }
+.post-heart { display: flex; align-items: center; gap: 3px; font-size: 11px; color: rgba(255,255,255,.9); }
+.post-heart svg { width: 13px; height: 13px; }
+
+/* ─── ABOUT / MEDIA TABS ─────────────────────────────── */
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* ─── STICKY SUBSCRIBE BANNER ───────────────────────── */
+.sticky-bar {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 99;
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  padding: 12px 24px;
+  display: flex; align-items: center; justify-content: space-between;
+  backdrop-filter: blur(12px) saturate(160%);
+  -webkit-backdrop-filter: blur(12px) saturate(160%);
+  transform: translateY(100%);
+  transition: transform .3s var(--transition), background var(--transition);
+}
+.sticky-bar.visible { transform: translateY(0); }
+.sticky-info { display: flex; align-items: center; gap: 12px; }
+.sticky-avatar {
+  width: 36px; height: 36px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--primary2));
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 15px; color: #fff; font-weight: 600;
+}
+.sticky-name { font-size: 14px; font-weight: 500; color: var(--text1); transition: color var(--transition); }
+.sticky-sub { font-size: 11px; color: var(--text3); transition: color var(--transition); }
+.sticky-btn {
+  font-size: 13px; font-weight: 600;
+  padding: 9px 24px; border-radius: 20px;
+  background: var(--primary); color: #fff;
+  transition: background .2s;
+}
+.sticky-btn:hover { background: var(--primary-h); }
+
+/* ─── FOOTER ─────────────────────────────────────────── */
+.footer {
+  background: var(--surface);
+  border-top: 1px solid var(--border);
+  padding: 28px 24px 80px;
+  text-align: center;
+  transition: background var(--transition), border-color var(--transition);
+}
+.footer-logo {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 15px; font-weight: 600;
+  letter-spacing: .12em; color: var(--primary);
+  margin-bottom: 8px;
+}
+.footer-links {
+  display: flex; gap: 20px; justify-content: center;
+  list-style: none; margin-bottom: 12px;
+}
+.footer-links a {
+  font-size: 12px; color: var(--text3);
+  transition: color .2s;
+}
+.footer-links a:hover { color: var(--primary); }
+.footer-copy { font-size: 11px; color: var(--text3); }
+
+/* ─── RESPONSIVE ─────────────────────────────────────── */
+@media (max-width: 680px) {
+  .nav-links { display: none; }
+  .cover-wrap { height: 200px; }
+  .avatar { width: 80px; height: 80px; font-size: 30px; }
+  .plans-grid { grid-template-columns: 1fr; }
+  .posts-grid { grid-template-columns: repeat(2, 1fr); }
+  .creator-name { font-size: 22px; }
+  .profile-section { padding: 0 16px; }
+  .stats-row { gap: 18px; }
+  .profile-actions { gap: 8px; }
+  .btn-tip { display: none; }
+}
+
+/* ─── ENTRANCE ANIMATIONS ────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.avatar-wrap { animation: fadeUp .5s .1s both; }
+.creator-name { animation: fadeUp .5s .2s both; }
+.creator-handle { animation: fadeUp .5s .25s both; }
+.creator-bio { animation: fadeUp .5s .3s both; }
+.stats-row { animation: fadeUp .5s .35s both; }
+.tags-row { animation: fadeUp .5s .4s both; }
+.plans-section { animation: fadeUp .5s .45s both; }
+.posts-section { animation: fadeUp .5s .5s both; }
+</style>
+</head>
+<body>
+
+<!-- ── NAVBAR ─────────────────────────────────────────── -->
+<nav class="navbar">
+  <div class="nav-logo" onclick="window.location.href='fanhub-landing.html'" style="cursor:pointer">FAN<span>HUB</span></div>
+  <ul class="nav-links">
+    <li><a href="fanhub-explore.html">探索</a></li>
+    <li><a href="fanhub-favorites.html">收藏</a></li>
+    <li><a href="fanhub-messages.html">私訊</a></li>
+  </ul>
+  <div class="nav-right">
+    <div style="
+      width:38px;height:22px;border-radius:11px;
+      background:var(--surface2);border:1.5px solid var(--border2);
+      position:relative;cursor:pointer;padding:2px;display:flex;align-items:center;
+      transition:background var(--transition),border-color var(--transition);
+    " id="themeToggle">
+      <div style="
+        width:16px;height:16px;border-radius:50%;background:#fff;
+        box-shadow:0 1px 3px rgba(0,0,0,.18);transition:transform var(--transition);
+      " id="themeToggleThumb"></div>
+    </div>
+    <button class="btn-login" onclick="window.location.href='fanhub-auth.html'">登入</button>
+    <button class="btn-join" onclick="window.location.href='fanhub-auth.html'">立即加入</button>
+  </div>
+</nav>
+
+<!-- ── COVER ──────────────────────────────────────────── -->
+<div class="cover-wrap">
+  <div class="cover-pattern"></div>
+  <!-- Decorative SVG shapes on cover -->
+  <svg style="position:absolute;inset:0;width:100%;height:100%;opacity:.25" viewBox="0 0 1200 300" preserveAspectRatio="xMidYMid slice">
+    <circle cx="200" cy="80" r="90" fill="currentColor" style="color:var(--primary);opacity:.3"/>
+    <circle cx="900" cy="200" r="130" fill="currentColor" style="color:var(--primary2);opacity:.2"/>
+    <circle cx="1100" cy="60" r="60" fill="currentColor" style="color:var(--primary);opacity:.15"/>
+  </svg>
+  <div class="cover-gradient"></div>
+</div>
+
+<!-- ── PROFILE ────────────────────────────────────────── -->
+<main>
+<div class="profile-section">
+
+  <div class="profile-top">
+    <div class="avatar-wrap">
+      <div class="avatar">A</div>
+      <div class="avatar-verified" title="已驗證創作者">
+        <svg viewBox="0 0 12 12" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <polyline points="2,6 5,9 10,3"/>
+        </svg>
+      </div>
+    </div>
+    <div class="profile-actions">
+      <button class="btn-save" id="btnSave" onclick="toggleSave()" title="收藏創作者">
+        <svg id="saveIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+        </svg>
+      </button>
+      <button class="btn-message" title="私訊">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17 8h2a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-2v4l-4-4H9a2 2 0 0 1-2-2v-1"/>
+          <path d="M15 3H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2v4l4-4h4a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2z"/>
+        </svg>
+      </button>
+      <button class="btn-tip">打賞</button>
+      <button class="btn-subscribe" onclick="showPlans()">訂閱解鎖</button>
+    </div>
+  </div>
+
+  <h1 class="creator-name">Ava Lin</h1>
+  <div class="creator-handle">@avalin<em>已驗證</em></div>
+  <p class="creator-bio">健身教練 · 生活寫真 · 獨家內容每週更新<br>在這裡分享最真實的自己，訂閱後解鎖全部內容。</p>
+
+  <div class="stats-row">
+    <div class="stat">
+      <span class="stat-num">12.4K</span>
+      <span class="stat-lbl">粉絲</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num">248</span>
+      <span class="stat-lbl">貼文</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num">4.9</span>
+      <span class="stat-lbl">評分</span>
+    </div>
+    <div class="stat">
+      <span class="stat-num">36</span>
+      <span class="stat-lbl">月</span>
+    </div>
+  </div>
+
+  <div class="tags-row">
+    <span class="tag">健身</span>
+    <span class="tag">生活風格</span>
+    <span class="tag">獨家寫真</span>
+    <span class="tag">每日更新</span>
+    <span class="tag">台灣</span>
+  </div>
+
+  <div class="section-divider"></div>
+
+  <!-- ── SUBSCRIPTION PLAN ──────────────────────────── -->
+  <div class="plans-section" id="plansSection">
+    <div class="section-label">訂閱方案</div>
+
+    <!-- Month / Year toggle -->
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+      <span style="font-size:12px;color:var(--text2);transition:color var(--transition)" id="planToggleLabel">月付</span>
+      <div style="
+        width:42px;height:24px;border-radius:12px;
+        background:var(--surface2);border:1.5px solid var(--border2);
+        position:relative;cursor:pointer;padding:3px;display:flex;align-items:center;
+        transition:background .22s,border-color .22s;
+      " id="planToggle" onclick="togglePlanPeriod()">
+        <div style="
+          width:16px;height:16px;border-radius:50%;background:#fff;
+          box-shadow:0 1px 3px rgba(0,0,0,.18);transition:transform .22s;
+        " id="planToggleThumb"></div>
+      </div>
+      <span style="font-size:12px;color:var(--text3);transition:color var(--transition)">
+        年付
+        <span style="
+          font-size:13px;font-weight:700;
+          padding:1px 6px;border-radius:6px;
+          background:var(--surface3);color:var(--primary);
+          border:1px solid var(--border2);margin-left:3px;
+        ">省 2 個月</span>
+      </span>
+    </div>
+
+    <!-- Single plan card -->
+    <div class="plan-card featured" style="max-width:400px" onclick="window.location.href='fanhub-subscribe-modal.html'">
+      <div class="plan-badge">全部內容解鎖</div>
+      <div class="plan-name">訂閱 Ava Lin</div>
+      <div class="plan-price" id="planPrice">NT$299<sub>/月</sub></div>
+      <div class="plan-period" id="planPeriod">隨時可取消</div>
+      <div class="plan-divider"></div>
+      <div class="plan-perks">
+        <div class="plan-perk">
+          <div class="perk-check"><svg viewBox="0 0 10 10" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,5 4,7.5 8,2.5"/></svg></div>
+          全部貼文、相簿、影片解鎖
+        </div>
+        <div class="plan-perk">
+          <div class="perk-check"><svg viewBox="0 0 10 10" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,5 4,7.5 8,2.5"/></svg></div>
+          私訊創作者
+        </div>
+        <div class="plan-perk">
+          <div class="perk-check"><svg viewBox="0 0 10 10" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,5 4,7.5 8,2.5"/></svg></div>
+          限定故事動態 · 直播優先入場
+        </div>
+      </div>
+      <button class="plan-btn" onclick="event.stopPropagation();window.location.href='fanhub-subscribe-modal.html'">立即訂閱</button>
+    </div>
+  </div>
+
+  <!-- ── CONTENT TABS ───────────────────────────────── -->
+  <div class="content-tabs">
+    <button class="content-tab active" onclick="switchTab(this,'posts')">貼文</button>
+    <button class="content-tab" onclick="switchTab(this,'photos')">相片</button>
+    <button class="content-tab" onclick="switchTab(this,'videos')">影片</button>
+    <button class="content-tab" onclick="switchTab(this,'about')">關於</button>
+  </div>
+
+  <!-- Posts -->
+  <div class="tab-content active" id="tab-posts">
+    <div class="posts-section">
+      <div class="posts-grid">
+
+        <!-- Free post 1 -->
+        <div class="post-card free">
+          <div class="post-bg post-c1"></div>
+          <div class="post-free-badge">免費</div>
+          <div class="post-meta">
+            <div class="post-heart">
+              <svg viewBox="0 0 24 24" fill="rgba(255,255,255,.9)" stroke="none"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+              328
+            </div>
+          </div>
+        </div>
+
+        <!-- Free post 2 -->
+        <div class="post-card free">
+          <div class="post-bg post-c2"></div>
+          <div class="post-free-badge">免費</div>
+          <div class="post-meta">
+            <div class="post-heart">
+              <svg viewBox="0 0 24 24" fill="rgba(255,255,255,.9)" stroke="none"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+              214
+            </div>
+          </div>
+        </div>
+
+        <!-- Locked posts -->
+        <div class="post-card locked">
+          <div class="post-bg post-c3"></div>
+          <div class="post-lock-overlay">
+            <div class="lock-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="5" y="11" width="14" height="10" rx="2" stroke="rgba(255,255,255,.9)"/>
+                <path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="rgba(255,255,255,.9)"/>
+              </svg>
+            </div>
+            <div class="lock-cta">訂閱解鎖</div>
+          </div>
+        </div>
+
+        <div class="post-card locked">
+          <div class="post-bg post-c1"></div>
+          <div class="post-lock-overlay">
+            <div class="lock-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="5" y="11" width="14" height="10" rx="2" stroke="rgba(255,255,255,.9)"/>
+                <path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="rgba(255,255,255,.9)"/>
+              </svg>
+            </div>
+            <div class="lock-cta">訂閱解鎖</div>
+          </div>
+        </div>
+
+        <div class="post-card locked">
+          <div class="post-bg post-c2"></div>
+          <div class="post-lock-overlay">
+            <div class="lock-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="5" y="11" width="14" height="10" rx="2" stroke="rgba(255,255,255,.9)"/>
+                <path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="rgba(255,255,255,.9)"/>
+              </svg>
+            </div>
+            <div class="lock-cta">訂閱解鎖</div>
+          </div>
+        </div>
+
+        <div class="post-card locked">
+          <div class="post-bg post-c3"></div>
+          <div class="post-lock-overlay">
+            <div class="lock-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="5" y="11" width="14" height="10" rx="2" stroke="rgba(255,255,255,.9)"/>
+                <path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="rgba(255,255,255,.9)"/>
+              </svg>
+            </div>
+            <div class="lock-cta">訂閱解鎖</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- Photos tab -->
+  <div class="tab-content" id="tab-photos">
+    <div class="posts-section">
+      <div class="posts-grid">
+        <div class="post-card free"><div class="post-bg post-c2"></div><div class="post-free-badge">免費</div></div>
+        <div class="post-card locked"><div class="post-bg post-c3"></div><div class="post-lock-overlay"><div class="lock-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2" stroke="rgba(255,255,255,.9)"/><path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="rgba(255,255,255,.9)"/></svg></div><div class="lock-cta">訂閱解鎖</div></div></div>
+        <div class="post-card locked"><div class="post-bg post-c1"></div><div class="post-lock-overlay"><div class="lock-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2" stroke="rgba(255,255,255,.9)"/><path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="rgba(255,255,255,.9)"/></svg></div><div class="lock-cta">訂閱解鎖</div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Videos tab -->
+  <div class="tab-content" id="tab-videos">
+    <div style="padding:48px 0;text-align:center;color:var(--text3);font-size:14px">
+      影片內容需訂閱才能觀看
+      <br><br>
+      <button class="btn-subscribe" onclick="showPlans()">選擇方案</button>
+    </div>
+  </div>
+
+  <!-- About tab -->
+  <div class="tab-content" id="tab-about">
+    <div style="padding:24px 0;max-width:480px">
+      <p style="font-size:14px;line-height:1.75;color:var(--text2);margin-bottom:16px">
+        大家好，我是 Ava Lin，台灣健身教練 · 寫真創作者。<br>
+        在 FANHUB 我會分享訓練日誌、生活紀錄，以及訂閱者專屬的獨家內容。
+      </p>
+      <div style="display:flex;flex-direction:column;gap:8px;font-size:13px;color:var(--text3)">
+        <div>📍 台北・台灣</div>
+        <div>🗓 加入時間：2023年 3月</div>
+        <div>📩 合作洽談：<a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="ceada1a0baafadba8eafb8afa2a7a0e0ada1a3">[email&#160;protected]</a></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</main>
+
+<!-- ── FOOTER ─────────────────────────────────────────── -->
+<footer class="footer">
+  <div class="footer-logo">FANHUB</div>
+  <ul class="footer-links">
+    <li><a href="#">隱私政策</a></li>
+    <li><a href="#">服務條款</a></li>
+    <li><a href="#">18+ 聲明</a></li>
+    <li><a href="#">客服中心</a></li>
+  </ul>
+  <p class="footer-copy">© 2025 FANHUB · 台灣創作者平台</p>
+</footer>
+
+<!-- ── TOAST ─────────────────────────────────────────────── -->
+<div class="toast" id="toast">
+  <div class="toast-dot"></div>
+  <span id="toastMsg">已加入收藏</span>
+</div>
+
+<!-- ── STICKY BAR ──────────────────────────────────────── -->
+<div class="sticky-bar" id="stickyBar">
+  <div class="sticky-info">
+    <div class="sticky-avatar">A</div>
+    <div>
+      <div class="sticky-name">Ava Lin</div>
+      <div class="sticky-sub" id="stickySub">月付 NT$299/月起</div>
+    </div>
+  </div>
+  <div class="sticky-right">
+    <button class="sticky-save" id="stickySave" onclick="toggleSave()" title="收藏">
+      <svg id="stickySaveIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
+      </svg>
+    </button>
+    <button class="sticky-btn" onclick="showPlans()">立即訂閱</button>
+  </div>
+</div>
+
+<script>
+/* ─── Theme ─────────────────────────────────────────── */
+const root = document.documentElement;
+root.dataset.theme = 'light'; // demo: force light on load
+
+const themeToggle = document.getElementById('themeToggle');
+const themeThumb  = document.getElementById('themeToggleThumb');
+function applyThemeToggleStyle() {
+  const dark = root.dataset.theme === 'dark';
+  themeToggle.style.background = dark ? 'var(--primary)' : 'var(--surface2)';
+  themeToggle.style.borderColor = dark ? 'var(--primary)' : 'var(--border2)';
+  themeThumb.style.transform = dark ? 'translateX(16px)' : 'translateX(0)';
+}
+themeToggle.addEventListener('click', () => {
+  const next = root.dataset.theme === 'light' ? 'dark' : 'light';
+  root.dataset.theme = next;
+  localStorage.setItem('fh-theme', next);
+  applyThemeToggleStyle();
+});
+applyThemeToggleStyle();
+
+/* ─── Plan period toggle ──────────────────────────── */
+let isYearly = false;
+function togglePlanPeriod() {
+  isYearly = !isYearly;
+  const toggle = document.getElementById('planToggle');
+  const thumb  = document.getElementById('planToggleThumb');
+  const label  = document.getElementById('planToggleLabel');
+  toggle.style.background = isYearly ? 'var(--primary)' : 'var(--surface2)';
+  toggle.style.borderColor = isYearly ? 'var(--primary)' : 'var(--border2)';
+  thumb.style.transform = isYearly ? 'translateX(18px)' : 'translateX(0)';
+  label.style.color = isYearly ? 'var(--text3)' : 'var(--text2)';
+  document.getElementById('planPrice').innerHTML = isYearly
+    ? 'NT$249<sub>/月</sub>'
+    : 'NT$299<sub>/月</sub>';
+  document.getElementById('planPeriod').textContent = isYearly
+    ? '年付 NT$2,988 · 省 NT$600'
+    : '隨時可取消';
+  document.getElementById('stickySub').textContent = isYearly
+    ? '年付 NT$249/月起'
+    : '月付 NT$299/月起';
+}
+
+/* ─── Save / Bookmark ────────────────────────────────── */
+const SAVE_KEY = 'fh-saved-avalin';
+let isSaved = localStorage.getItem(SAVE_KEY) === '1';
+
+function applySaveState() {
+  const btnSave    = document.getElementById('btnSave');
+  const stickySave = document.getElementById('stickySave');
+  const saveIcon   = document.getElementById('saveIcon');
+  const stickyIcon = document.getElementById('stickySaveIcon');
+  const fill = isSaved ? 'var(--primary)' : 'none';
+  [btnSave, stickySave].forEach(b => {
+    if (!b) return;
+    b.classList.toggle('saved', isSaved);
+  });
+  [saveIcon, stickyIcon].forEach(ic => {
+    if (!ic) return;
+    ic.querySelector('path').setAttribute('fill', fill);
+  });
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  t.classList.add('show');
+  clearTimeout(window._toastTimer);
+  window._toastTimer = setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+function toggleSave() {
+  isSaved = !isSaved;
+  localStorage.setItem(SAVE_KEY, isSaved ? '1' : '0');
+  applySaveState();
+  const btn = document.getElementById('btnSave');
+  btn.classList.remove('pulse');
+  void btn.offsetWidth;
+  btn.classList.add('pulse');
+  showToast(isSaved ? '已加入收藏 · 可在收藏清單找到她' : '已取消收藏');
+}
+
+applySaveState();
+function switchTab(btn, id) {
+  document.querySelectorAll('.content-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('tab-' + id).classList.add('active');
+}
+
+/* ─── Scroll to plans ────────────────────────────────── */
+function showPlans() {
+  document.getElementById('plansSection').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+/* ─── Sticky bar ─────────────────────────────────────── */
+const stickyBar = document.getElementById('stickyBar');
+const plansEl = document.getElementById('plansSection');

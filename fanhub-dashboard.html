@@ -1,0 +1,1002 @@
+<!DOCTYPE html>
+<html lang="zh-TW" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>後台儀表板 · FANHUB</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fdf9f6;--surface:#ffffff;--surface2:#faf3ef;--surface3:#fdf0eb;
+  --p:#cc5e76;--ph:#b84d65;--p2:#8a3248;
+  --t1:#2e1118;--t2:#4a1e2a;--t3:#7a4858;
+  --bd:rgba(150,70,90,.25);--bd2:rgba(150,70,90,.42);
+  --nav:rgba(253,249,246,.94);
+  --ok:#2d8a4e;--ok-bg:#eaf6ee;
+  --warn:#854f0b;--warn-bg:#faeeda;
+  --tr:.22s cubic-bezier(.4,0,.2,1);
+}
+[data-theme=dark]{
+  --bg:#080508;--surface:#1e1016;--surface2:#2a1820;--surface3:#382030;
+  --p:#d4718b;--ph:#e07d96;--p2:#9b4c6a;
+  --t1:#f8e0e8;--t2:#d8a8b8;--t3:#a87888;
+  --bd:rgba(200,120,150,.22);--bd2:rgba(200,120,150,.42);
+  --nav:rgba(8,5,8,.96);
+  --ok:#5eca7a;--ok-bg:#0d2518;
+  --warn:#ef9f27;--warn-bg:#2a1a05;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:'DM Sans',sans-serif;
+  font-size:16px;
+  background:var(--bg);color:var(--t1);
+  -webkit-font-smoothing:antialiased;
+  transition:background var(--tr),color var(--tr);
+  overflow-x:hidden;
+}
+button{font-family:inherit;cursor:pointer;border:none;outline:none;background:none}
+
+/* ── SIDEBAR ─────────────────────────────────────── */
+.sidebar{
+  position:fixed;top:0;left:0;bottom:0;
+  width:220px;z-index:100;
+  background:var(--surface);
+  border-right:1px solid var(--bd);
+  display:flex;flex-direction:column;
+  transition:background var(--tr),border-color var(--tr);
+}
+.sidebar-logo{
+  padding:20px 20px 16px;
+  border-bottom:1px solid var(--bd);
+  display:flex;align-items:center;justify-content:space-between;
+  transition:border-color var(--tr);
+}
+.logo-text{
+  font-size:17px;font-weight:500;letter-spacing:.18em;color:var(--p);
+  transition:color var(--tr);
+}
+.logo-text em{font-style:normal;font-weight:400;opacity:.55}
+.theme-btn{
+  width:34px;height:20px;border-radius:10px;
+  background:var(--surface2);border:1.5px solid var(--bd2);
+  position:relative;cursor:pointer;padding:2px;
+  display:flex;align-items:center;
+  transition:background var(--tr),border-color var(--tr);
+}
+.theme-btn::after{
+  content:'';width:14px;height:14px;border-radius:50%;
+  background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.18);
+  transition:transform var(--tr);
+}
+[data-theme=dark] .theme-btn{background:var(--p);border-color:var(--p)}
+[data-theme=dark] .theme-btn::after{transform:translateX(14px)}
+
+/* Creator mini profile */
+.sidebar-profile{
+  padding:16px 20px;
+  border-bottom:1px solid var(--bd);
+  display:flex;align-items:center;gap:10px;
+  transition:border-color var(--tr);
+}
+.s-avatar{
+  width:38px;height:38px;border-radius:50%;
+  background:linear-gradient(135deg,var(--p),var(--p2));
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Cormorant Garamond',serif;
+  font-size:17px;font-weight:600;color:#fff;flex-shrink:0;
+}
+.s-name{font-size:17px;font-weight:500;color:var(--t1);transition:color var(--tr)}
+.s-handle{font-size:18px;color:var(--t3);transition:color var(--tr)}
+.s-status{
+  display:flex;align-items:center;gap:4px;
+  font-size:17px;font-weight:600;letter-spacing:.06em;
+  padding:2px 7px;border-radius:6px;
+  background:var(--ok-bg);color:var(--ok);
+  margin-top:3px;width:fit-content;
+}
+.s-status-dot{width:5px;height:5px;border-radius:50%;background:var(--ok)}
+
+/* Nav items */
+.sidebar-nav{flex:1;padding:12px 0;overflow-y:auto}
+.nav-section{
+  font-size:17px;font-weight:500;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--t3);
+  padding:10px 20px 4px;transition:color var(--tr);
+}
+.nav-item{
+  display:flex;align-items:center;gap:10px;
+  padding:9px 20px;font-size:14.5px;color:var(--t2);
+  cursor:pointer;transition:all .18s;position:relative;
+}
+.nav-item:hover{background:var(--surface2);color:var(--t1)}
+.nav-item.active{background:var(--surface3);color:var(--p);font-weight:500}
+.nav-item.active::before{
+  content:'';position:absolute;left:0;top:0;bottom:0;
+  width:3px;background:var(--p);border-radius:0 2px 2px 0;
+}
+.nav-item svg{width:15px;height:15px;flex-shrink:0}
+.nav-badge{
+  margin-left:auto;font-size:17px;font-weight:700;
+  padding:1px 6px;border-radius:8px;
+  background:var(--p);color:#fff;
+}
+
+/* Sidebar footer */
+.sidebar-footer{
+  padding:14px 20px;
+  border-top:1px solid var(--bd);
+  display:flex;flex-direction:column;gap:2px;
+  transition:border-color var(--tr);
+}
+.s-footer-link{
+  font-size:17px;color:var(--t3);padding:5px 0;cursor:pointer;
+  transition:color .18s;display:flex;align-items:center;gap:6px;
+}
+.s-footer-link:hover{color:var(--p)}
+.s-footer-link svg{width:13px;height:13px}
+
+/* ── MAIN ────────────────────────────────────────── */
+.main{
+  margin-left:220px;
+  min-height:100vh;
+  padding:0;
+}
+
+/* Top bar */
+.topbar{
+  height:56px;padding:0 32px;
+  display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid var(--bd);
+  background:var(--surface);
+  position:sticky;top:0;z-index:50;
+  transition:background var(--tr),border-color var(--tr);
+}
+.topbar-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:20px;font-weight:600;color:var(--t1);
+  transition:color var(--tr);
+}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.topbar-btn{
+  font-size:18px;font-weight:500;
+  padding:7px 16px;border-radius:8px;
+  background:var(--p);color:#fff;
+  transition:background .18s;
+  display:flex;align-items:center;gap:6px;
+}
+.topbar-btn:hover{background:var(--ph)}
+.topbar-btn svg{width:13px;height:13px}
+.topbar-icon-btn{
+  width:34px;height:34px;border-radius:50%;
+  background:var(--surface2);border:1px solid var(--bd);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--t2);position:relative;
+  transition:all .18s;
+}
+.topbar-icon-btn:hover{border-color:var(--p);color:var(--p)}
+.topbar-icon-btn svg{width:15px;height:15px}
+.notif-dot{
+  position:absolute;top:6px;right:6px;
+  width:7px;height:7px;border-radius:50%;
+  background:var(--p);border:1.5px solid var(--surface);
+}
+
+/* Content */
+.content{padding:28px 32px 60px}
+
+/* ── METRIC CARDS ────────────────────────────────── */
+.metrics{
+  display:grid;grid-template-columns:repeat(4,1fr);
+  gap:14px;margin-bottom:24px;
+}
+@media(max-width:900px){.metrics{grid-template-columns:repeat(2,1fr)}}
+.metric-card{
+  background:var(--surface);
+  border:1px solid var(--bd);
+  border-radius:14px;
+  padding:18px 20px;
+  transition:all .2s,background var(--tr),border-color var(--tr);
+  cursor:default;
+}
+.metric-card:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(204,94,118,.08)}
+.metric-head{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:12px;
+}
+.metric-label{
+  font-size:18px;font-weight:500;letter-spacing:.07em;
+  text-transform:uppercase;color:var(--t3);
+  transition:color var(--tr);
+}
+.metric-icon{
+  width:30px;height:30px;border-radius:8px;
+  background:var(--surface2);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--p);transition:background var(--tr),color var(--tr);
+}
+.metric-icon svg{width:14px;height:14px}
+.metric-value{
+  font-family:'Cormorant Garamond',serif;
+  font-size:32px;font-weight:600;
+  color:var(--t1);line-height:1;margin-bottom:6px;
+  transition:color var(--tr);
+}
+.metric-change{
+  font-size:17px;display:flex;align-items:center;gap:4px;
+}
+.change-up{color:var(--ok)}
+.change-down{color:var(--p)}
+.change-arrow{font-size:18px}
+
+/* ── CHART AREA ──────────────────────────────────── */
+.charts-row{display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:24px}
+@media(max-width:860px){.charts-row{grid-template-columns:1fr}}
+
+.chart-card{
+  background:var(--surface);border:1px solid var(--bd);
+  border-radius:14px;padding:20px;
+  transition:background var(--tr),border-color var(--tr);
+}
+.chart-head{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:16px;
+}
+.chart-title{
+  font-size:17px;font-weight:600;color:var(--t1);
+  transition:color var(--tr);
+}
+.chart-period{
+  display:flex;gap:2px;
+  background:var(--surface2);border-radius:8px;padding:3px;
+  transition:background var(--tr);
+}
+.period-btn{
+  font-size:18px;font-weight:500;padding:4px 10px;
+  border-radius:6px;color:var(--t3);transition:all .18s;
+}
+.period-btn.active{background:var(--surface);color:var(--t1);box-shadow:0 1px 4px rgba(0,0,0,.07)}
+
+/* Simple bar chart using CSS */
+.bar-chart{
+  display:flex;align-items:flex-end;gap:6px;
+  height:120px;padding-bottom:20px;position:relative;
+}
+.bar-chart::after{
+  content:'';position:absolute;left:0;right:0;bottom:20px;
+  height:1px;background:var(--bd);transition:background var(--tr);
+}
+.bar-wrap{
+  flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;
+  height:100%;justify-content:flex-end;
+}
+.bar{
+  width:100%;border-radius:4px 4px 0 0;
+  background:var(--surface2);
+  transition:height .4s cubic-bezier(.4,0,.2,1),background var(--tr);
+  position:relative;cursor:pointer;
+}
+.bar.this-month{background:var(--p)}
+.bar:hover{opacity:.85}
+.bar-label{font-size:17px;color:var(--t3);transition:color var(--tr)}
+
+/* Donut chart (CSS) */
+.donut-wrap{
+  display:flex;flex-direction:column;align-items:center;
+  gap:16px;
+}
+.donut{
+  width:120px;height:120px;border-radius:50%;
+  position:relative;
+  background:conic-gradient(
+    var(--p) 0% 65%,
+    var(--surface2) 65% 82%,
+    #d4a05e 82% 93%,
+    var(--bd2) 93% 100%
+  );
+  transition:background var(--tr);
+}
+[data-theme=dark] .donut{
+  background:conic-gradient(
+    var(--p) 0% 65%,
+    #3d2230 65% 82%,
+    #6a4828 82% 93%,
+    rgba(212,113,139,.2) 93% 100%
+  );
+}
+.donut::after{
+  content:'';position:absolute;inset:24px;
+  border-radius:50%;background:var(--surface);
+  transition:background var(--tr);
+}
+.donut-center{
+  position:absolute;inset:0;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;z-index:1;
+}
+.donut-num{
+  font-family:'Cormorant Garamond',serif;
+  font-size:20px;font-weight:600;color:var(--t1);
+  transition:color var(--tr);
+}
+.donut-sub{font-size:17px;color:var(--t3);transition:color var(--tr)}
+.legend{display:flex;flex-direction:column;gap:7px;width:100%}
+.legend-item{display:flex;align-items:center;justify-content:space-between}
+.legend-left{display:flex;align-items:center;gap:7px;font-size:17px;color:var(--t2);transition:color var(--tr)}
+.legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.legend-pct{font-size:17px;font-weight:500;color:var(--t1);transition:color var(--tr)}
+
+/* ── BOTTOM GRID ──────────────────────────────────── */
+.bottom-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+@media(max-width:860px){.bottom-grid{grid-template-columns:1fr}}
+
+/* Recent posts table */
+.table-card{
+  background:var(--surface);border:1px solid var(--bd);
+  border-radius:14px;overflow:hidden;
+  transition:background var(--tr),border-color var(--tr);
+}
+.table-head{
+  padding:16px 20px;
+  display:flex;align-items:center;justify-content:space-between;
+  border-bottom:1px solid var(--bd);
+  transition:border-color var(--tr);
+}
+.table-title{font-size:17px;font-weight:600;color:var(--t1);transition:color var(--tr)}
+.table-link{font-size:17px;color:var(--p);cursor:pointer;transition:opacity .18s}
+.table-link:hover{opacity:.7}
+.post-row{
+  display:flex;align-items:center;gap:12px;
+  padding:12px 20px;
+  border-bottom:1px solid var(--bd);
+  transition:background .15s,border-color var(--tr);
+  cursor:pointer;
+}
+.post-row:last-child{border-bottom:none}
+.post-row:hover{background:var(--surface2)}
+.post-thumb{
+  width:44px;height:44px;border-radius:8px;
+  flex-shrink:0;position:relative;overflow:hidden;
+}
+.post-thumb-bg{width:100%;height:100%}
+.post-lock-icon{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  background:rgba(15,10,13,.3);
+}
+.post-lock-icon svg{width:12px;height:12px;stroke:rgba(255,255,255,.85)}
+.post-info{flex:1;min-width:0}
+.post-title-text{
+  font-size:18px;font-weight:500;color:var(--t1);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  transition:color var(--tr);
+}
+.post-meta-text{font-size:18px;color:var(--t3);margin-top:2px;transition:color var(--tr)}
+.post-stats{display:flex;gap:12px;flex-shrink:0}
+.post-stat{
+  display:flex;align-items:center;gap:3px;
+  font-size:17px;color:var(--t3);transition:color var(--tr);
+}
+.post-stat svg{width:12px;height:12px}
+
+/* Subscriber list */
+.sub-row{
+  display:flex;align-items:center;gap:10px;
+  padding:11px 20px;
+  border-bottom:1px solid var(--bd);
+  transition:border-color var(--tr);
+}
+.sub-row:last-child{border-bottom:none}
+.sub-avatar-sm{
+  width:34px;height:34px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-size:17px;font-weight:600;color:#fff;flex-shrink:0;
+  font-family:'Cormorant Garamond',serif;
+}
+.sub-info{flex:1}
+.sub-name-text{font-size:18px;font-weight:500;color:var(--t1);transition:color var(--tr)}
+.sub-since{font-size:18px;color:var(--t3);transition:color var(--tr)}
+.sub-amount{font-size:18px;font-weight:600;color:var(--ok);transition:color var(--tr)}
+.sub-plan-badge{
+  font-size:17px;font-weight:600;padding:2px 7px;border-radius:6px;
+  background:var(--surface2);color:var(--t2);
+  transition:background var(--tr),color var(--tr);
+}
+
+/* Quick actions */
+.quick-actions{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:10px;
+  margin-bottom:14px;
+}
+.qa-btn{
+  background:var(--surface);border:1px solid var(--bd);
+  border-radius:12px;padding:14px 16px;
+  display:flex;align-items:center;gap:10px;
+  cursor:pointer;transition:all .18s;
+}
+.qa-btn:hover{border-color:var(--p);background:var(--surface2)}
+.qa-icon{
+  width:32px;height:32px;border-radius:8px;
+  background:var(--surface2);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--p);flex-shrink:0;
+  transition:background var(--tr),color var(--tr);
+}
+.qa-btn:hover .qa-icon{background:var(--p);color:#fff}
+.qa-icon svg{width:15px;height:15px}
+.qa-label{font-size:18px;font-weight:500;color:var(--t1);transition:color var(--tr)}
+.qa-sub{font-size:18px;color:var(--t3);transition:color var(--tr)}
+
+/* Next payout card */
+.payout-card{
+  background:var(--surface);border:1px solid var(--bd);
+  border-radius:14px;padding:20px;
+  transition:background var(--tr),border-color var(--tr);
+}
+.payout-head{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:16px;
+}
+.payout-title{font-size:17px;font-weight:600;color:var(--t1);transition:color var(--tr)}
+.payout-badge{
+  font-size:18px;font-weight:600;padding:3px 10px;border-radius:8px;
+  background:var(--ok-bg);color:var(--ok);
+}
+.payout-amount{
+  font-family:'Cormorant Garamond',serif;
+  font-size:38px;font-weight:600;color:var(--t1);
+  line-height:1;margin-bottom:4px;
+  transition:color var(--tr);
+}
+.payout-date{font-size:17px;color:var(--t3);margin-bottom:16px;transition:color var(--tr)}
+.payout-bar-bg{
+  height:6px;border-radius:3px;
+  background:var(--surface2);margin-bottom:8px;
+  overflow:hidden;transition:background var(--tr);
+}
+.payout-bar-fill{
+  height:100%;border-radius:3px;
+  background:linear-gradient(90deg,var(--p2),var(--p));
+  width:72%;
+}
+.payout-bar-label{
+  display:flex;justify-content:space-between;
+  font-size:18px;color:var(--t3);margin-bottom:16px;
+  transition:color var(--tr);
+}
+.payout-withdraw-btn{
+  width:100%;padding:10px 0;border-radius:10px;
+  background:var(--p);color:#fff;
+  font-size:17px;font-weight:600;
+  transition:background .18s;
+}
+.payout-withdraw-btn:hover{background:var(--ph)}
+
+/* Animations */
+@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.metric-card{animation:fadeUp .4s both}
+.metric-card:nth-child(1){animation-delay:.05s}
+.metric-card:nth-child(2){animation-delay:.09s}
+.metric-card:nth-child(3){animation-delay:.13s}
+.metric-card:nth-child(4){animation-delay:.17s}
+.charts-row,.bottom-grid{animation:fadeUp .4s .2s both}
+
+/* Responsive */
+@media(max-width:760px){
+  .sidebar{transform:translateX(-100%)}
+  .main{margin-left:0}
+  .content{padding:20px 16px 48px}
+}
+</style>
+</head>
+<body>
+
+<!-- ── SIDEBAR ────────────────────────────────────── -->
+<div class="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-text">FAN<em>HUB</em></div>
+    <div class="theme-btn" id="themeBtn"></div>
+  </div>
+
+  <div class="sidebar-profile">
+    <div class="s-avatar">A</div>
+    <div>
+      <div class="s-name">Ava Lin</div>
+      <div class="s-handle">@avalin</div>
+      <div class="s-status"><div class="s-status-dot"></div>創作者</div>
+    </div>
+  </div>
+
+  <div class="sidebar-nav">
+    <div class="nav-section">主要</div>
+    <div class="nav-item active">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+      儀表板
+    </div>
+    <div class="nav-item" onclick="window.location.href='fanhub-creator-profile.html'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+      個人主頁
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+      我的貼文
+    </div>
+    <div class="nav-item" onclick="window.location.href='fanhub-messages.html'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8h2a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-2v4l-4-4H9a2 2 0 0 1-2-2v-1"/><path d="M15 3H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2v4l4-4h4a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2z"/></svg>
+      私訊
+      <span class="nav-badge">3</span>
+    </div>
+
+    <div class="nav-section">收益</div>
+    <div class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      收益總覽
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      訂閱者
+    </div>
+    <div class="nav-item">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
+      數據分析
+    </div>
+
+    <div class="nav-section">帳號</div>
+    <div class="nav-item" onclick="window.location.href='fanhub-settings.html'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+      設定
+    </div>
+  </div>
+
+  <div class="sidebar-footer">
+    <div class="s-footer-link" onclick="window.location.href='fanhub-landing.html'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+      返回訂閱者模式
+    </div>
+    <div class="s-footer-link">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+      說明中心
+    </div>
+  </div>
+</div>
+
+<!-- ── MAIN ───────────────────────────────────────── -->
+<div class="main">
+
+  <div class="topbar">
+    <div class="topbar-title">儀表板</div>
+    <div class="topbar-right">
+      <button class="topbar-icon-btn">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+        <div class="notif-dot"></div>
+      </button>
+      <button class="topbar-btn" onclick="alert('新增貼文功能開發中')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        新增貼文
+      </button>
+    </div>
+  </div>
+
+  <div class="content">
+
+    <!-- ── PAYOUT HERO ─────────────────────────────── -->
+    <div style="
+      background:var(--t1);border-radius:18px;
+      padding:28px 32px;margin-bottom:24px;
+      display:grid;grid-template-columns:1fr auto;
+      gap:32px;align-items:center;
+      transition:background var(--tr);
+      position:relative;overflow:hidden;
+    ">
+      <!-- Decorative rings -->
+      <div style="
+        position:absolute;right:-60px;top:-60px;
+        width:240px;height:240px;border-radius:50%;
+        border:1px solid rgba(212,113,139,.1);pointer-events:none;
+      "></div>
+      <div style="
+        position:absolute;right:-20px;top:-20px;
+        width:160px;height:160px;border-radius:50%;
+        border:1px solid rgba(212,113,139,.08);pointer-events:none;
+      "></div>
+
+      <div style="position:relative;z-index:1">
+        <div style="
+          font-size:12px;font-weight:500;letter-spacing:.14em;
+          text-transform:uppercase;color:var(--p);margin-bottom:8px;
+        ">下次提領 · 4 月 1 日結算</div>
+
+        <div style="display:flex;align-items:baseline;gap:10px;margin-bottom:6px">
+          <div style="
+            font-family:'Cormorant Garamond',serif;
+            font-size:clamp(48px,6vw,72px);font-weight:600;
+            color:#fff;line-height:1;
+            transition:color var(--tr);
+          " id="payoutHero">NT$30,888</div>
+          <div style="font-size:13px;color:rgba(255,255,255,.45);padding-bottom:6px">預估可提領</div>
+        </div>
+
+        <!-- Progress bar -->
+        <div style="margin-bottom:10px">
+          <div style="
+            height:4px;border-radius:2px;
+            background:rgba(255,255,255,.1);
+            overflow:hidden;margin-bottom:6px;
+          ">
+            <div style="
+              height:100%;border-radius:2px;
+              background:linear-gradient(90deg,var(--p2),var(--p));
+              width:72%;transition:width .5s cubic-bezier(.4,0,.2,1);
+            " id="payoutBar"></div>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:12px">
+            <span style="color:rgba(255,255,255,.45)">本月目標 NT$43,000</span>
+            <span style="color:var(--p);font-weight:500">72% 達成</span>
+          </div>
+        </div>
+
+        <!-- Breakdown pills -->
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:16px">
+          <div style="
+            display:flex;align-items:center;gap:6px;
+            background:rgba(255,255,255,.06);border-radius:20px;
+            padding:5px 12px;font-size:13px;color:rgba(255,255,255,.7);
+          ">
+            <div style="width:6px;height:6px;border-radius:50%;background:var(--p)"></div>
+            訂閱 NT$20,088
+          </div>
+          <div style="
+            display:flex;align-items:center;gap:6px;
+            background:rgba(255,255,255,.06);border-radius:20px;
+            padding:5px 12px;font-size:13px;color:rgba(255,255,255,.7);
+          ">
+            <div style="width:6px;height:6px;border-radius:50%;background:#d4a05e"></div>
+            付費訊息 NT$4,200
+          </div>
+          <div style="
+            display:flex;align-items:center;gap:6px;
+            background:rgba(255,255,255,.06);border-radius:20px;
+            padding:5px 12px;font-size:13px;color:rgba(255,255,255,.7);
+          ">
+            <div style="width:6px;height:6px;border-radius:50%;background:#7aac7c"></div>
+            單篇解鎖 NT$5,400
+          </div>
+          <div style="
+            display:flex;align-items:center;gap:6px;
+            background:rgba(255,255,255,.06);border-radius:20px;
+            padding:5px 12px;font-size:13px;color:rgba(255,255,255,.7);
+          ">
+            <div style="width:6px;height:6px;border-radius:50%;background:#8898c0"></div>
+            打賞 NT$1,200
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: motivational insight + CTA -->
+      <div style="
+        display:flex;flex-direction:column;align-items:flex-end;gap:14px;
+        position:relative;z-index:1;flex-shrink:0;
+      ">
+        <!-- Insight card -->
+        <div style="
+          background:rgba(255,255,255,.07);border-radius:12px;
+          padding:14px 18px;text-align:right;min-width:180px;
+        ">
+          <div style="font-size:13px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:6px">距離目標還差</div>
+          <div style="
+            font-family:'Cormorant Garamond',serif;
+            font-size:28px;font-weight:600;font-style:italic;
+            color:#fff;line-height:1;margin-bottom:4px;
+          ">NT$12,112</div>
+          <div style="font-size:12px;color:rgba(255,255,255,.45);line-height:1.5">
+            再發 3 則貼文<br>預計可達成目標
+          </div>
+        </div>
+
+        <button style="
+          font-family:'DM Sans',sans-serif;
+          font-size:12px;font-weight:500;letter-spacing:.06em;
+          padding:10px 22px;border-radius:10px;
+          background:var(--p);color:#fff;border:none;cursor:pointer;
+          transition:background .18s,transform .15s;
+          box-shadow:0 4px 16px rgba(204,94,118,.35);
+        " onmouseover="this.style.background='#b84d65';this.style.transform='translateY(-1px)'"
+           onmouseout="this.style.background='#cc5e76';this.style.transform='translateY(0)'"
+           onclick="window.location.href='fanhub-payout.html'">
+          申請提領
+        </button>
+
+        <div style="font-size:12px;color:rgba(255,255,255,.3);text-align:right">
+          平台手續費 15% 已扣除
+        </div>
+      </div>
+    </div>
+
+    <!-- ── METRIC CARDS (secondary) ──────────────────── -->
+    <div style="font-size:12px;font-weight:500;letter-spacing:.1em;text-transform:uppercase;color:var(--t3);margin-bottom:12px;transition:color var(--tr)">本月數據</div>
+    <div class="metrics">
+      <div class="metric-card">
+        <div class="metric-head">
+          <div class="metric-label">本月收益</div>
+          <div class="metric-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+          </div>
+        </div>
+        <div class="metric-value">NT$36,480</div>
+        <div class="metric-change">
+          <span class="change-arrow change-up">↑</span>
+          <span class="change-up">+12.4%</span>
+          <span style="color:var(--t3);font-size:12px">比上月</span>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-head">
+          <div class="metric-label">訂閱人數</div>
+          <div class="metric-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          </div>
+        </div>
+        <div class="metric-value">248</div>
+        <div class="metric-change">
+          <span class="change-arrow change-up">↑</span>
+          <span class="change-up">+18 人</span>
+          <span style="color:var(--t3);font-size:12px">本月新增</span>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-head">
+          <div class="metric-label">貼文互動率</div>
+          <div class="metric-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+          </div>
+        </div>
+        <div class="metric-value">8.4%</div>
+        <div class="metric-change">
+          <span class="change-arrow change-down">↓</span>
+          <span class="change-down">-0.6%</span>
+          <span style="color:var(--t3);font-size:12px">比上月</span>
+        </div>
+      </div>
+
+      <div class="metric-card">
+        <div class="metric-head">
+          <div class="metric-label">付費訊息收益</div>
+          <div class="metric-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8h2a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-2v4l-4-4H9a2 2 0 0 1-2-2v-1"/><path d="M15 3H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2v4l4-4h4a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2z"/></svg>
+          </div>
+        </div>
+        <div class="metric-value">NT$4,200</div>
+        <div class="metric-change">
+          <span class="change-arrow change-up">↑</span>
+          <span class="change-up">+38%</span>
+          <span style="color:var(--t3);font-size:12px">比上月</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Charts row -->
+    <div class="charts-row">
+
+      <!-- Revenue bar chart -->
+      <div class="chart-card">
+        <div class="chart-head">
+          <div class="chart-title">收益趨勢</div>
+          <div class="chart-period">
+            <button class="period-btn" onclick="setPeriod(this,'w')">週</button>
+            <button class="period-btn active" onclick="setPeriod(this,'m')">月</button>
+            <button class="period-btn" onclick="setPeriod(this,'y')">年</button>
+          </div>
+        </div>
+        <div class="bar-chart" id="barChart">
+          <!-- rendered by JS -->
+        </div>
+      </div>
+
+      <!-- Revenue breakdown donut -->
+      <div class="chart-card">
+        <div class="chart-head">
+          <div class="chart-title">收益來源</div>
+        </div>
+        <div class="donut-wrap">
+          <div class="donut">
+            <div class="donut-center">
+              <div class="donut-num">NT$40K</div>
+              <div class="donut-sub">本月合計</div>
+            </div>
+          </div>
+          <div class="legend">
+            <div class="legend-item">
+              <div class="legend-left"><div class="legend-dot" style="background:var(--p)"></div>訂閱收益</div>
+              <div class="legend-pct">65%</div>
+            </div>
+            <div class="legend-item">
+              <div class="legend-left"><div class="legend-dot" style="background:var(--surface2);border:1px solid var(--bd2)"></div>單篇解鎖</div>
+              <div class="legend-pct">17%</div>
+            </div>
+            <div class="legend-item">
+              <div class="legend-left"><div class="legend-dot" style="background:#d4a05e"></div>付費訊息</div>
+              <div class="legend-pct">11%</div>
+            </div>
+            <div class="legend-item">
+              <div class="legend-left"><div class="legend-dot" style="background:var(--bd2)"></div>打賞</div>
+              <div class="legend-pct">7%</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Bottom grid -->
+    <div class="bottom-grid">
+
+      <!-- Left: recent posts + new subscribers -->
+      <div style="display:flex;flex-direction:column;gap:14px">
+
+        <div class="table-card">
+          <div class="table-head">
+            <div class="table-title">最新貼文成效</div>
+            <div class="table-link">查看全部</div>
+          </div>
+          <div class="post-row" onclick="window.location.href='fanhub-creator-profile.html'">
+            <div class="post-thumb">
+              <div class="post-thumb-bg" style="background:linear-gradient(145deg,#f2ddd4,#e8c4c0)"></div>
+              <div class="post-lock-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor"/><path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="currentColor"/></svg></div>
+            </div>
+            <div class="post-info">
+              <div class="post-title-text">週三健身日記 #48</div>
+              <div class="post-meta-text">訂閱者限定 · 3 小時前</div>
+            </div>
+            <div class="post-stats">
+              <div class="post-stat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>142</div>
+              <div class="post-stat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>28</div>
+            </div>
+          </div>
+          <div class="post-row" onclick="window.location.href='fanhub-creator-profile.html'">
+            <div class="post-thumb">
+              <div class="post-thumb-bg" style="background:linear-gradient(145deg,#ddf0f5,#c4e4ec)"></div>
+            </div>
+            <div class="post-info">
+              <div class="post-title-text">今天的早餐準備</div>
+              <div class="post-meta-text">免費 · 昨天</div>
+            </div>
+            <div class="post-stats">
+              <div class="post-stat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>89</div>
+              <div class="post-stat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>14</div>
+            </div>
+          </div>
+          <div class="post-row" onclick="window.location.href='fanhub-creator-profile.html'">
+            <div class="post-thumb">
+              <div class="post-thumb-bg" style="background:linear-gradient(145deg,#f5eedd,#f0dcc0)"></div>
+              <div class="post-lock-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor"/><path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="currentColor"/></svg></div>
+            </div>
+            <div class="post-info">
+              <div class="post-title-text">獨家寫真組 #12</div>
+              <div class="post-meta-text">訂閱者限定 · 3 天前</div>
+            </div>
+            <div class="post-stats">
+              <div class="post-stat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>218</div>
+              <div class="post-stat"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>41</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="table-card">
+          <div class="table-head">
+            <div class="table-title">最新訂閱者</div>
+            <div class="table-link" onclick="window.location.href='fanhub-subscribers.html'" style="cursor:pointer">查看全部 248 人</div>
+          </div>
+          <div class="sub-row">
+            <div class="sub-avatar-sm" style="background:linear-gradient(135deg,#5eaab8,#306878)">K</div>
+            <div class="sub-info">
+              <div class="sub-name-text">Kevin L.</div>
+              <div class="sub-since">3 小時前加入</div>
+            </div>
+            <span class="sub-plan-badge">月付</span>
+            <div class="sub-amount" style="margin-left:8px">NT$299</div>
+          </div>
+          <div class="sub-row">
+            <div class="sub-avatar-sm" style="background:linear-gradient(135deg,#d4a05e,#a87230)">M</div>
+            <div class="sub-info">
+              <div class="sub-name-text">Mike C.</div>
+              <div class="sub-since">昨天加入</div>
+            </div>
+            <span class="sub-plan-badge">年付</span>
+            <div class="sub-amount" style="margin-left:8px">NT$249</div>
+          </div>
+          <div class="sub-row">
+            <div class="sub-avatar-sm" style="background:linear-gradient(135deg,#8a5ec0,#5a3090)">J</div>
+            <div class="sub-info">
+              <div class="sub-name-text">Jason W.</div>
+              <div class="sub-since">3 天前加入</div>
+            </div>
+            <span class="sub-plan-badge">月付</span>
+            <div class="sub-amount" style="margin-left:8px">NT$299</div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Right: quick actions + payout -->
+      <div style="display:flex;flex-direction:column;gap:14px">
+
+        <div class="chart-card">
+          <div class="chart-head" style="margin-bottom:12px">
+            <div class="chart-title">快速操作</div>
+          </div>
+          <div class="quick-actions">
+            <div class="qa-btn" onclick="window.location.href='fanhub-post-create.html'">
+              <div class="qa-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg></div>
+              <div><div class="qa-label">新增貼文</div><div class="qa-sub">文字、圖片</div></div>
+            </div>
+            <div class="qa-btn" onclick="window.location.href='fanhub-post-create.html'">
+              <div class="qa-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg></div>
+              <div><div class="qa-label">上傳影片</div><div class="qa-sub">MP4, MOV</div></div>
+            </div>
+            <div class="qa-btn" onclick="window.location.href='fanhub-messages.html'">
+              <div class="qa-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8h2a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-2v4l-4-4H9a2 2 0 0 1-2-2v-1"/><path d="M15 3H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2v4l4-4h4a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2z"/></svg></div>
+              <div><div class="qa-label">查看私訊</div><div class="qa-sub">3 則未讀</div></div>
+            </div>
+            <div class="qa-btn">
+              <div class="qa-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+              <div><div class="qa-label">付費訊息</div><div class="qa-sub">傳送給粉絲</div></div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+/* Theme */
+const root = document.documentElement;
+root.dataset.theme = 'light'; // demo: force light on load
+document.getElementById('themeBtn').addEventListener('click', () => {
+  const n = root.dataset.theme === 'light' ? 'dark' : 'light';
+  root.dataset.theme = n; localStorage.setItem('fh-theme', n);
+});
+
+/* Bar chart data */
+const data = {
+  w: [320,280,410,380,520,460,390],
+  m: [28400,31200,27800,33600,36480,0,0],
+  y: [180000,210000,195000,240000,228000,260000,290000,275000,310000,295000,330000,360000]
+};
+const labels = {
+  w: ['一','二','三','四','五','六','日'],
+  m: ['10月','11月','12月','1月','2月','3月',''],
+  y: ['4月','5月','6月','7月','8月','9月','10月','11月','12月','1月','2月','3月']
+};
+
+let currentPeriod = 'm';
+
+function renderChart(period) {
+  const d = data[period].filter(v => v > 0);
+  const lb = labels[period].filter((_, i) => data[period][i] > 0);
+  const max = Math.max(...d);
+  const chart = document.getElementById('barChart');
+  chart.innerHTML = d.map((v, i) => {
+    const h = Math.round((v / max) * 100);
+    const isLast = i === d.length - 1;
+    return `<div class="bar-wrap">
+      <div class="bar${isLast ? ' this-month' : ''}" style="height:${h}%" title="NT$${v.toLocaleString()}"></div>
+      <div class="bar-label">${lb[i]}</div>
+    </div>`;
+  }).join('');
+}
+
+function setPeriod(btn, period) {
+  document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  currentPeriod = period;
+  renderChart(period);
+}
+
+renderChart('m');
+</script>
+</body>
+</html>

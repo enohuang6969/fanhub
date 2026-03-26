@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="zh-TW" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>私訊 · FANHUB</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,600&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fdf9f6;--surface:#ffffff;--surface2:#faf3ef;--surface3:#fdf0eb;
+  --p:#cc5e76;--ph:#b84d65;--p2:#8a3248;
+  --t1:#2e1118;--t2:#4a1e2a;--t3:#7a4858;
+  --bd:rgba(150,70,90,.25);--bd2:rgba(150,70,90,.42);
+  --nav:rgba(253,249,246,.94);
+  --bubble-out:#cc5e76;--bubble-out-t:#fff;
+  --bubble-in:var(--surface2);--bubble-in-t:var(--t1);
+  --tr:.22s cubic-bezier(.4,0,.2,1);
+}
+[data-theme=dark]{
+  --bg:#080508;--surface:#1e1016;--surface2:#2a1820;--surface3:#382030;
+  --p:#d4718b;--ph:#e07d96;--p2:#9b4c6a;
+  --t1:#f8e0e8;--t2:#d8a8b8;--t3:#a87888;
+  --bd:rgba(200,120,150,.22);--bd2:rgba(200,120,150,.42);
+  --nav:rgba(8,5,8,.96);
+  --bubble-out:#d4718b;
+  --bubble-in:#2d1822;--bubble-in-t:#f0c0cf;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:'DM Sans',sans-serif;
+  font-size:16px;
+  background:var(--bg);color:var(--t1);
+  -webkit-font-smoothing:antialiased;
+  transition:background var(--tr),color var(--tr);
+  overflow:hidden;
+}
+button{font-family:inherit;cursor:pointer;border:none;outline:none;background:none}
+input,textarea{font-family:inherit;outline:none}
+
+/* ── NAVBAR ─────────────────────────────────────── */
+.nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  height:52px;background:var(--nav);
+  backdrop-filter:blur(20px) saturate(160%);
+  -webkit-backdrop-filter:blur(20px) saturate(160%);
+  border-bottom:1px solid var(--bd);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 20px;transition:background var(--tr);
+}
+.nav-logo{font-size:17px;font-weight:500;letter-spacing:.18em;color:var(--p);cursor:pointer}
+.nav-logo em{font-style:normal;font-weight:400;opacity:.55}
+.nav-right{display:flex;align-items:center;gap:10px}
+.theme-btn{
+  width:38px;height:22px;border-radius:11px;
+  background:var(--surface2);border:1.5px solid var(--bd2);
+  position:relative;cursor:pointer;padding:2px;
+  display:flex;align-items:center;
+  transition:background var(--tr),border-color var(--tr);
+}
+.theme-btn::after{
+  content:'';width:16px;height:16px;border-radius:50%;
+  background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.18);
+  transition:transform var(--tr);
+}
+[data-theme=dark] .theme-btn{background:var(--p);border-color:var(--p)}
+[data-theme=dark] .theme-btn::after{transform:translateX(16px)}
+
+/* ── LAYOUT ──────────────────────────────────────── */
+.layout{
+  display:grid;
+  grid-template-columns:300px 1fr;
+  height:100vh;
+  padding-top:52px;
+}
+@media(max-width:680px){
+  .layout{grid-template-columns:1fr}
+  .sidebar{display:none}
+  .sidebar.mobile-show{display:flex}
+  .chat-panel{display:none}
+  .chat-panel.mobile-show{display:flex}
+}
+
+/* ── SIDEBAR ─────────────────────────────────────── */
+.sidebar{
+  border-right:1px solid var(--bd);
+  display:flex;flex-direction:column;
+  background:var(--surface);
+  transition:background var(--tr),border-color var(--tr);
+  overflow:hidden;
+}
+.sidebar-head{
+  padding:14px 16px 10px;
+  border-bottom:1px solid var(--bd);
+  transition:border-color var(--tr);
+}
+.sidebar-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:20px;font-weight:600;
+  color:var(--t1);margin-bottom:10px;
+  transition:color var(--tr);
+}
+.search-bar{
+  display:flex;align-items:center;
+  background:var(--surface2);
+  border:1px solid var(--bd2);
+  border-radius:10px;
+  padding:0 10px;height:34px;gap:7px;
+  transition:border-color .18s,background var(--tr);
+}
+.search-bar:focus-within{border-color:var(--p)}
+.search-bar svg{width:13px;height:13px;color:var(--t3);flex-shrink:0}
+.search-bar input{
+  flex:1;border:none;background:transparent;
+  font-size:14.5px;color:var(--t1);
+  transition:color var(--tr);
+}
+.search-bar input::placeholder{color:var(--t3)}
+
+/* Thread list */
+.thread-list{flex:1;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--bd2) transparent}
+.thread-list::-webkit-scrollbar{width:4px}
+.thread-list::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:2px}
+
+.thread{
+  display:flex;align-items:center;gap:11px;
+  padding:12px 16px;cursor:pointer;
+  border-bottom:1px solid var(--bd);
+  transition:background .15s,border-color var(--tr);
+  position:relative;
+}
+.thread:hover{background:var(--surface2)}
+.thread.active{background:var(--surface3)}
+.thread-avatar{
+  width:44px;height:44px;border-radius:50%;
+  flex-shrink:0;display:flex;align-items:center;justify-content:center;
+  font-family:'Cormorant Garamond',serif;
+  font-size:17px;font-weight:600;color:#fff;
+  position:relative;
+}
+.online-ring{
+  position:absolute;bottom:1px;right:1px;
+  width:10px;height:10px;border-radius:50%;
+  background:#4caf50;border:2px solid var(--surface);
+  transition:border-color var(--tr);
+}
+.thread-body{flex:1;min-width:0}
+.thread-name-row{display:flex;align-items:center;justify-content:space-between;margin-bottom:2px}
+.thread-name{font-size:17px;font-weight:500;color:var(--t1);transition:color var(--tr)}
+.thread-time{font-size:18px;color:var(--t3);flex-shrink:0;transition:color var(--tr)}
+.thread-preview{
+  font-size:15.5px;color:var(--t3);
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  transition:color var(--tr);
+}
+.thread-preview.unread{color:var(--t2);font-weight:500}
+.unread-dot{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--p);flex-shrink:0;
+  transition:background var(--tr);
+}
+
+/* Lock badge on thread */
+.thread-lock{
+  font-size:17px;font-weight:600;letter-spacing:.04em;
+  padding:1px 6px;border-radius:5px;
+  background:var(--surface3);color:var(--p2);
+  border:1px solid var(--bd2);
+  margin-left:5px;flex-shrink:0;
+  transition:background var(--tr),color var(--tr);
+}
+
+/* ── CHAT PANEL ──────────────────────────────────── */
+.chat-panel{
+  display:flex;flex-direction:column;
+  background:var(--bg);
+  transition:background var(--tr);
+  position:relative;
+}
+
+/* Chat header */
+.chat-head{
+  padding:12px 20px;
+  border-bottom:1px solid var(--bd);
+  display:flex;align-items:center;gap:12px;
+  background:var(--surface);
+  transition:background var(--tr),border-color var(--tr);
+  flex-shrink:0;
+}
+.chat-avatar{
+  width:38px;height:38px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Cormorant Garamond',serif;
+  font-size:17px;font-weight:600;color:#fff;
+  flex-shrink:0;
+}
+.chat-head-info{flex:1}
+.chat-head-name{
+  font-size:18px;font-weight:600;color:var(--t1);
+  display:flex;align-items:center;gap:5px;
+  transition:color var(--tr);
+}
+.vcheck{width:13px;height:13px;border-radius:50%;background:var(--p);display:inline-flex;align-items:center;justify-content:center}
+.vcheck svg{width:7px;height:7px}
+.chat-head-status{font-size:17px;color:var(--t3);transition:color var(--tr)}
+.online-text{color:#4caf50;font-weight:500}
+.chat-head-actions{display:flex;gap:8px}
+.head-btn{
+  width:34px;height:34px;border-radius:50%;
+  background:var(--surface2);border:1px solid var(--bd);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--t2);transition:all .18s;
+}
+.head-btn:hover{border-color:var(--p);color:var(--p)}
+.head-btn svg{width:15px;height:15px}
+
+/* Messages area */
+.messages{
+  flex:1;overflow-y:auto;
+  padding:20px;
+  display:flex;flex-direction:column;gap:4px;
+  scrollbar-width:thin;scrollbar-color:var(--bd2) transparent;
+}
+.messages::-webkit-scrollbar{width:4px}
+.messages::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:2px}
+
+/* Date separator */
+.date-sep{
+  display:flex;align-items:center;gap:10px;
+  margin:10px 0;
+}
+.date-sep-line{flex:1;height:1px;background:var(--bd);transition:background var(--tr)}
+.date-sep-text{font-size:18px;color:var(--t3);white-space:nowrap;transition:color var(--tr)}
+
+/* Bubble group */
+.bubble-group{
+  display:flex;flex-direction:column;
+  gap:2px;margin-bottom:8px;
+}
+.bubble-group.out{align-items:flex-end}
+.bubble-group.in{align-items:flex-start}
+
+/* Bubble */
+.bubble{
+  max-width:68%;padding:10px 14px;
+  border-radius:18px;font-size:17px;line-height:1.55;
+  position:relative;word-break:break-word;
+}
+.bubble.out{
+  background:var(--bubble-out);color:var(--bubble-out-t);
+  border-bottom-right-radius:5px;
+}
+.bubble.in{
+  background:var(--bubble-in);color:var(--bubble-in-t);
+  border-bottom-left-radius:5px;
+  transition:background var(--tr),color var(--tr);
+}
+/* First/last radius tweaks */
+.bubble-group.out .bubble:not(:last-child){border-bottom-right-radius:18px}
+.bubble-group.out .bubble:not(:first-child){border-top-right-radius:5px}
+.bubble-group.in .bubble:not(:last-child){border-bottom-left-radius:18px}
+.bubble-group.in .bubble:not(:first-child){border-top-left-radius:5px}
+
+/* Bubble meta */
+.bubble-meta{
+  display:flex;align-items:center;gap:4px;
+  font-size:18px;margin-top:3px;
+}
+.bubble-group.out .bubble-meta{justify-content:flex-end;color:var(--t3)}
+.bubble-group.in .bubble-meta{color:var(--t3)}
+.read-check{color:var(--p);font-size:17px}
+
+/* Image bubble */
+.bubble-img{
+  max-width:220px;border-radius:14px;overflow:hidden;
+  cursor:pointer;transition:opacity .18s;
+}
+.bubble-img:hover{opacity:.9}
+.bubble-img .img-inner{
+  width:220px;height:160px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;color:rgba(255,255,255,.7);
+}
+
+/* Locked paid content bubble */
+.bubble-locked{
+  background:var(--surface);
+  border:1.5px solid var(--bd2);
+  border-radius:14px;padding:14px;
+  max-width:240px;cursor:pointer;
+  transition:all .18s;
+}
+.bubble-locked:hover{border-color:var(--p)}
+.locked-preview{
+  width:100%;height:110px;border-radius:9px;
+  background:var(--surface2);
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:10px;position:relative;overflow:hidden;
+  transition:background var(--tr);
+}
+.locked-preview-bg{
+  position:absolute;inset:0;
+  background:linear-gradient(145deg,var(--surface2),var(--surface3));
+  filter:blur(4px);
+  transition:background var(--tr);
+}
+.locked-icon{
+  position:relative;z-index:1;
+  width:36px;height:36px;border-radius:50%;
+  background:rgba(204,94,118,.15);
+  border:1.5px solid rgba(204,94,118,.3);
+  display:flex;align-items:center;justify-content:center;
+}
+.locked-icon svg{width:17px;height:17px;stroke:var(--p)}
+.locked-info{display:flex;align-items:center;justify-content:space-between}
+.locked-label{font-size:17px;color:var(--t2);transition:color var(--tr)}
+.locked-price{
+  font-size:18px;font-weight:600;color:var(--p);
+  transition:color var(--tr);
+}
+.locked-unlock-btn{
+  width:100%;margin-top:9px;
+  padding:7px 0;border-radius:9px;
+  background:var(--p);color:#fff;
+  font-size:17px;font-weight:600;
+  transition:background .18s;
+}
+.locked-unlock-btn:hover{background:var(--ph)}
+
+/* Typing indicator */
+.typing{
+  display:flex;align-items:center;gap:4px;
+  padding:10px 14px;
+  background:var(--bubble-in);
+  border-radius:18px;border-bottom-left-radius:5px;
+  width:fit-content;
+}
+.typing-dot{
+  width:6px;height:6px;border-radius:50%;
+  background:var(--t3);
+  animation:typingBounce 1.2s infinite;
+}
+.typing-dot:nth-child(2){animation-delay:.2s}
+.typing-dot:nth-child(3){animation-delay:.4s}
+@keyframes typingBounce{
+  0%,60%,100%{transform:translateY(0)}
+  30%{transform:translateY(-5px)}
+}
+
+/* ── INPUT AREA ──────────────────────────────────── */
+.input-area{
+  padding:12px 16px;
+  border-top:1px solid var(--bd);
+  background:var(--surface);
+  flex-shrink:0;
+  transition:background var(--tr),border-color var(--tr);
+}
+.input-row{
+  display:flex;align-items:flex-end;gap:8px;
+}
+.input-actions{display:flex;gap:6px;flex-shrink:0;padding-bottom:2px}
+.input-action-btn{
+  width:32px;height:32px;border-radius:50%;
+  background:var(--surface2);border:1px solid var(--bd);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--t2);transition:all .18s;flex-shrink:0;
+}
+.input-action-btn:hover{border-color:var(--p);color:var(--p)}
+.input-action-btn svg{width:14px;height:14px}
+.input-box-wrap{
+  flex:1;
+  background:var(--surface2);
+  border:1.5px solid var(--bd2);
+  border-radius:20px;
+  padding:8px 14px;
+  transition:border-color .18s,background var(--tr);
+}
+.input-box-wrap:focus-within{border-color:var(--p)}
+.input-box{
+  width:100%;border:none;background:transparent;
+  font-size:17px;color:var(--t1);
+  resize:none;max-height:100px;
+  line-height:1.5;
+  transition:color var(--tr);
+}
+.input-box::placeholder{color:var(--t3)}
+.send-btn{
+  width:36px;height:36px;border-radius:50%;
+  background:var(--p);
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;flex-shrink:0;
+  transition:background .18s,transform .15s;
+  box-shadow:0 2px 8px rgba(204,94,118,.3);
+}
+.send-btn:hover{background:var(--ph);transform:scale(1.05)}
+.send-btn svg{width:15px;height:15px}
+
+/* Paid content prompt above input */
+.paid-prompt{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:7px 12px;margin-bottom:8px;
+  background:var(--surface3);border-radius:10px;
+  border:1px solid var(--bd2);
+  transition:background var(--tr),border-color var(--tr);
+}
+.paid-prompt-text{font-size:17px;color:var(--t2);transition:color var(--tr)}
+.paid-prompt-btn{
+  font-size:17px;font-weight:600;color:var(--p);
+  padding:3px 10px;border-radius:7px;
+  background:var(--surface);border:1px solid var(--bd2);
+  transition:all .18s;
+}
+.paid-prompt-btn:hover{border-color:var(--p);background:var(--surface3)}
+
+/* Unlock success state */
+.unlock-success{
+  padding:14px;border-radius:12px;
+  border:1.5px solid var(--p);
+  background:var(--surface3);
+  transition:background var(--tr),border-color var(--tr);
+}
+.unlock-success-label{
+  font-size:18px;font-weight:600;color:var(--p);
+  display:flex;align-items:center;gap:5px;margin-bottom:8px;
+}
+.unlock-success-label svg{width:12px;height:12px}
+.unlock-success-preview{
+  width:100%;height:100px;border-radius:8px;
+  background:linear-gradient(145deg,var(--surface2),var(--p2));
+  display:flex;align-items:center;justify-content:center;
+  position:relative;overflow:hidden;
+  transition:background var(--tr);
+}
+.unlock-play{
+  width:36px;height:36px;border-radius:50%;
+  background:rgba(255,255,255,.2);border:1.5px solid rgba(255,255,255,.4);
+  display:flex;align-items:center;justify-content:center;
+}
+.unlock-play svg{width:14px;height:14px;fill:#fff;margin-left:2px}
+  flex:1;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;
+  gap:12px;color:var(--t3);
+}
+.empty-icon{
+  width:56px;height:56px;border-radius:50%;
+  background:var(--surface2);
+  display:flex;align-items:center;justify-content:center;
+  transition:background var(--tr);
+}
+.empty-icon svg{width:24px;height:24px}
+.empty-title{font-size:17px;font-weight:500;color:var(--t2);transition:color var(--tr)}
+.empty-sub{font-size:18px;text-align:center;max-width:200px;line-height:1.55;transition:color var(--tr)}
+
+/* Entrance */
+@keyframes fadeIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.bubble-group{animation:fadeIn .22s both}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-logo" onclick="window.location.href='fanhub-explore.html'">FAN<em>HUB</em></div>
+  <div class="nav-right">
+    <div class="theme-btn" id="themeBtn"></div>
+  </div>
+</nav>
+
+<div class="layout">
+
+  <!-- ── SIDEBAR ─────────────────────────────────── -->
+  <div class="sidebar">
+    <div class="sidebar-head">
+      <div class="sidebar-title">私訊</div>
+      <div class="search-bar">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+        <input type="text" placeholder="搜尋對話…">
+      </div>
+    </div>
+
+    <div class="thread-list">
+
+      <!-- Thread 1: active / Ava Lin -->
+      <div class="thread active" onclick="switchThread('ava')">
+        <div class="thread-avatar" style="background:linear-gradient(135deg,#cc5e76,#8a3248)">
+          A
+          <div class="online-ring"></div>
+        </div>
+        <div class="thread-body">
+          <div class="thread-name-row">
+            <div class="thread-name">
+              Ava Lin
+              <span style="font-size:13px;font-weight:600;padding:1px 6px;border-radius:5px;background:var(--surface3);color:var(--p2);border:1px solid var(--bd2);margin-left:4px">創作者</span>
+            </div>
+            <div class="thread-time">剛剛</div>
+          </div>
+          <div class="thread-preview unread">謝謝你的訂閱！有任何問題都可以…</div>
+        </div>
+        <div class="unread-dot"></div>
+      </div>
+
+      <!-- Thread 2: Sara Wu -->
+      <div class="thread" onclick="switchThread('sara')">
+        <div class="thread-avatar" style="background:linear-gradient(135deg,#5faa6e,#387a45)">
+          S
+        </div>
+        <div class="thread-body">
+          <div class="thread-name-row">
+            <div class="thread-name">Sara Wu <span style="font-size:13px;font-weight:600;padding:1px 6px;border-radius:5px;background:var(--surface3);color:var(--p2);border:1px solid var(--bd2);margin-left:4px">創作者</span></div>
+            <div class="thread-time">昨天</div>
+          </div>
+          <div class="thread-preview">下週的直播是週四晚上八點！</div>
+        </div>
+      </div>
+
+      <!-- Thread 3: Roxy Hsu -->
+      <div class="thread" onclick="switchThread('roxy')">
+        <div class="thread-avatar" style="background:linear-gradient(135deg,#5eaab8,#306878)">
+          R
+        </div>
+        <div class="thread-body">
+          <div class="thread-name-row">
+            <div class="thread-name">Roxy Hsu <span style="font-size:13px;font-weight:600;padding:1px 6px;border-radius:5px;background:var(--surface3);color:var(--p2);border:1px solid var(--bd2);margin-left:4px">創作者</span></div>
+            <div class="thread-time">週一</div>
+          </div>
+          <div class="thread-preview">你好！我剛上傳了新的攝影集 📸</div>
+        </div>
+      </div>
+
+      <!-- Thread 4: Luna Kao -->
+      <div class="thread" onclick="switchThread('luna')">
+        <div class="thread-avatar" style="background:linear-gradient(135deg,#d4a05e,#a87230)">
+          L
+        </div>
+        <div class="thread-body">
+          <div class="thread-name-row">
+            <div class="thread-name">Luna Kao <span style="font-size:13px;font-weight:600;padding:1px 6px;border-radius:5px;background:var(--surface3);color:var(--p2);border:1px solid var(--bd2);margin-left:4px">創作者</span></div>
+            <div class="thread-time">3/18</div>
+          </div>
+          <div class="thread-preview">好的，我會為你準備的！</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── CHAT PANEL ───────────────────────────────── -->
+  <div class="chat-panel" id="chatPanel">
+
+    <!-- Chat header -->
+    <div class="chat-head">
+      <div class="chat-avatar" id="chatAvatar" style="background:linear-gradient(135deg,#cc5e76,#8a3248)">A</div>
+      <div class="chat-head-info">
+        <div class="chat-head-name" id="chatName">
+          Ava Lin
+          <span class="vcheck"><svg viewBox="0 0 12 12" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,6 5,9 10,3"/></svg></span>
+        </div>
+        <div class="chat-head-status"><span class="online-text">● 在線上</span></div>
+      </div>
+      <div class="chat-head-actions">
+        <button class="head-btn" title="查看主頁" onclick="window.location.href='fanhub-creator-profile.html'">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+        </button>
+        <button class="head-btn" title="更多選項">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><circle cx="12" cy="5" r="1"/><circle cx="12" cy="12" r="1"/><circle cx="12" cy="19" r="1"/></svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Messages -->
+    <div class="messages" id="messages">
+
+      <div class="date-sep">
+        <div class="date-sep-line"></div>
+        <div class="date-sep-text">今天</div>
+        <div class="date-sep-line"></div>
+      </div>
+
+      <!-- Creator message: welcome -->
+      <div class="bubble-group in">
+        <div class="bubble in">嗨！歡迎訂閱我的頻道 ✨<br>謝謝你的支持，有任何問題都可以直接問我！</div>
+        <div class="bubble-meta">14:02</div>
+      </div>
+
+      <!-- User reply -->
+      <div class="bubble-group out">
+        <div class="bubble out">謝謝！我很期待你的內容 😊</div>
+        <div class="bubble-meta">14:05 <span class="read-check">✓✓</span></div>
+      </div>
+
+      <!-- Creator -->
+      <div class="bubble-group in">
+        <div class="bubble in">這週五我會發布新的健身影片，還有一個獨家的飲食計畫，訂閱者限定！</div>
+        <div class="bubble in">你有特別想看的主題嗎？</div>
+        <div class="bubble-meta">14:06</div>
+      </div>
+
+      <!-- User -->
+      <div class="bubble-group out">
+        <div class="bubble out">我對居家訓練比較感興趣，因為沒辦法常去健身房</div>
+        <div class="bubble-meta">14:10 <span class="read-check">✓✓</span></div>
+      </div>
+
+      <!-- Creator -->
+      <div class="bubble-group in">
+        <div class="bubble in">太好了！我下週會專門做一個「無器材居家訓練」的系列 💪</div>
+        <div class="bubble-meta">14:11</div>
+      </div>
+
+      <!-- Locked paid content -->
+      <div class="bubble-group in">
+        <div class="bubble-locked" onclick="unlockContent()">
+          <div class="locked-preview">
+            <div class="locked-preview-bg"></div>
+            <div class="locked-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor"/><path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="currentColor"/></svg>
+            </div>
+          </div>
+          <div class="locked-info">
+            <div class="locked-label">獨家影片 · 48 分鐘</div>
+            <div class="locked-price">NT$150</div>
+          </div>
+          <button class="locked-unlock-btn">解鎖這則訊息</button>
+        </div>
+        <div class="bubble-meta">14:13</div>
+      </div>
+
+      <!-- User -->
+      <div class="bubble-group out">
+        <div class="bubble out">好的！我很期待 🙏</div>
+        <div class="bubble-meta">14:18 <span class="read-check">✓✓</span></div>
+      </div>
+
+      <!-- Creator typing -->
+      <div class="bubble-group in" id="typingGroup" style="display:none">
+        <div class="typing">
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+          <div class="typing-dot"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Input area -->
+    <div class="input-area">
+      <!-- Paid content prompt (for creators) -->
+      <div class="paid-prompt" id="paidPrompt" style="display:none">
+        <span class="paid-prompt-text">傳送付費限定內容給訂閱者</span>
+        <button class="paid-prompt-btn">+ 設定付費訊息</button>
+      </div>
+
+      <div class="input-row">
+        <div class="input-actions">
+          <button class="input-action-btn" title="傳送圖片">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          </button>
+        </div>
+        <div class="input-box-wrap">
+          <textarea class="input-box" id="msgInput" placeholder="輸入訊息…" rows="1" oninput="autoResize(this)" onkeydown="handleKey(event)"></textarea>
+        </div>
+        <button class="send-btn" onclick="sendMessage()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+/* Theme */
+const root = document.documentElement;
+root.dataset.theme = 'light'; // demo: force light on load
+document.getElementById('themeBtn').addEventListener('click', () => {
+  const n = root.dataset.theme === 'light' ? 'dark' : 'light';
+  root.dataset.theme = n; localStorage.setItem('fh-theme', n);
+});
+
+/* Thread data */
+const threads = {
+  ava:  { name:'Ava Lin',  avatar:'A', color:'linear-gradient(135deg,#cc5e76,#8a3248)', online:true },
+  sara: { name:'Sara Wu',  avatar:'S', color:'linear-gradient(135deg,#5faa6e,#387a45)', online:false },
+  roxy: { name:'Roxy Hsu', avatar:'R', color:'linear-gradient(135deg,#5eaab8,#306878)', online:true },
+  luna: { name:'Luna Kao', avatar:'L', color:'linear-gradient(135deg,#d4a05e,#a87230)', online:false },
+};
+
+function switchThread(id) {
+  document.querySelectorAll('.thread').forEach(t => t.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+  const t = threads[id];
+  document.getElementById('chatAvatar').textContent = t.avatar;
+  document.getElementById('chatAvatar').style.background = t.color;
+  document.getElementById('chatName').innerHTML = t.name +
+    ' <span class="vcheck"><svg viewBox="0 0 12 12" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,6 5,9 10,3"/></svg></span>';
+  document.querySelector('.chat-head-status').innerHTML = t.online
+    ? '<span class="online-text">● 在線上</span>'
+    : '<span style="color:var(--t3)">最後上線：今天</span>';
+  // Remove unread dot from clicked thread
+  const dot = event.currentTarget.querySelector('.unread-dot');
+  if (dot) dot.remove();
+  const prev = event.currentTarget.querySelector('.thread-preview');
+  if (prev) prev.classList.remove('unread');
+}
+
+/* Auto resize textarea */
+function autoResize(el) {
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 100) + 'px';
+}
+
+/* Send on Enter (Shift+Enter for newline) */
+function handleKey(e) {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+}
+
+/* Send message */
+function sendMessage() {
+  const input = document.getElementById('msgInput');
+  const text = input.value.trim();
+  if (!text) return;
+  appendBubble(text, 'out');
+  input.value = '';
+  input.style.height = 'auto';
+  // Simulate reply after delay
+  showTyping();
+  setTimeout(() => {
+    hideTyping();
+    const replies = [
+      '好的，我知道了！',
+      '謝謝你告訴我 😊',
+      '我會盡快準備相關內容！',
+      '太棒了，期待和你互動 ✨',
+    ];
+    appendBubble(replies[Math.floor(Math.random() * replies.length)], 'in');
+  }, 1800);
+}
+
+function appendBubble(text, dir) {
+  const msgs = document.getElementById('messages');
+  const group = document.createElement('div');
+  group.className = 'bubble-group ' + dir;
+  const now = new Date();
+  const time = now.getHours() + ':' + String(now.getMinutes()).padStart(2,'0');
+  group.innerHTML = `<div class="bubble ${dir}">${text}</div>
+    <div class="bubble-meta">${time}${dir==='out'?' <span class="read-check">✓✓</span>':''}</div>`;
+  msgs.appendChild(group);
+  msgs.scrollTop = msgs.scrollHeight;
+}
+
+function showTyping() {
+  document.getElementById('typingGroup').style.display = '';
+  const msgs = document.getElementById('messages');
+  msgs.scrollTop = msgs.scrollHeight;
+}
+function hideTyping() {
+  document.getElementById('typingGroup').style.display = 'none';
+}
+
+/* Unlock paid content */
+function unlockContent() {
+  const locked = document.querySelector('.bubble-locked');
+  if (!locked) return;
+  locked.outerHTML = `<div class="unlock-success">
+    <div class="unlock-success-label">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 13l4 4L19 7"/></svg>
+      已解鎖 · 獨家影片
+    </div>
+    <div class="unlock-success-preview">
+      <div class="unlock-play">
+        <svg viewBox="0 0 24 24"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+      </div>
+    </div>
+    <div style="font-size:12px;color:var(--t3);margin-top:7px;transition:color var(--tr)">點擊播放 · 48 分鐘 · 已永久解鎖</div>
+  </div>`;
+}
+
+/* Scroll to bottom on load */
+window.addEventListener('load', () => {
+  const msgs = document.getElementById('messages');
+  msgs.scrollTop = msgs.scrollHeight;
+});
+</script>
+</body>
+</html>

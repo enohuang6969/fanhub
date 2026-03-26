@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="zh-TW" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>發布貼文 · FANHUB</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ── TOKENS ──
+   Light: bg=#fdf9f6 surface=#ffffff surface2=#faf3ef surface3=#fdf0eb p=#cc5e76 t1=#2e1118 nav=rgba(253,249,246,.94)
+   Dark : bg=#0f0a0d surface=#1a0f14 surface2=#2d1822 surface3=#3d2230 p=#d4718b t1=#f0c0cf nav=rgba(15,10,13,.94)
+*/
+:root{
+  --bg:#fdf9f6;--surface:#ffffff;--surface2:#faf3ef;--surface3:#fdf0eb;
+  --p:#cc5e76;--ph:#b84d65;--p2:#8a3248;
+  --t1:#2e1118;--t2:#4a1e2a;--t3:#7a4858;
+  --bd:rgba(150,70,90,.25);--bd2:rgba(150,70,90,.42);
+  --nav:rgba(253,249,246,.94);
+  --ok:#2d8a4e;--ok-bg:#eaf6ee;
+  --tr:.22s cubic-bezier(.4,0,.2,1);
+}
+[data-theme=dark]{
+  --bg:#080508;--surface:#1e1016;--surface2:#2a1820;--surface3:#382030;
+  --p:#d4718b;--ph:#e07d96;--p2:#9b4c6a;
+  --t1:#f8e0e8;--t2:#d8a8b8;--t3:#a87888;
+  --bd:rgba(200,120,150,.22);--bd2:rgba(200,120,150,.42);
+  --nav:rgba(8,5,8,.96);
+  --ok:#5eca7a;--ok-bg:#0d2518;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:'DM Sans',sans-serif;
+  font-size:16px;
+  background:var(--bg);color:var(--t1);
+  -webkit-font-smoothing:antialiased;
+  transition:background var(--tr),color var(--tr);
+  overflow:hidden;
+}
+button{font-family:inherit;cursor:pointer;border:none;outline:none;background:none}
+input,textarea,select{font-family:inherit;outline:none}
+
+/* ── TOPBAR ──────────────────────────────────────── */
+.topbar{
+  height:52px;
+  background:var(--nav);
+  backdrop-filter:blur(20px) saturate(160%);
+  -webkit-backdrop-filter:blur(20px) saturate(160%);
+  border-bottom:1px solid var(--bd);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 24px;
+  position:relative;z-index:100;
+  transition:background var(--tr),border-color var(--tr);
+  flex-shrink:0;
+}
+.topbar-left{display:flex;align-items:center;gap:16px}
+.back-btn{
+  display:flex;align-items:center;gap:5px;
+  font-size:18px;color:var(--t3);cursor:pointer;transition:color .18s;
+}
+.back-btn:hover{color:var(--p)}
+.back-btn svg{width:14px;height:14px}
+.topbar-title{
+  font-size:18px;font-weight:500;color:var(--t1);transition:color var(--tr);
+}
+.draft-badge{
+  font-size:18px;font-weight:500;color:var(--t3);
+  background:var(--surface2);padding:3px 10px;border-radius:8px;
+  transition:background var(--tr),color var(--tr);
+}
+.topbar-right{display:flex;align-items:center;gap:10px}
+.theme-btn{
+  width:34px;height:20px;border-radius:10px;
+  background:var(--surface2);border:1.5px solid var(--bd2);
+  position:relative;cursor:pointer;padding:2px;display:flex;align-items:center;
+  transition:background var(--tr),border-color var(--tr);
+}
+.theme-btn::after{
+  content:'';width:14px;height:14px;border-radius:50%;
+  background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.18);transition:transform var(--tr);
+}
+[data-theme=dark] .theme-btn{background:var(--p);border-color:var(--p)}
+[data-theme=dark] .theme-btn::after{transform:translateX(14px)}
+.btn-sm{
+  font-size:18px;font-weight:500;padding:6px 14px;border-radius:8px;
+  border:1px solid var(--bd2);color:var(--t2);transition:all .18s;
+}
+.btn-sm:hover{border-color:var(--p);color:var(--p)}
+.btn-publish{
+  font-size:18px;font-weight:600;padding:7px 18px;border-radius:8px;
+  background:var(--p);color:#fff;
+  transition:background .18s,transform .15s;
+  box-shadow:0 2px 8px rgba(204,94,118,.25);
+}
+.btn-publish:hover{background:var(--ph);transform:translateY(-1px)}
+.btn-publish:disabled{opacity:.5;pointer-events:none}
+
+/* ── MAIN LAYOUT ─────────────────────────────────── */
+.editor-layout{
+  display:grid;
+  grid-template-columns:1fr 300px;
+  height:calc(100vh - 52px);
+}
+
+/* ── LEFT: EDITOR ────────────────────────────────── */
+.editor-main{
+  overflow-y:auto;
+  display:flex;flex-direction:column;
+  border-right:1px solid var(--bd);
+  transition:border-color var(--tr);
+}
+.editor-main::-webkit-scrollbar{width:4px}
+.editor-main::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:2px}
+
+/* Type selector */
+.type-selector{
+  display:flex;gap:6px;
+  padding:16px 24px 0;
+  border-bottom:1px solid var(--bd);
+  transition:border-color var(--tr);
+  overflow-x:auto;scrollbar-width:none;
+  flex-shrink:0;
+}
+.type-selector::-webkit-scrollbar{display:none}
+.type-tab{
+  display:flex;align-items:center;gap:6px;
+  font-size:18px;font-weight:500;color:var(--t3);
+  padding:8px 14px;border-bottom:2px solid transparent;
+  cursor:pointer;transition:color .18s,border-color .18s;
+  white-space:nowrap;flex-shrink:0;
+}
+.type-tab svg{width:14px;height:14px}
+.type-tab.active{color:var(--p);border-bottom-color:var(--p)}
+.type-tab:hover:not(.active){color:var(--t2)}
+
+/* Content area */
+.editor-content{flex:1;padding:24px;display:flex;flex-direction:column;gap:16px}
+
+/* Caption textarea */
+.caption-wrap{position:relative}
+.caption-textarea{
+  width:100%;min-height:120px;
+  padding:0;border:none;background:transparent;
+  font-size:17px;color:var(--t1);line-height:1.7;
+  resize:none;
+  transition:color var(--tr);
+}
+.caption-textarea::placeholder{color:var(--bd2);font-size:17px}
+.caption-char{
+  position:absolute;bottom:0;right:0;
+  font-size:18px;color:var(--t3);transition:color var(--tr);
+}
+.caption-char.warn{color:var(--p)}
+
+/* Formatting toolbar */
+.format-bar{
+  display:flex;gap:2px;padding:8px 10px;
+  background:var(--surface2);border-radius:10px;
+  border:1px solid var(--bd);
+  transition:background var(--tr),border-color var(--tr);
+  flex-wrap:wrap;
+}
+.fmt-btn{
+  width:30px;height:28px;border-radius:6px;
+  display:flex;align-items:center;justify-content:center;
+  color:var(--t2);transition:all .18s;font-size:18px;font-weight:700;
+}
+.fmt-btn:hover{background:var(--surface3);color:var(--p)}
+.fmt-btn svg{width:13px;height:13px}
+.fmt-divider{width:1px;height:24px;background:var(--bd);margin:2px 4px;flex-shrink:0;transition:background var(--tr)}
+
+/* Media upload zone */
+.media-zone{
+  border:1.5px dashed var(--bd2);border-radius:14px;
+  padding:28px 20px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
+  cursor:pointer;transition:all .22s;min-height:140px;
+  background:var(--surface2);
+  transition:background var(--tr),border-color var(--tr);
+}
+.media-zone:hover{border-color:var(--p);background:var(--surface3)}
+.media-zone-icon{
+  width:44px;height:44px;border-radius:12px;
+  background:var(--surface);border:1px solid var(--bd);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--t3);transition:background var(--tr),border-color var(--tr);
+}
+.media-zone:hover .media-zone-icon{border-color:var(--p);color:var(--p)}
+.media-zone-icon svg{width:20px;height:20px}
+.media-zone-title{font-size:17px;font-weight:500;color:var(--t2);transition:color var(--tr)}
+.media-zone-sub{font-size:17px;color:var(--t3);transition:color var(--tr)}
+.media-zone-types{display:flex;gap:5px;margin-top:2px}
+.media-type-pill{
+  font-size:17px;font-weight:600;letter-spacing:.06em;
+  padding:2px 7px;border-radius:6px;
+  background:var(--surface);border:1px solid var(--bd);color:var(--t3);
+  transition:background var(--tr),color var(--tr),border-color var(--tr);
+}
+
+/* Uploaded media grid */
+.media-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);gap:8px;
+  display:none;
+}
+.media-thumb{
+  aspect-ratio:1;border-radius:10px;
+  position:relative;overflow:hidden;
+  background:var(--surface2);transition:background var(--tr);
+}
+.media-thumb-bg{width:100%;height:100%}
+.media-thumb-del{
+  position:absolute;top:6px;right:6px;
+  width:22px;height:22px;border-radius:50%;
+  background:rgba(15,10,13,.55);backdrop-filter:blur(4px);
+  display:flex;align-items:center;justify-content:center;
+  color:#fff;opacity:0;transition:opacity .18s;
+}
+.media-thumb:hover .media-thumb-del{opacity:1}
+.media-thumb-del svg{width:10px;height:10px}
+.media-add{
+  aspect-ratio:1;border-radius:10px;
+  border:1.5px dashed var(--bd2);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;color:var(--t3);
+  transition:all .18s;background:var(--surface2);
+}
+.media-add:hover{border-color:var(--p);color:var(--p);background:var(--surface3)}
+.media-add svg{width:20px;height:20px}
+
+/* Paid content section */
+.paid-section{
+  background:var(--surface3);border-radius:12px;
+  padding:14px 16px;border:1px solid var(--bd2);
+  transition:background var(--tr),border-color var(--tr);
+}
+.paid-section-head{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:12px;
+}
+.paid-section-title{
+  font-size:18px;font-weight:600;color:var(--t1);
+  display:flex;align-items:center;gap:6px;transition:color var(--tr);
+}
+.paid-section-title svg{width:13px;height:13px;color:var(--p)}
+.toggle-sw{
+  width:36px;height:20px;border-radius:10px;
+  background:var(--surface2);border:1.5px solid var(--bd2);
+  position:relative;cursor:pointer;padding:2px;display:flex;align-items:center;
+  transition:background .22s,border-color .22s;
+}
+.toggle-sw.on{background:var(--p);border-color:var(--p)}
+.toggle-thumb{
+  width:14px;height:14px;border-radius:50%;
+  background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.18);transition:transform .22s;
+}
+.toggle-sw.on .toggle-thumb{transform:translateX(16px)}
+.paid-options{display:none}
+.paid-options.show{display:flex;flex-direction:column;gap:10px}
+.paid-row{display:flex;align-items:center;gap:10px}
+.paid-label{font-size:18px;color:var(--t2);flex-shrink:0;width:80px;transition:color var(--tr)}
+.price-input-wrap{
+  display:flex;align-items:center;flex:1;
+  background:var(--surface);border:1.5px solid var(--bd2);border-radius:8px;overflow:hidden;
+  transition:border-color .18s,background var(--tr);
+}
+.price-input-wrap:focus-within{border-color:var(--p)}
+.price-pre{
+  padding:0 10px;font-size:18px;color:var(--t3);
+  border-right:1px solid var(--bd2);height:36px;
+  display:flex;align-items:center;flex-shrink:0;transition:color var(--tr),border-color var(--tr);
+}
+.price-inp{
+  flex:1;height:36px;padding:0 10px;border:none;background:transparent;
+  font-size:17px;color:var(--t1);transition:color var(--tr);
+}
+
+/* Hashtag input */
+.hashtag-wrap{
+  display:flex;flex-wrap:wrap;gap:6px;
+  padding:8px 10px;min-height:40px;
+  background:var(--surface2);border:1.5px solid var(--bd2);
+  border-radius:9px;cursor:text;
+  transition:border-color .18s,background var(--tr);
+}
+.hashtag-wrap:focus-within{border-color:var(--p);background:var(--surface)}
+.hashtag-chip{
+  display:flex;align-items:center;gap:4px;
+  background:var(--surface3);border:1px solid var(--bd2);
+  border-radius:6px;padding:2px 8px;
+  font-size:17px;color:var(--p2);transition:background var(--tr),color var(--tr);
+}
+.hashtag-chip-x{color:var(--t3);cursor:pointer;font-size:18px;transition:color .18s}
+.hashtag-chip-x:hover{color:var(--p)}
+.hashtag-field{
+  border:none;background:transparent;font-size:18px;
+  color:var(--t1);min-width:80px;flex:1;transition:color var(--tr);
+}
+.hashtag-field::placeholder{color:var(--t3)}
+
+/* ── RIGHT: SETTINGS ─────────────────────────────── */
+.editor-settings{
+  overflow-y:auto;background:var(--surface);
+  transition:background var(--tr);
+}
+.editor-settings::-webkit-scrollbar{width:4px}
+.editor-settings::-webkit-scrollbar-thumb{background:var(--bd2);border-radius:2px}
+
+.settings-section{
+  border-bottom:1px solid var(--bd);
+  padding:16px;
+  transition:border-color var(--tr);
+}
+.settings-section:last-child{border-bottom:none}
+.settings-label{
+  font-size:18px;font-weight:500;letter-spacing:.08em;
+  text-transform:uppercase;color:var(--t3);
+  margin-bottom:12px;transition:color var(--tr);
+}
+
+/* Access selector */
+.access-options{display:flex;flex-direction:column;gap:6px}
+.access-opt{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 12px;border-radius:10px;
+  border:1.5px solid var(--bd2);cursor:pointer;
+  background:var(--surface2);transition:all .18s;
+}
+.access-opt:hover{border-color:var(--p)}
+.access-opt.selected{border-color:var(--p);background:var(--surface3)}
+.access-radio{
+  width:16px;height:16px;border-radius:50%;
+  border:1.5px solid var(--bd2);flex-shrink:0;
+  display:flex;align-items:center;justify-content:center;transition:all .2s;
+}
+.access-opt.selected .access-radio{border-color:var(--p);background:var(--p)}
+.access-radio-dot{
+  width:7px;height:7px;border-radius:50%;
+  background:#fff;opacity:0;transition:opacity .2s;
+}
+.access-opt.selected .access-radio-dot{opacity:1}
+.access-info{}
+.access-name{font-size:18px;font-weight:500;color:var(--t1);transition:color var(--tr)}
+.access-desc{font-size:18px;color:var(--t3);margin-top:1px;transition:color var(--tr)}
+.access-badge{
+  margin-left:auto;font-size:17px;font-weight:700;
+  padding:2px 7px;border-radius:6px;flex-shrink:0;
+}
+.badge-free{background:var(--ok-bg);color:var(--ok)}
+.badge-sub{background:var(--surface3);color:var(--p2);border:1px solid var(--bd2)}
+.badge-paid{background:rgba(204,94,118,.1);color:var(--p)}
+
+/* Schedule */
+.schedule-row{display:flex;flex-direction:column;gap:8px}
+.schedule-toggle{display:flex;align-items:center;justify-content:space-between}
+.schedule-toggle-label{font-size:18px;font-weight:500;color:var(--t1);transition:color var(--tr)}
+.schedule-input{
+  width:100%;height:38px;padding:0 12px;
+  background:var(--surface2);border:1.5px solid var(--bd2);
+  border-radius:8px;font-size:18px;color:var(--t1);
+  transition:border-color .18s,background var(--tr),color var(--tr);
+  display:none;
+}
+.schedule-input.show{display:block}
+.schedule-input:focus{border-color:var(--p)}
+
+/* Preview card */
+.preview-card{
+  background:var(--surface2);border-radius:12px;
+  overflow:hidden;border:1px solid var(--bd);
+  transition:background var(--tr),border-color var(--tr);
+}
+.preview-card-cover{
+  height:120px;position:relative;overflow:hidden;
+  background:linear-gradient(145deg,var(--surface2),var(--surface3));
+  display:flex;align-items:center;justify-content:center;
+  transition:background var(--tr);
+}
+.preview-empty-icon{color:var(--bd2)}
+.preview-empty-icon svg{width:32px;height:32px}
+.preview-card-body{padding:10px 12px}
+.preview-caption-text{
+  font-size:17px;color:var(--t2);line-height:1.5;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+  min-height:32px;transition:color var(--tr);
+}
+.preview-caption-empty{color:var(--t3);font-style:italic}
+.preview-meta{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-top:8px;font-size:18px;color:var(--t3);transition:color var(--tr);
+}
+.preview-avatar-sm{
+  width:20px;height:20px;border-radius:50%;
+  background:linear-gradient(135deg,var(--p),var(--p2));
+  display:flex;align-items:center;justify-content:center;
+  font-size:8px;font-weight:700;color:#fff;flex-shrink:0;
+}
+
+/* Tips */
+.tip-box{
+  background:var(--ok-bg);border-radius:10px;
+  padding:10px 12px;border:1px solid rgba(45,138,78,.15);
+  display:flex;align-items:flex-start;gap:7px;
+}
+.tip-box svg{width:13px;height:13px;stroke:var(--ok);flex-shrink:0;margin-top:1px}
+.tip-text{font-size:18px;color:var(--ok);line-height:1.55}
+
+/* Publish area at bottom of right panel */
+.publish-area{
+  padding:16px;background:var(--surface);
+  border-top:1px solid var(--bd);
+  transition:background var(--tr),border-color var(--tr);
+  position:sticky;bottom:0;
+}
+.publish-btn-full{
+  width:100%;height:44px;border-radius:10px;
+  background:var(--p);color:#fff;
+  font-size:17px;font-weight:600;
+  transition:background .18s,transform .15s;
+  box-shadow:0 3px 12px rgba(204,94,118,.25);
+  display:flex;align-items:center;justify-content:center;gap:7px;
+  position:relative;overflow:hidden;
+}
+.publish-btn-full:hover{background:var(--ph);transform:translateY(-1px)}
+.publish-btn-full::after{
+  content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.15),transparent);
+  transition:left .5s;
+}
+.publish-btn-full:hover::after{left:140%}
+.publish-btn-full svg{width:14px;height:14px}
+.publish-btn-full.loading{pointer-events:none;opacity:.8}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spinner{width:16px;height:16px;border-radius:50%;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;animation:spin .7s linear infinite;display:none}
+.publish-btn-full.loading .spinner{display:block}
+.publish-btn-full.loading .pub-txt{display:none}
+.draft-btn{
+  width:100%;font-size:17px;color:var(--t3);
+  padding:8px 0;margin-top:6px;
+  transition:color .18s;text-align:center;
+}
+.draft-btn:hover{color:var(--p)}
+
+/* Success overlay */
+.success-overlay{
+  display:none;position:fixed;inset:0;z-index:300;
+  background:rgba(15,10,13,.55);backdrop-filter:blur(6px);
+  align-items:center;justify-content:center;padding:24px;
+}
+.success-overlay.show{display:flex}
+.success-card{
+  background:var(--surface);border-radius:20px;border:1px solid var(--bd);
+  padding:36px 28px;text-align:center;max-width:360px;width:100%;
+  transition:background var(--tr),border-color var(--tr);
+}
+.success-ring{
+  width:60px;height:60px;border-radius:50%;
+  border:2px solid var(--ok);background:var(--ok-bg);
+  display:flex;align-items:center;justify-content:center;margin:0 auto 14px;
+}
+.success-ring svg{width:24px;height:24px;stroke:var(--ok)}
+.success-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:22px;font-weight:600;color:var(--t1);margin-bottom:6px;transition:color var(--tr);
+}
+.success-msg{font-size:17px;color:var(--t2);line-height:1.6;margin-bottom:22px;transition:color var(--tr)}
+.success-btns{display:flex;flex-direction:column;gap:8px}
+.success-view{
+  height:40px;border-radius:10px;
+  background:var(--p);color:#fff;font-size:17px;font-weight:600;
+  transition:background .18s;
+}
+.success-view:hover{background:var(--ph)}
+.success-new{
+  height:40px;border-radius:10px;
+  border:1px solid var(--bd2);color:var(--t2);font-size:18px;
+  transition:all .18s;
+}
+.success-new:hover{border-color:var(--p);color:var(--p)}
+
+@media(max-width:760px){
+  .editor-layout{grid-template-columns:1fr;height:auto;overflow:visible}
+  .editor-main{overflow-y:visible;height:auto}
+  .editor-settings{border-top:1px solid var(--bd)}
+  body{overflow:auto}
+}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-left">
+    <div class="back-btn" onclick="window.location.href='fanhub-dashboard.html'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+      返回
+    </div>
+    <div class="topbar-title">新增貼文</div>
+    <div class="draft-badge" id="draftBadge">草稿</div>
+  </div>
+  <div class="topbar-right">
+    <div class="theme-btn" id="themeBtn"></div>
+    <button class="btn-sm" onclick="saveDraft()">儲存草稿</button>
+  </div>
+</div>
+
+<div class="editor-layout">
+
+  <!-- ── LEFT: EDITOR ─────────────────────────────── -->
+  <div class="editor-main">
+
+    <!-- Post type tabs -->
+    <div class="type-selector" id="typeTabs">
+      <div class="type-tab active" onclick="switchType(this,'text')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><line x1="17" y1="10" x2="3" y2="10"/><line x1="21" y1="6" x2="3" y2="6"/><line x1="21" y1="14" x2="3" y2="14"/><line x1="17" y1="18" x2="3" y2="18"/></svg>
+        文字
+      </div>
+      <div class="type-tab" onclick="switchType(this,'photo')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        圖片
+      </div>
+      <div class="type-tab" onclick="switchType(this,'album')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+        相簿
+      </div>
+      <div class="type-tab" onclick="switchType(this,'video')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+        影片
+      </div>
+    </div>
+
+    <div class="editor-content">
+
+      <!-- Caption -->
+      <div class="caption-wrap">
+        <textarea class="caption-textarea" id="captionArea"
+          placeholder="分享你想說的話…"
+          oninput="onCaption(this)" rows="5"></textarea>
+        <div class="caption-char" id="captionCount">0 / 2000</div>
+      </div>
+
+      <!-- Format bar -->
+      <div class="format-bar">
+        <button class="fmt-btn" title="粗體" onclick="formatText('bold')"><strong>B</strong></button>
+        <button class="fmt-btn" title="斜體" onclick="formatText('italic')"><em>I</em></button>
+        <button class="fmt-btn" title="底線" onclick="formatText('underline')"><span style="text-decoration:underline">U</span></button>
+        <div class="fmt-divider"></div>
+        <button class="fmt-btn" title="Emoji">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M8 13s1.5 2 4 2 4-2 4-2"/><line x1="9" y1="9" x2="9.01" y2="9"/><line x1="15" y1="9" x2="15.01" y2="9"/></svg>
+        </button>
+        <button class="fmt-btn" title="插入連結">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+        </button>
+      </div>
+
+      <!-- Media zone (hidden for text type) -->
+      <div id="mediaSection" style="display:none">
+        <div class="media-zone" id="mediaZone" onclick="simulateUpload()">
+          <div class="media-zone-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+          </div>
+          <div class="media-zone-title" id="mediaZoneTitle">點擊上傳圖片</div>
+          <div class="media-zone-sub">或拖曳檔案到此處</div>
+          <div class="media-zone-types">
+            <div class="media-type-pill">JPG</div>
+            <div class="media-type-pill">PNG</div>
+            <div class="media-type-pill">WEBP</div>
+            <div class="media-type-pill">最大 10MB</div>
+          </div>
+        </div>
+        <!-- Uploaded grid (shown after upload) -->
+        <div class="media-grid" id="mediaGrid">
+          <div class="media-thumb">
+            <div class="media-thumb-bg" style="background:linear-gradient(145deg,#f2ddd4,#e8c4c0)"></div>
+            <button class="media-thumb-del" onclick="removeMedia(this)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </div>
+          <div class="media-thumb">
+            <div class="media-thumb-bg" style="background:linear-gradient(145deg,#ddf0f5,#c4e4ec)"></div>
+            <button class="media-thumb-del" onclick="removeMedia(this)">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
+          </div>
+          <div class="media-add" onclick="simulateUpload()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+          </div>
+        </div>
+      </div>
+
+      <!-- Video zone -->
+      <div id="videoSection" style="display:none">
+        <div class="media-zone" onclick="showToast('影片上傳功能開發中')">
+          <div class="media-zone-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/></svg>
+          </div>
+          <div class="media-zone-title">點擊上傳影片</div>
+          <div class="media-zone-sub">最大 2GB，支援 MP4、MOV</div>
+          <div class="media-zone-types">
+            <div class="media-type-pill">MP4</div>
+            <div class="media-type-pill">MOV</div>
+            <div class="media-type-pill">最大 2GB</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Paid content toggle -->
+      <div class="paid-section">
+        <div class="paid-section-head">
+          <div class="paid-section-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+            單篇付費解鎖
+          </div>
+          <div class="toggle-sw" id="paidToggle" onclick="togglePaid()">
+            <div class="toggle-thumb"></div>
+          </div>
+        </div>
+        <div class="paid-options" id="paidOptions">
+          <div class="paid-row">
+            <div class="paid-label">解鎖金額</div>
+            <div class="price-input-wrap">
+              <div class="price-pre">NT$</div>
+              <input class="price-inp" type="number" value="150" min="50" max="9999" placeholder="50–9999">
+            </div>
+          </div>
+          <div style="font-size:12px;color:var(--t3);padding-left:90px">建議 NT$50–500 · 最低 NT$50</div>
+        </div>
+      </div>
+
+      <!-- Hashtags -->
+      <div>
+        <div style="font-size:13px;font-weight:500;color:var(--t3);margin-bottom:7px;letter-spacing:.04em"># 標籤（按 Enter 新增，最多 10 個）</div>
+        <div class="hashtag-wrap" id="hashtagWrap" onclick="document.getElementById('hashtagField').focus()">
+          <div class="hashtag-chip">#健身<span class="hashtag-chip-x" onclick="event.stopPropagation();this.closest('.hashtag-chip').remove()">×</span></div>
+          <div class="hashtag-chip">#生活<span class="hashtag-chip-x" onclick="event.stopPropagation();this.closest('.hashtag-chip').remove()">×</span></div>
+          <input class="hashtag-field" id="hashtagField" placeholder="新增標籤…" onkeydown="addHashtag(event)">
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── RIGHT: SETTINGS ──────────────────────────── -->
+  <div class="editor-settings">
+
+    <!-- Preview -->
+    <div class="settings-section">
+      <div class="settings-label">預覽</div>
+      <div class="preview-card">
+        <div class="preview-card-cover" id="previewCover">
+          <div class="preview-empty-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          </div>
+        </div>
+        <div class="preview-card-body">
+          <div class="preview-caption-text preview-caption-empty" id="previewCaption">你的貼文內容將顯示在這裡…</div>
+          <div class="preview-meta">
+            <div style="display:flex;align-items:center;gap:5px">
+              <div class="preview-avatar-sm">A</div>
+              <span>Ava Lin</span>
+            </div>
+            <span>剛剛</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Access control -->
+    <div class="settings-section">
+      <div class="settings-label">觀看權限</div>
+      <div class="access-options">
+        <div class="access-opt" id="opt-free" onclick="selectAccess('free')">
+          <div class="access-radio"><div class="access-radio-dot"></div></div>
+          <div class="access-info">
+            <div class="access-name">所有人免費</div>
+            <div class="access-desc">公開可見，吸引新粉絲</div>
+          </div>
+          <div class="access-badge badge-free">免費</div>
+        </div>
+        <div class="access-opt selected" id="opt-sub" onclick="selectAccess('sub')">
+          <div class="access-radio"><div class="access-radio-dot"></div></div>
+          <div class="access-info">
+            <div class="access-name">訂閱者限定</div>
+            <div class="access-desc">需要訂閱才能查看</div>
+          </div>
+          <div class="access-badge badge-sub">限定</div>
+        </div>
+        <div class="access-opt" id="opt-paid" onclick="selectAccess('paid')">
+          <div class="access-radio"><div class="access-radio-dot"></div></div>
+          <div class="access-info">
+            <div class="access-name">單篇付費解鎖</div>
+            <div class="access-desc">非訂閱者可單獨購買</div>
+          </div>
+          <div class="access-badge badge-paid">付費</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Schedule -->
+    <div class="settings-section">
+      <div class="settings-label">發布時間</div>
+      <div class="schedule-row">
+        <div class="schedule-toggle">
+          <div class="schedule-toggle-label">排程發布</div>
+          <div class="toggle-sw" id="scheduleToggle" onclick="toggleSchedule()">
+            <div class="toggle-thumb"></div>
+          </div>
+        </div>
+        <input class="schedule-input" id="scheduleInput" type="datetime-local" style="display:none">
+      </div>
+    </div>
+
+    <!-- Tips -->
+    <div class="settings-section">
+      <div class="tip-box">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+        <div class="tip-text">加入圖片的貼文平均互動率比純文字高 <strong>3.2 倍</strong>。建議每篇貼文至少附上一張圖。</div>
+      </div>
+    </div>
+
+    <!-- Publish CTA -->
+    <div class="publish-area">
+      <button class="publish-btn-full" id="publishBtn" onclick="doPublish()">
+        <span class="pub-txt" style="display:flex;align-items:center;gap:6px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+          立即發布
+        </span>
+        <div class="spinner"></div>
+      </button>
+      <button class="draft-btn" onclick="saveDraft()">儲存為草稿</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- Success overlay -->
+<div class="success-overlay" id="successOverlay">
+  <div class="success-card">
+    <div class="success-ring">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <div class="success-title">貼文已發布！</div>
+    <p class="success-msg">你的貼文已成功發布，<br>訂閱者現在可以看到它了。</p>
+    <div class="success-btns">
+      <button class="success-view" onclick="window.location.href='fanhub-creator-profile.html'">查看我的主頁</button>
+      <button class="success-new" onclick="resetEditor()">發布另一篇</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div style="position:fixed;bottom:28px;left:50%;transform:translateX(-50%) translateY(8px);background:var(--t1);color:var(--bg);font-size:12.5px;font-weight:500;padding:9px 20px;border-radius:22px;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .22s,transform .22s;z-index:400;display:flex;align-items:center;gap:7px" id="toast">
+  <div style="width:6px;height:6px;border-radius:50%;background:var(--p);flex-shrink:0"></div>
+  <span id="toastMsg"></span>
+</div>
+
+<script>
+/* Theme */
+const root = document.documentElement;
+root.dataset.theme = 'light'; // demo: force light on load
+document.getElementById('themeBtn').addEventListener('click', () => {
+  const n = root.dataset.theme === 'light' ? 'dark' : 'light';
+  root.dataset.theme = n; localStorage.setItem('fh-theme', n);
+});
+
+/* Post type switching */
+let currentType = 'text';
+function switchType(btn, type) {
+  currentType = type;
+  document.querySelectorAll('.type-tab').forEach(t => t.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById('mediaSection').style.display = ['photo','album'].includes(type) ? '' : 'none';
+  document.getElementById('videoSection').style.display = type === 'video' ? '' : 'none';
+  const zoneTitle = document.getElementById('mediaZoneTitle');
+  if (zoneTitle) zoneTitle.textContent = type === 'album' ? '點擊上傳多張圖片' : '點擊上傳圖片';
+  markDirty();
+}
+
+/* Caption sync */
+function onCaption(el) {
+  const len = el.value.length;
+  const counter = document.getElementById('captionCount');
+  counter.textContent = len + ' / 2000';
+  counter.classList.toggle('warn', len > 1800);
+  const prev = document.getElementById('previewCaption');
+  if (el.value.trim()) {
+    prev.textContent = el.value;
+    prev.classList.remove('preview-caption-empty');
+  } else {
+    prev.textContent = '你的貼文內容將顯示在這裡…';
+    prev.classList.add('preview-caption-empty');
+  }
+  markDirty();
+}
+
+/* Format text */
+function formatText(cmd) {
+  document.execCommand(cmd, false, null);
+}
+
+/* Simulate upload */
+let uploaded = false;
+function simulateUpload() {
+  if (uploaded) return;
+  uploaded = true;
+  document.getElementById('mediaZone').style.display = 'none';
+  const grid = document.getElementById('mediaGrid');
+  grid.style.display = 'grid';
+  /* Update preview cover */
+  const cover = document.getElementById('previewCover');
+  cover.innerHTML = '<div style="width:100%;height:100%;background:linear-gradient(145deg,#f2ddd4,#e8c4c0)"></div>';
+  markDirty();
+}
+
+function removeMedia(btn) {
+  btn.closest('.media-thumb').remove();
+  const thumbs = document.querySelectorAll('#mediaGrid .media-thumb').length;
+  if (thumbs === 0) {
+    uploaded = false;
+    document.getElementById('mediaGrid').style.display = 'none';
+    document.getElementById('mediaZone').style.display = '';
+    document.getElementById('previewCover').innerHTML = `<div class="preview-empty-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round" style="width:32px;height:32px;color:var(--bd2)"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div>`;
+  }
+}
+
+/* Paid toggle */
+function togglePaid() {
+  const sw = document.getElementById('paidToggle');
+  const opts = document.getElementById('paidOptions');
+  sw.classList.toggle('on');
+  opts.classList.toggle('show', sw.classList.contains('on'));
+  markDirty();
+}
+
+/* Access select */
+function selectAccess(type) {
+  ['free','sub','paid'].forEach(t => document.getElementById('opt-'+t).classList.remove('selected'));
+  document.getElementById('opt-'+type).classList.add('selected');
+  markDirty();
+}
+
+/* Schedule toggle */
+function toggleSchedule() {
+  const sw = document.getElementById('scheduleToggle');
+  const inp = document.getElementById('scheduleInput');
+  sw.classList.toggle('on');
+  inp.style.display = sw.classList.contains('on') ? 'block' : 'none';
+  if (sw.classList.contains('on')) {
+    const d = new Date(); d.setDate(d.getDate() + 1);
+    inp.value = d.toISOString().slice(0,16);
+  }
+}
+
+/* Hashtags */
+function addHashtag(e) {
+  if (e.key !== 'Enter') return;
+  e.preventDefault();
+  const field = document.getElementById('hashtagField');
+  let val = field.value.trim().replace(/^#/,'');
+  if (!val) return;
+  const chips = document.querySelectorAll('#hashtagWrap .hashtag-chip');
+  if (chips.length >= 10) { showToast('最多 10 個標籤'); return; }
+  const chip = document.createElement('div');
+  chip.className = 'hashtag-chip';
+  chip.innerHTML = '#'+val+'<span class="hashtag-chip-x" onclick="event.stopPropagation();this.closest(\'.hashtag-chip\').remove()">×</span>';
+  document.getElementById('hashtagWrap').insertBefore(chip, field);
+  field.value = '';
+  markDirty();
+}
+
+/* Dirty tracking */
+let isDirty = false;
+function markDirty() {
+  isDirty = true;
+  document.getElementById('draftBadge').textContent = '未儲存';
+  document.getElementById('draftBadge').style.color = 'var(--p)';
+}
+
+/* Save draft */
+function saveDraft() {
+  isDirty = false;
+  document.getElementById('draftBadge').textContent = '草稿已儲存';
+  document.getElementById('draftBadge').style.color = 'var(--ok)';
+  showToast('草稿已儲存');
+}
+
+/* Publish */
+function doPublish() {
+  const btn = document.getElementById('publishBtn');
+  btn.classList.add('loading');
+  setTimeout(() => {
+    btn.classList.remove('loading');
+    document.getElementById('successOverlay').classList.add('show');
+  }, 1600);
+}
+
+/* Reset */
+function resetEditor() {
+  document.getElementById('successOverlay').classList.remove('show');
+  document.getElementById('captionArea').value = '';
+  document.getElementById('previewCaption').textContent = '你的貼文內容將顯示在這裡…';
+  document.getElementById('previewCaption').classList.add('preview-caption-empty');
+  document.getElementById('captionCount').textContent = '0 / 2000';
+  isDirty = false;
+  document.getElementById('draftBadge').textContent = '草稿';
+  document.getElementById('draftBadge').style.color = '';
+}
+
+/* Warn before leave */
+window.addEventListener('beforeunload', e => { if (isDirty) e.preventDefault(); });
+
+/* Toast */
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  t.style.opacity='1'; t.style.transform='translateX(-50%) translateY(0)';
+  clearTimeout(window._tt);
+  window._tt = setTimeout(() => {
+    t.style.opacity='0'; t.style.transform='translateX(-50%) translateY(8px)';
+  }, 2200);
+}
+</script>
+</body>
+</html>

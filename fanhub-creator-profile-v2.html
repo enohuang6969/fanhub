@@ -1,0 +1,1243 @@
+<!DOCTYPE html>
+<html lang="zh-TW" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ava Lin · FANHUB</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,600&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+/* ── TOKENS ──
+   Light: bg=#fdf9f6 surface=#ffffff surface2=#faf3ef surface3=#fdf0eb p=#cc5e76 t1=#2e1118 nav=rgba(253,249,246,.94)
+   Dark : bg=#0f0a0d surface=#1a0f14 surface2=#2d1822 surface3=#3d2230 p=#d4718b t1=#f0c0cf nav=rgba(15,10,13,.94)
+*/
+:root{
+  --bg:#fdf9f6;--surface:#ffffff;--surface2:#faf3ef;--surface3:#fdf0eb;
+  --p:#cc5e76;--ph:#b84d65;--p2:#8a3248;
+  --t1:#2e1118;--t2:#4a1e2a;--t3:#7a4858;
+  --bd:rgba(150,70,90,.25);--bd2:rgba(150,70,90,.42);
+  --nav:rgba(253,249,246,.94);
+  --ok:#2d8a4e;--ok-bg:#eaf6ee;
+  --tr:.28s cubic-bezier(.4,0,.2,1);
+}
+[data-theme=dark]{
+  --bg:#080508;--surface:#1e1016;--surface2:#2a1820;--surface3:#382030;
+  --p:#d4718b;--ph:#e07d96;--p2:#9b4c6a;
+  --t1:#f8e0e8;--t2:#d8a8b8;--t3:#a87888;
+  --bd:rgba(200,120,150,.22);--bd2:rgba(200,120,150,.42);
+  --nav:rgba(8,5,8,.96);
+  --ok:#5eca7a;--ok-bg:#0d2518;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:'DM Sans',sans-serif;
+  font-size:16px;
+  background:var(--bg);color:var(--t1);
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+  transition:background var(--tr),color var(--tr);
+}
+button{font-family:inherit;cursor:pointer;border:none;outline:none;background:none}
+a{text-decoration:none;color:inherit}
+
+/* ── NAVBAR ─────────────────────────────────────── */
+.nav{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  height:52px;background:var(--nav);
+  backdrop-filter:blur(20px) saturate(160%);
+  -webkit-backdrop-filter:blur(20px) saturate(160%);
+  border-bottom:1px solid var(--bd);
+  display:flex;align-items:center;justify-content:space-between;
+  padding:0 28px;transition:background var(--tr),border-color var(--tr);
+}
+.nav-logo{font-size:17px;font-weight:500;letter-spacing:.18em;color:var(--p);cursor:pointer}
+.nav-logo em{font-style:normal;font-weight:400;opacity:.55}
+.nav-links{display:flex;gap:24px}
+.nav-links a{font-size:17px;letter-spacing:.05em;color:var(--t3);transition:color .18s}
+.nav-links a:hover{color:var(--t1)}
+.nav-right{display:flex;align-items:center;gap:10px}
+.theme-btn{
+  width:38px;height:22px;border-radius:11px;
+  background:var(--surface2);border:1.5px solid var(--bd2);
+  position:relative;cursor:pointer;padding:2px;display:flex;align-items:center;
+  transition:background var(--tr),border-color var(--tr);
+}
+.theme-btn::after{
+  content:'';width:16px;height:16px;border-radius:50%;
+  background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.18);transition:transform var(--tr);
+}
+[data-theme=dark] .theme-btn{background:var(--p);border-color:var(--p)}
+[data-theme=dark] .theme-btn::after{transform:translateX(16px)}
+.nav-login{
+  font-size:18px;color:var(--t2);padding:6px 14px;
+  border:1px solid var(--bd2);border-radius:8px;transition:all .18s;
+}
+.nav-login:hover{border-color:var(--p);color:var(--p)}
+@media(max-width:680px){.nav-links{display:none}}
+
+/* ── HERO COVER ──────────────────────────────────── */
+.hero-cover{
+  position:relative;height:380px;overflow:hidden;
+  margin-top:52px;
+}
+@media(max-width:680px){.hero-cover{height:260px}}
+.hero-cover-bg{
+  width:100%;height:100%;
+  background:linear-gradient(155deg,#e8c8c0 0%,#d4aab0 35%,#c090a0 65%,#a87090 100%);
+  transform:scale(1.03);transition:transform 8s ease;
+}
+.hero-cover-bg.loaded{transform:scale(1)}
+.hero-cover-gradient{
+  position:absolute;inset:0;
+  background:linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(9,6,10,.08) 40%,
+    rgba(9,6,10,.6) 75%,
+    rgba(9,6,10,.85) 100%
+  );
+}
+/* Floating badge top-left */
+.hero-live-badge{
+  position:absolute;top:20px;left:24px;z-index:2;
+  display:flex;align-items:center;gap:6px;
+  background:rgba(15,10,13,.5);backdrop-filter:blur(8px);
+  border:1px solid rgba(255,255,255,.15);
+  border-radius:20px;padding:5px 14px;
+  font-size:17px;font-weight:600;color:#fff;letter-spacing:.04em;
+}
+.hero-live-dot{width:7px;height:7px;border-radius:50%;background:#4caf50;animation:pulse-live 1.5s infinite}
+@keyframes pulse-live{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.6;transform:scale(1.3)}}
+
+/* Milestone badge top-right */
+.hero-milestone{
+  position:absolute;top:20px;right:24px;z-index:2;
+  background:rgba(15,10,13,.5);backdrop-filter:blur(8px);
+  border:1px solid rgba(212,113,139,.3);
+  border-radius:20px;padding:5px 14px;
+  font-size:17px;font-weight:700;color:var(--p);letter-spacing:.04em;
+  display:flex;align-items:center;gap:5px;
+}
+
+/* Bottom of cover: name area */
+.hero-bottom{
+  position:absolute;bottom:0;left:0;right:0;z-index:2;
+  padding:0 32px 0;
+  display:flex;align-items:flex-end;justify-content:space-between;
+}
+@media(max-width:680px){.hero-bottom{padding:0 18px 0}}
+
+/* ── PROFILE HEADER ──────────────────────────────── */
+.profile-header{
+  max-width:900px;margin:0 auto;
+  padding:0 32px;
+}
+@media(max-width:680px){.profile-header{padding:0 18px}}
+
+/* Avatar overlapping cover */
+.avatar-row{
+  display:flex;align-items:flex-end;justify-content:space-between;
+  margin-top:-40px;margin-bottom:16px;position:relative;z-index:3;
+}
+.avatar-wrap{position:relative;display:inline-block}
+.avatar{
+  width:100px;height:100px;border-radius:50%;
+  background:linear-gradient(135deg,var(--p),var(--p2));
+  border:4px solid var(--bg);
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Cormorant Garamond',serif;
+  font-size:40px;font-weight:600;color:#fff;
+  box-shadow:0 4px 20px rgba(204,94,118,.25);
+  transition:border-color var(--tr);
+}
+@media(max-width:680px){.avatar{width:76px;height:76px;font-size:30px}}
+.verified-ring{
+  position:absolute;bottom:4px;right:4px;
+  width:24px;height:24px;border-radius:50%;
+  background:var(--p);border:2.5px solid var(--bg);
+  display:flex;align-items:center;justify-content:center;
+  transition:border-color var(--tr);
+}
+.verified-ring svg{width:11px;height:11px}
+
+/* Action buttons */
+.header-actions{display:flex;align-items:center;gap:8px;padding-bottom:6px}
+.btn-save{
+  width:38px;height:38px;border-radius:50%;
+  background:var(--surface);border:1.5px solid var(--bd2);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--t3);transition:all .2s;
+}
+.btn-save:hover,.btn-save.saved{border-color:var(--p);color:var(--p)}
+.btn-save.saved svg path{fill:var(--p);stroke:var(--p)}
+.btn-save svg{width:16px;height:16px}
+.btn-msg{
+  width:38px;height:38px;border-radius:50%;
+  background:var(--surface);border:1.5px solid var(--bd2);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--t3);transition:all .2s;
+}
+.btn-msg:hover{border-color:var(--p);color:var(--p)}
+.btn-msg svg{width:16px;height:16px}
+.btn-subscribe{
+  font-size:17px;font-weight:600;
+  padding:9px 24px;border-radius:20px;
+  background:var(--p);color:#fff;
+  box-shadow:0 3px 12px rgba(204,94,118,.28);
+  transition:background .18s,transform .15s;
+}
+.btn-subscribe:hover{background:var(--ph);transform:translateY(-1px)}
+
+/* Name & handle */
+.creator-name{
+  font-family:'Cormorant Garamond',serif;
+  font-size:32px;font-weight:600;
+  color:var(--t1);line-height:1.1;margin-bottom:3px;
+  display:flex;align-items:center;gap:8px;
+  transition:color var(--tr);
+}
+@media(max-width:680px){.creator-name{font-size:24px}}
+.creator-handle{
+  font-size:18px;color:var(--t3);margin-bottom:12px;
+  display:flex;align-items:center;gap:8px;
+  transition:color var(--tr);
+}
+.online-pill{
+  display:inline-flex;align-items:center;gap:4px;
+  font-size:18px;font-weight:500;color:var(--ok);
+}
+.online-pill::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--ok)}
+
+/* Stats row */
+.stats-row{
+  display:flex;gap:28px;margin-bottom:16px;
+  flex-wrap:wrap;
+}
+.stat{display:flex;flex-direction:column;gap:1px}
+.stat-num{
+  font-family:'Cormorant Garamond',serif;
+  font-size:22px;font-weight:600;color:var(--t1);
+  line-height:1;transition:color var(--tr);
+}
+.stat-lbl{font-size:18px;color:var(--t3);letter-spacing:.05em;transition:color var(--tr)}
+.stat-divider{width:1px;height:32px;background:var(--bd);align-self:center;transition:background var(--tr)}
+
+/* Milestone badges row */
+.badges-row{
+  display:flex;gap:7px;flex-wrap:wrap;margin-bottom:16px;
+}
+.badge-chip{
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:18px;font-weight:600;letter-spacing:.04em;
+  padding:4px 11px;border-radius:20px;
+  transition:all var(--tr);
+}
+.badge-milestone{background:linear-gradient(135deg,rgba(204,94,118,.12),rgba(138,50,72,.08));color:var(--p2);border:1px solid rgba(204,94,118,.2)}
+.badge-hot{background:linear-gradient(135deg,rgba(255,120,0,.1),rgba(255,60,0,.06));color:#c44800;border:1px solid rgba(255,100,0,.2)}
+.badge-top{background:linear-gradient(135deg,rgba(45,138,78,.1),rgba(30,100,50,.06));color:var(--ok);border:1px solid rgba(45,138,78,.2)}
+.badge-chip svg{width:11px;height:11px}
+
+/* Tags */
+.tags-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:24px}
+.tag{
+  font-size:17px;padding:3px 11px;border-radius:16px;
+  background:var(--surface2);color:var(--t2);
+  border:1px solid var(--bd);
+  transition:background var(--tr),color var(--tr),border-color var(--tr);
+}
+
+/* ── CREATOR'S STORY ─────────────────────────────── */
+.story-section{
+  max-width:900px;margin:0 auto 32px;
+  padding:0 32px;
+}
+@media(max-width:680px){.story-section{padding:0 18px}}
+.story-card{
+  background:var(--surface);
+  border:1px solid var(--bd);
+  border-radius:16px;
+  padding:24px 28px;
+  position:relative;overflow:hidden;
+  transition:background var(--tr),border-color var(--tr);
+}
+.story-card::before{
+  content:'';
+  position:absolute;top:0;left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--p),var(--p2),var(--p));
+}
+.story-eyebrow{
+  font-size:18px;font-weight:500;letter-spacing:.12em;
+  text-transform:uppercase;color:var(--p);
+  margin-bottom:12px;transition:color var(--tr);
+}
+.story-quote{
+  font-family:'Cormorant Garamond',serif;
+  font-size:20px;font-weight:400;font-style:italic;
+  color:var(--t1);line-height:1.6;
+  margin-bottom:16px;
+  transition:color var(--tr);
+}
+.story-quote::before{
+  content:'\201C';
+  font-size:52px;color:var(--p);opacity:.35;
+  line-height:0;vertical-align:-.45em;margin-right:3px;
+}
+.story-body{
+  font-size:17px;color:var(--t2);line-height:1.8;
+  margin-bottom:16px;transition:color var(--tr);
+}
+.story-more-btn{
+  font-size:18px;font-weight:500;color:var(--p);
+  display:flex;align-items:center;gap:4px;
+  transition:opacity .18s;
+}
+.story-more-btn:hover{opacity:.7}
+.story-more-btn svg{width:13px;height:13px}
+
+/* ── HIGHLIGHTS ──────────────────────────────────── */
+.highlights-section{
+  max-width:900px;margin:0 auto 32px;
+  padding:0 32px;
+}
+@media(max-width:680px){.highlights-section{padding:0 18px}}
+.section-header{
+  display:flex;align-items:baseline;justify-content:space-between;
+  margin-bottom:16px;
+}
+.section-title-text{
+  font-family:'Cormorant Garamond',serif;
+  font-size:22px;font-weight:600;color:var(--t1);
+  transition:color var(--tr);
+}
+.section-sub{font-size:17px;color:var(--t3);transition:color var(--tr)}
+
+/* Highlights horizontal scroll */
+.highlights-scroll{
+  display:flex;gap:12px;
+  overflow-x:auto;scrollbar-width:none;
+  padding-bottom:4px;
+}
+.highlights-scroll::-webkit-scrollbar{display:none}
+.highlight-card{
+  flex-shrink:0;width:180px;
+  border-radius:12px;overflow:hidden;
+  position:relative;cursor:pointer;
+  border:1px solid var(--bd);
+  transition:transform .22s,box-shadow .22s,border-color .22s;
+}
+.highlight-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(204,94,118,.12);border-color:var(--bd2)}
+.highlight-cover{
+  height:220px;position:relative;overflow:hidden;
+}
+.highlight-cover-bg{width:100%;height:100%;transition:transform .38s}
+.highlight-card:hover .highlight-cover-bg{transform:scale(1.05)}
+.highlight-overlay{
+  position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(9,6,10,.8) 0%,transparent 50%);
+}
+/* Pin icon */
+.highlight-pin{
+  position:absolute;top:10px;left:10px;
+  width:22px;height:22px;border-radius:50%;
+  background:var(--p);
+  display:flex;align-items:center;justify-content:center;
+}
+.highlight-pin svg{width:10px;height:10px;stroke:#fff}
+/* Lock overlay */
+.highlight-lock{
+  position:absolute;top:10px;right:10px;
+  width:22px;height:22px;border-radius:50%;
+  background:rgba(15,10,13,.5);backdrop-filter:blur(4px);
+  display:flex;align-items:center;justify-content:center;
+}
+.highlight-lock svg{width:10px;height:10px;stroke:rgba(255,255,255,.8)}
+.highlight-info{
+  padding:10px 12px;background:var(--surface);
+  transition:background var(--tr);
+}
+.highlight-caption{
+  font-size:17px;font-weight:500;color:var(--t1);
+  line-height:1.55;margin-bottom:5px;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;
+  transition:color var(--tr);
+}
+.highlight-meta{
+  display:flex;align-items:center;justify-content:space-between;
+  font-size:18px;color:var(--t3);transition:color var(--tr);
+}
+.highlight-likes{display:flex;align-items:center;gap:3px}
+.highlight-likes svg{width:10px;height:10px}
+
+/* ── SUBSCRIPTION SECTION ────────────────────────── */
+.sub-section{
+  max-width:900px;margin:0 auto 32px;
+  padding:0 32px;
+}
+@media(max-width:680px){.sub-section{padding:0 18px}}
+
+.sub-card{
+  background:var(--surface);
+  border:1.5px solid var(--p);
+  border-radius:16px;
+  overflow:hidden;
+  transition:background var(--tr);
+}
+.sub-card-top{
+  background:linear-gradient(135deg,rgba(204,94,118,.06),rgba(138,50,72,.03));
+  padding:20px 24px 18px;
+  border-bottom:1px solid var(--bd);
+  transition:background var(--tr),border-color var(--tr);
+}
+.sub-plan-label{
+  font-size:18px;font-weight:500;letter-spacing:.1em;
+  text-transform:uppercase;color:var(--p);margin-bottom:8px;
+  transition:color var(--tr);
+}
+.sub-pricing-row{
+  display:flex;align-items:center;gap:16px;margin-bottom:6px;
+}
+.sub-price{
+  font-family:'Cormorant Garamond',serif;
+  font-size:38px;font-weight:600;color:var(--t1);line-height:1;
+  transition:color var(--tr);
+}
+.sub-price-period{font-size:17px;color:var(--t3);padding-top:10px;transition:color var(--tr)}
+
+/* Period toggle */
+.period-toggle{
+  display:flex;align-items:center;gap:8px;
+  background:var(--surface2);border-radius:20px;
+  padding:3px;transition:background var(--tr);
+}
+.period-btn{
+  font-size:17px;font-weight:500;
+  padding:5px 12px;border-radius:16px;
+  color:var(--t3);transition:all .2s;
+}
+.period-btn.active{background:var(--surface);color:var(--t1);box-shadow:0 1px 4px rgba(0,0,0,.08)}
+.save-badge{
+  font-size:17px;font-weight:700;
+  padding:2px 8px;border-radius:10px;
+  background:rgba(204,94,118,.12);color:var(--p);
+  transition:background var(--tr),color var(--tr);
+}
+.sub-cancel-note{font-size:17px;color:var(--t3);transition:color var(--tr)}
+
+.sub-card-body{padding:20px 24px}
+.sub-perks{display:flex;flex-direction:column;gap:9px;margin-bottom:20px}
+.sub-perk{
+  display:flex;align-items:flex-start;gap:10px;
+  font-size:17px;color:var(--t2);transition:color var(--tr);
+}
+.perk-check{
+  width:18px;height:18px;border-radius:50%;
+  background:var(--p);flex-shrink:0;margin-top:1px;
+  display:flex;align-items:center;justify-content:center;
+  transition:background var(--tr);
+}
+.perk-check svg{width:9px;height:9px}
+.sub-subscribe-btn{
+  width:100%;height:50px;border-radius:12px;
+  background:var(--p);color:#fff;
+  font-size:18px;font-weight:600;
+  box-shadow:0 4px 16px rgba(204,94,118,.28);
+  transition:background .18s,transform .15s;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  position:relative;overflow:hidden;
+}
+.sub-subscribe-btn:hover{background:var(--ph);transform:translateY(-1px)}
+.sub-subscribe-btn::after{
+  content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.15),transparent);
+  transition:left .5s;
+}
+.sub-subscribe-btn:hover::after{left:140%}
+.sub-subscribe-btn svg{width:16px;height:16px}
+
+/* Locked preview strip */
+.locked-strip{
+  display:flex;gap:3px;margin-bottom:16px;
+  border-radius:10px;overflow:hidden;position:relative;
+}
+.locked-thumb{height:68px;flex:1;position:relative;overflow:hidden}
+.locked-thumb-bg{width:100%;height:100%}
+.locked-strip-overlay{
+  position:absolute;inset:0;
+  background:rgba(9,6,10,.45);
+  display:flex;align-items:center;justify-content:center;
+}
+.locked-strip-overlay svg{width:14px;height:14px;stroke:rgba(255,255,255,.7)}
+.locked-strip-count{
+  position:absolute;bottom:7px;left:50%;transform:translateX(-50%);
+  font-size:18px;font-weight:500;color:rgba(255,255,255,.8);
+  white-space:nowrap;
+  background:rgba(9,6,10,.4);backdrop-filter:blur(4px);
+  padding:2px 10px;border-radius:8px;
+}
+
+/* ── CONTENT TABS ────────────────────────────────── */
+.tabs-section{
+  max-width:900px;margin:0 auto;
+  padding:0 32px;
+}
+@media(max-width:680px){.tabs-section{padding:0 18px}}
+.content-tabs{
+  display:flex;gap:0;
+  border-bottom:1px solid var(--bd);
+  margin-bottom:20px;
+  transition:border-color var(--tr);
+  overflow-x:auto;scrollbar-width:none;
+}
+.content-tabs::-webkit-scrollbar{display:none}
+.ctab{
+  font-size:17px;font-weight:500;
+  padding:10px 18px;color:var(--t3);
+  border-bottom:2px solid transparent;
+  cursor:pointer;white-space:nowrap;
+  transition:color .18s,border-color .18s;
+  margin-bottom:-1px;
+}
+.ctab.active{color:var(--p);border-bottom-color:var(--p)}
+.ctab:hover:not(.active){color:var(--t2)}
+.tab-count{
+  font-size:18px;font-weight:400;color:var(--t3);
+  margin-left:4px;transition:color var(--tr);
+}
+.ctab.active .tab-count{color:var(--p)}
+
+/* Content panel */
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+
+/* Posts grid */
+.posts-grid{
+  display:grid;grid-template-columns:repeat(3,1fr);
+  gap:8px;margin-bottom:40px;
+}
+@media(max-width:480px){.posts-grid{grid-template-columns:repeat(2,1fr)}}
+.post-card{
+  aspect-ratio:1;border-radius:10px;overflow:hidden;
+  position:relative;cursor:pointer;
+  border:1px solid var(--bd);
+  transition:transform .22s,box-shadow .22s,border-color .22s;
+}
+.post-card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(204,94,118,.1);border-color:var(--bd2)}
+.post-bg{width:100%;height:100%;transition:transform .35s}
+.post-card:hover .post-bg{transform:scale(1.04)}
+
+/* Free badge */
+.post-free{
+  position:absolute;top:8px;left:8px;
+  font-size:8px;font-weight:700;letter-spacing:.06em;
+  padding:2px 7px;border-radius:6px;
+  background:var(--ok-bg);color:var(--ok);
+  border:1px solid rgba(45,138,78,.2);
+}
+/* Lock overlay */
+.post-lock{
+  position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(9,6,10,.65) 0%,rgba(9,6,10,.2) 60%,transparent 100%);
+  display:flex;align-items:flex-end;padding:10px;
+}
+.post-lock-icon{
+  width:24px;height:24px;border-radius:50%;
+  background:rgba(255,255,255,.15);backdrop-filter:blur(4px);
+  display:flex;align-items:center;justify-content:center;
+  margin-left:auto;
+}
+.post-lock-icon svg{width:11px;height:11px;stroke:rgba(255,255,255,.8)}
+/* Engagement on hover */
+.post-engage{
+  position:absolute;inset:0;
+  background:rgba(9,6,10,.4);
+  display:flex;align-items:center;justify-content:center;gap:14px;
+  opacity:0;transition:opacity .2s;
+}
+.post-card:hover .post-engage{opacity:1}
+.engage-item{display:flex;align-items:center;gap:4px;font-size:18px;font-weight:600;color:#fff}
+.engage-item svg{width:14px;height:14px}
+
+/* About tab */
+.about-panel{display:flex;flex-direction:column;gap:14px;margin-bottom:40px}
+.about-card{
+  background:var(--surface);border:1px solid var(--bd);
+  border-radius:14px;padding:18px 20px;
+  transition:background var(--tr),border-color var(--tr);
+}
+.about-card-title{
+  font-size:18px;font-weight:600;color:var(--t1);
+  margin-bottom:12px;display:flex;align-items:center;gap:7px;
+  transition:color var(--tr);
+}
+.about-card-title svg{width:14px;height:14px;color:var(--p)}
+.about-stat-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+.about-stat{
+  background:var(--surface2);border-radius:10px;padding:12px 14px;
+  transition:background var(--tr);
+}
+.about-stat-num{
+  font-family:'Cormorant Garamond',serif;
+  font-size:22px;font-weight:600;color:var(--t1);
+  transition:color var(--tr);
+}
+.about-stat-lbl{font-size:18px;color:var(--t3);transition:color var(--tr)}
+
+/* Milestone timeline */
+.milestone-list{display:flex;flex-direction:column;gap:12px}
+.milestone-item{
+  display:flex;align-items:center;gap:14px;
+}
+.milestone-icon{
+  width:36px;height:36px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  font-size:18px;
+}
+.milestone-info{}
+.milestone-title{font-size:17px;font-weight:500;color:var(--t1);transition:color var(--tr)}
+.milestone-date{font-size:18px;color:var(--t3);transition:color var(--tr)}
+.milestone-line{flex:1;height:1px;background:var(--bd);transition:background var(--tr)}
+
+/* Schedule / hot posts */
+.schedule-bars{display:flex;align-items:flex-end;gap:4px;height:48px}
+.sbar-wrap{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px}
+.sbar{width:100%;border-radius:3px 3px 0 0;background:var(--surface2);transition:background var(--tr)}
+.sbar.peak{background:var(--p)}
+.sbar-lbl{font-size:8px;color:var(--t3);transition:color var(--tr)}
+
+/* ── STICKY SUBSCRIBE BAR ────────────────────────── */
+.sticky-bar{
+  position:fixed;bottom:0;left:0;right:0;z-index:100;
+  background:var(--surface);border-top:1px solid var(--bd);
+  padding:12px 24px;
+  display:flex;align-items:center;justify-content:space-between;
+  gap:16px;
+  transform:translateY(100%);
+  transition:transform .3s,background var(--tr),border-color var(--tr);
+  box-shadow:0 -4px 20px rgba(0,0,0,.06);
+}
+.sticky-bar.visible{transform:translateY(0)}
+.sticky-info{display:flex;align-items:center;gap:10px}
+.sticky-avatar{
+  width:32px;height:32px;border-radius:50%;
+  background:linear-gradient(135deg,var(--p),var(--p2));
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:600;color:#fff;
+}
+.sticky-name{font-size:17px;font-weight:600;color:var(--t1);transition:color var(--tr)}
+.sticky-price{font-size:17px;color:var(--t3);transition:color var(--tr)}
+.sticky-btn{
+  font-size:17px;font-weight:600;
+  padding:10px 24px;border-radius:20px;
+  background:var(--p);color:#fff;
+  box-shadow:0 2px 10px rgba(204,94,118,.28);
+  transition:background .18s;
+}
+.sticky-btn:hover{background:var(--ph)}
+
+/* ── TOAST ───────────────────────────────────────── */
+.toast{
+  position:fixed;bottom:80px;left:50%;
+  transform:translateX(-50%) translateY(8px);
+  background:var(--t1);color:var(--bg);
+  font-size:14.5px;font-weight:500;
+  padding:9px 20px;border-radius:22px;
+  white-space:nowrap;opacity:0;pointer-events:none;
+  transition:opacity .22s,transform .22s;z-index:300;
+  display:flex;align-items:center;gap:7px;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.t-dot{width:6px;height:6px;border-radius:50%;background:var(--p);flex-shrink:0}
+
+/* ── ANIMATIONS ──────────────────────────────────── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(16px)}to{opacity:1;transform:translateY(0)}}
+.avatar-row{animation:fadeUp .5s .1s both}
+.creator-name{animation:fadeUp .5s .18s both}
+.creator-handle{animation:fadeUp .4s .24s both}
+.stats-row{animation:fadeUp .4s .28s both}
+.badges-row{animation:fadeUp .4s .32s both}
+.tags-row{animation:fadeUp .4s .36s both}
+.story-section{animation:fadeUp .5s .4s both}
+.highlights-section{animation:fadeUp .5s .44s both}
+.sub-section{animation:fadeUp .5s .48s both}
+.tabs-section{animation:fadeUp .5s .52s both}
+
+/* Divider */
+.section-divider{height:1px;background:var(--bd);margin:0 32px 28px;transition:background var(--tr)}
+@media(max-width:680px){.section-divider{margin:0 18px 24px}}
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="nav">
+  <div class="nav-logo" onclick="window.location.href='fanhub-landing.html'">FAN<em>HUB</em></div>
+  <div class="nav-links">
+    <a href="fanhub-explore.html">探索</a>
+    <a href="fanhub-favorites.html">收藏</a>
+    <a href="fanhub-messages.html">私訊</a>
+  </div>
+  <div class="nav-right">
+    <div class="theme-btn" id="themeBtn"></div>
+    <button class="nav-login" onclick="window.location.href='fanhub-auth.html'">登入</button>
+  </div>
+</nav>
+
+<!-- HERO COVER -->
+<div class="hero-cover">
+  <div class="hero-cover-bg" id="coverBg"></div>
+  <div class="hero-cover-gradient"></div>
+  <div class="hero-live-badge"><div class="hero-live-dot"></div>在線上</div>
+  <div class="hero-milestone">
+    <svg viewBox="0 0 24 24" fill="currentColor" style="width:12px;height:12px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+    萬人迷
+  </div>
+</div>
+
+<!-- PROFILE HEADER -->
+<div class="profile-header">
+  <div class="avatar-row">
+    <div class="avatar-wrap">
+      <div class="avatar">A</div>
+      <div class="verified-ring">
+        <svg viewBox="0 0 12 12" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,6 5,9 10,3"/></svg>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button class="btn-save" id="btnSave" onclick="toggleSave()">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      </button>
+      <button class="btn-msg" onclick="window.location.href='fanhub-messages.html'">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M17 8h2a2 2 0 0 1 2 2v6a2 2 0 0 1-2 2h-2v4l-4-4H9a2 2 0 0 1-2-2v-1"/><path d="M15 3H5a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h2v4l4-4h4a2 2 0 0 0 2-2V5a2 2 0 0 0-2-2z"/></svg>
+      </button>
+      <button class="btn-subscribe" onclick="window.location.href='fanhub-subscribe-modal.html'">訂閱解鎖</button>
+    </div>
+  </div>
+
+  <div class="creator-name">
+    Ava Lin
+    <svg viewBox="0 0 18 18" fill="none" style="width:18px;height:18px;flex-shrink:0"><circle cx="9" cy="9" r="9" fill="#cc5e76"/><polyline points="5,9 8,12 13,6" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </div>
+  <div class="creator-handle">
+    @avalin
+    <div class="section-divider" style="margin:0;width:1px;height:12px;display:inline-block;background:var(--bd)"></div>
+    <span class="online-pill">在線上</span>
+    <div class="section-divider" style="margin:0;width:1px;height:12px;display:inline-block;background:var(--bd)"></div>
+    加入 36 個月
+  </div>
+
+  <div class="stats-row">
+    <div class="stat">
+      <div class="stat-num">12.4K</div>
+      <div class="stat-lbl">粉絲</div>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat">
+      <div class="stat-num">248</div>
+      <div class="stat-lbl">貼文</div>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat">
+      <div class="stat-num">4.9</div>
+      <div class="stat-lbl">評分</div>
+    </div>
+    <div class="stat-divider"></div>
+    <div class="stat">
+      <div class="stat-num">94%</div>
+      <div class="stat-lbl">續訂率</div>
+    </div>
+  </div>
+
+  <!-- Milestone badges -->
+  <div class="badges-row">
+    <div class="badge-chip badge-milestone">
+      <svg viewBox="0 0 24 24" fill="currentColor" style="width:10px;height:10px"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+      萬人迷
+    </div>
+    <div class="badge-chip badge-hot">🔥 Hot AF · 本週漲粉 Top 3</div>
+    <div class="badge-chip badge-top">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="width:10px;height:10px"><polyline points="20 6 9 17 4 12"/></svg>
+      菁英創作者
+    </div>
+  </div>
+
+  <div class="tags-row">
+    <span class="tag">健身</span>
+    <span class="tag">生活風格</span>
+    <span class="tag">獨家寫真</span>
+    <span class="tag">每日更新</span>
+    <span class="tag">台灣</span>
+  </div>
+</div>
+
+<!-- CREATOR'S STORY -->
+<div class="story-section">
+  <div class="story-card">
+    <div class="story-eyebrow">創作者的話</div>
+    <div class="story-quote">
+      我想讓你看到的，是那個健身房之外的我。
+    </div>
+    <div class="story-body" id="storyBody">
+      三年前我開始運動，不是為了瘦，是因為我的心情需要一個出口。後來我發現，很多人都有同樣的感受，卻找不到地方說。
+      <span id="storyMore" style="display:none">
+        <br><br>
+        所以我開始記錄。不只是訓練日誌，也有我每天的想法、不完美的早餐、有時候懶得動但還是去了的那些早晨。
+        <br><br>
+        這裡是真實的我。訂閱的你，是我選擇讓進來的人。
+      </span>
+    </div>
+    <button class="story-more-btn" id="storyMoreBtn" onclick="toggleStory()">
+      閱讀更多
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+  </div>
+</div>
+
+<!-- HIGHLIGHTS -->
+<div class="highlights-section">
+  <div class="section-header">
+    <div class="section-title-text">精選時刻</div>
+    <div class="section-sub">創作者親自策展</div>
+  </div>
+  <div class="highlights-scroll">
+
+    <div class="highlight-card" onclick="window.location.href='fanhub-unlock-modal.html'">
+      <div class="highlight-cover">
+        <div class="highlight-cover-bg" style="background:linear-gradient(155deg,#f0d0c0,#e0b0a8,#c89090)"></div>
+        <div class="highlight-overlay"></div>
+        <div class="highlight-pin"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+        <div class="highlight-lock"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor"/><path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="currentColor"/></svg></div>
+      </div>
+      <div class="highlight-info">
+        <div class="highlight-caption">第 100 天的健身日記，也是我哭著完成的那天</div>
+        <div class="highlight-meta">
+          <div class="highlight-likes"><svg viewBox="0 0 24 24" fill="var(--p)" stroke="none"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> 842</div>
+          <span>3 個月前</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="highlight-card">
+      <div class="highlight-cover">
+        <div class="highlight-cover-bg" style="background:linear-gradient(155deg,#ddf0f8,#b8dcea,#90c4d8)"></div>
+        <div class="highlight-overlay"></div>
+        <div class="highlight-pin"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+      </div>
+      <div class="highlight-info">
+        <div class="highlight-caption">日本旅行 Vlog：京都的那個早晨</div>
+        <div class="highlight-meta">
+          <div class="highlight-likes"><svg viewBox="0 0 24 24" fill="var(--p)" stroke="none"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> 617</div>
+          <span>免費</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="highlight-card" onclick="window.location.href='fanhub-unlock-modal.html'">
+      <div class="highlight-cover">
+        <div class="highlight-cover-bg" style="background:linear-gradient(155deg,#f8e8d0,#f0d0a8,#e0b880)"></div>
+        <div class="highlight-overlay"></div>
+        <div class="highlight-pin"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+        <div class="highlight-lock"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor"/><path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="currentColor"/></svg></div>
+      </div>
+      <div class="highlight-info">
+        <div class="highlight-caption">寫真集 Vol.08 — 海邊的下午</div>
+        <div class="highlight-meta">
+          <div class="highlight-likes"><svg viewBox="0 0 24 24" fill="var(--p)" stroke="none"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> 1,204</div>
+          <span>限定</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="highlight-card">
+      <div class="highlight-cover">
+        <div class="highlight-cover-bg" style="background:linear-gradient(155deg,#e8d8f0,#d0b8e0,#b898c8)"></div>
+        <div class="highlight-overlay"></div>
+        <div class="highlight-pin"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+      </div>
+      <div class="highlight-info">
+        <div class="highlight-caption">分享我的日常保養流程（無廣）</div>
+        <div class="highlight-meta">
+          <div class="highlight-likes"><svg viewBox="0 0 24 24" fill="var(--p)" stroke="none"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> 438</div>
+          <span>免費</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="highlight-card" onclick="window.location.href='fanhub-unlock-modal.html'">
+      <div class="highlight-cover">
+        <div class="highlight-cover-bg" style="background:linear-gradient(155deg,#d0e8d0,#a8c8a0,#80a880)"></div>
+        <div class="highlight-overlay"></div>
+        <div class="highlight-pin"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+        <div class="highlight-lock"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor"/><path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="currentColor"/></svg></div>
+      </div>
+      <div class="highlight-info">
+        <div class="highlight-caption">全程記錄：備賽最後一週</div>
+        <div class="highlight-meta">
+          <div class="highlight-likes"><svg viewBox="0 0 24 24" fill="var(--p)" stroke="none"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> 2,108</div>
+          <span>限定</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- SUBSCRIPTION -->
+<div class="sub-section">
+  <div class="section-header">
+    <div class="section-title-text">訂閱方案</div>
+  </div>
+  <div class="sub-card">
+    <div class="sub-card-top">
+      <div class="sub-plan-label">全內容解鎖 · Ava Lin</div>
+      <div class="sub-pricing-row">
+        <div>
+          <div style="display:flex;align-items:baseline;gap:4px">
+            <div class="sub-price" id="profilePrice">NT$299</div>
+            <div class="sub-price-period">/月</div>
+          </div>
+          <div class="sub-cancel-note" id="profilePeriodNote">隨時可取消</div>
+        </div>
+        <div style="margin-left:auto">
+          <div class="period-toggle">
+            <button class="period-btn active" id="btnM" onclick="setPeriod('m')">月付</button>
+            <button class="period-btn" id="btnY" onclick="setPeriod('y')">年付</button>
+          </div>
+          <div class="save-badge" id="saveBadge" style="margin-top:5px;text-align:center">切換年付省 17%</div>
+        </div>
+      </div>
+    </div>
+    <div class="sub-card-body">
+      <!-- Locked preview -->
+      <div class="locked-strip">
+        <div class="locked-thumb">
+          <div class="locked-thumb-bg" style="background:linear-gradient(145deg,#f0d0c0,#e0b0a8)"></div>
+          <div class="locked-strip-overlay"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor"/><path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="currentColor"/></svg></div>
+        </div>
+        <div class="locked-thumb">
+          <div class="locked-thumb-bg" style="background:linear-gradient(145deg,#ddf0f8,#b8dcea)"></div>
+          <div class="locked-strip-overlay"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor"/><path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="currentColor"/></svg></div>
+        </div>
+        <div class="locked-thumb">
+          <div class="locked-thumb-bg" style="background:linear-gradient(145deg,#f8e8d0,#f0d0a8)"></div>
+          <div class="locked-strip-overlay"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor"/><path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="currentColor"/></svg></div>
+        </div>
+        <div class="locked-thumb">
+          <div class="locked-thumb-bg" style="background:linear-gradient(145deg,#e8d8f0,#d0b8e0)"></div>
+          <div class="locked-strip-overlay"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor"/><path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="currentColor"/></svg></div>
+        </div>
+        <div class="locked-strip-count">+ 244 則等你解鎖</div>
+      </div>
+
+      <div class="sub-perks">
+        <div class="sub-perk">
+          <div class="perk-check"><svg viewBox="0 0 12 12" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,6 5,9 10,3"/></svg></div>
+          全部貼文、相簿、影片解鎖
+        </div>
+        <div class="sub-perk">
+          <div class="perk-check"><svg viewBox="0 0 12 12" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,6 5,9 10,3"/></svg></div>
+          私訊 Ava Lin，她會回覆
+        </div>
+        <div class="sub-perk">
+          <div class="perk-check"><svg viewBox="0 0 12 12" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,6 5,9 10,3"/></svg></div>
+          限定故事動態 · 直播優先入場
+        </div>
+        <div class="sub-perk">
+          <div class="perk-check"><svg viewBox="0 0 12 12" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,6 5,9 10,3"/></svg></div>
+          新訂閱者專屬迎新彩蛋
+        </div>
+      </div>
+
+      <button class="sub-subscribe-btn" onclick="window.location.href='fanhub-subscribe-modal.html'">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        立即訂閱 · <span id="btnPrice">NT$299</span>/月
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="section-divider"></div>
+
+<!-- CONTENT TABS -->
+<div class="tabs-section">
+  <div class="content-tabs">
+    <div class="ctab active" onclick="switchTab(this,'posts')">貼文 <span class="tab-count">248</span></div>
+    <div class="ctab" onclick="switchTab(this,'photos')">相片 <span class="tab-count">124</span></div>
+    <div class="ctab" onclick="switchTab(this,'videos')">影片 <span class="tab-count">36</span></div>
+    <div class="ctab" onclick="switchTab(this,'about')">關於</div>
+  </div>
+
+  <!-- POSTS -->
+  <div class="tab-panel active" id="panel-posts">
+    <div class="posts-grid">
+      <!-- Free post -->
+      <div class="post-card">
+        <div class="post-bg" style="background:linear-gradient(145deg,#ddf0f8,#b8dcea)"></div>
+        <div class="post-free">免費</div>
+        <div class="post-engage">
+          <div class="engage-item"><svg viewBox="0 0 24 24" fill="#fff" stroke="none"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>617</div>
+          <div class="engage-item"><svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>43</div>
+        </div>
+      </div>
+      <!-- Locked posts -->
+      <div class="post-card" onclick="window.location.href='fanhub-unlock-modal.html'">
+        <div class="post-bg" style="background:linear-gradient(145deg,#f0d0c0,#e0b0a8)"></div>
+        <div class="post-lock"><div class="post-lock-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor"/><path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="currentColor"/></svg></div></div>
+        <div class="post-engage">
+          <div class="engage-item"><svg viewBox="0 0 24 24" fill="#fff" stroke="none"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>842</div>
+        </div>
+      </div>
+      <div class="post-card" onclick="window.location.href='fanhub-unlock-modal.html'">
+        <div class="post-bg" style="background:linear-gradient(145deg,#f8e8d0,#f0d0a8)"></div>
+        <div class="post-lock"><div class="post-lock-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor"/><path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="currentColor"/></svg></div></div>
+      </div>
+      <div class="post-card">
+        <div class="post-bg" style="background:linear-gradient(145deg,#e8f0d8,#c8d8a8)"></div>
+        <div class="post-free">免費</div>
+        <div class="post-engage">
+          <div class="engage-item"><svg viewBox="0 0 24 24" fill="#fff" stroke="none"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>328</div>
+        </div>
+      </div>
+      <div class="post-card" onclick="window.location.href='fanhub-unlock-modal.html'">
+        <div class="post-bg" style="background:linear-gradient(145deg,#e8d8f0,#d0b8e0)"></div>
+        <div class="post-lock"><div class="post-lock-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor"/><path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="currentColor"/></svg></div></div>
+      </div>
+      <div class="post-card" onclick="window.location.href='fanhub-unlock-modal.html'">
+        <div class="post-bg" style="background:linear-gradient(145deg,#d0e8d0,#a8c8a0)"></div>
+        <div class="post-lock"><div class="post-lock-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor"/><path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="currentColor"/></svg></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PHOTOS (same grid) -->
+  <div class="tab-panel" id="panel-photos">
+    <div class="posts-grid">
+      <div class="post-card" onclick="window.location.href='fanhub-unlock-modal.html'">
+        <div class="post-bg" style="background:linear-gradient(145deg,#f0d0c0,#c8a090)"></div>
+        <div class="post-lock"><div class="post-lock-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor"/><path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="currentColor"/></svg></div></div>
+      </div>
+      <div class="post-card"><div class="post-bg" style="background:linear-gradient(145deg,#ddf0f8,#90c0d0)"></div><div class="post-free">免費</div></div>
+      <div class="post-card" onclick="window.location.href='fanhub-unlock-modal.html'">
+        <div class="post-bg" style="background:linear-gradient(145deg,#f8e8d0,#d8b880)"></div>
+        <div class="post-lock"><div class="post-lock-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2" stroke="currentColor"/><path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="currentColor"/></svg></div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- VIDEOS -->
+  <div class="tab-panel" id="panel-videos">
+    <div class="posts-grid">
+      <div class="post-card" onclick="window.location.href='fanhub-unlock-modal.html'" style="position:relative">
+        <div class="post-bg" style="background:linear-gradient(145deg,#1a0f14,#2d1822)"></div>
+        <div class="post-lock">
+          <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);display:flex;align-items:center;justify-content:center">
+            <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:#fff;margin-left:2px"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          </div>
+        </div>
+        <div style="position:absolute;bottom:8px;right:8px;font-size:13px;background:rgba(0,0,0,.6);color:#fff;padding:2px 6px;border-radius:5px">48:32</div>
+      </div>
+      <div class="post-card" style="position:relative">
+        <div class="post-bg" style="background:linear-gradient(145deg,#0f1820,#182838)"></div>
+        <div class="post-free">免費</div>
+        <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:38px;height:38px;border-radius:50%;background:rgba(255,255,255,.15);display:flex;align-items:center;justify-content:center">
+          <svg viewBox="0 0 24 24" style="width:14px;height:14px;fill:#fff;margin-left:2px"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        </div>
+        <div style="position:absolute;bottom:8px;right:8px;font-size:13px;background:rgba(0,0,0,.6);color:#fff;padding:2px 6px;border-radius:5px">12:18</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ABOUT -->
+  <div class="tab-panel" id="panel-about">
+    <div class="about-panel">
+
+      <div class="about-card">
+        <div class="about-card-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          創作數據
+        </div>
+        <div class="about-stat-grid">
+          <div class="about-stat">
+            <div class="about-stat-num">248</div>
+            <div class="about-stat-lbl">貼文總數</div>
+          </div>
+          <div class="about-stat">
+            <div class="about-stat-num">94%</div>
+            <div class="about-stat-lbl">訂閱者續訂率</div>
+          </div>
+          <div class="about-stat">
+            <div class="about-stat-num">8.4%</div>
+            <div class="about-stat-lbl">平均互動率</div>
+          </div>
+          <div class="about-stat">
+            <div class="about-stat-num">每 2 天</div>
+            <div class="about-stat-lbl">平均更新頻率</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="about-card">
+        <div class="about-card-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+          創作者里程碑
+        </div>
+        <div class="milestone-list">
+          <div class="milestone-item">
+            <div class="milestone-icon" style="background:rgba(204,94,118,.1)">🎉</div>
+            <div class="milestone-info">
+              <div class="milestone-title">達到 10,000 訂閱者 · 萬人迷</div>
+              <div class="milestone-date">2025 年 1 月</div>
+            </div>
+          </div>
+          <div class="milestone-item">
+            <div class="milestone-icon" style="background:rgba(45,138,78,.1)">💪</div>
+            <div class="milestone-info">
+              <div class="milestone-title">發布第 200 篇貼文</div>
+              <div class="milestone-date">2024 年 10 月</div>
+            </div>
+          </div>
+          <div class="milestone-item">
+            <div class="milestone-icon" style="background:rgba(212,160,94,.1)">⭐</div>
+            <div class="milestone-info">
+              <div class="milestone-title">達到 5,000 訂閱者 · 菁英創作者</div>
+              <div class="milestone-date">2024 年 6 月</div>
+            </div>
+          </div>
+          <div class="milestone-item">
+            <div class="milestone-icon" style="background:rgba(94,138,184,.1)">🌱</div>
+            <div class="milestone-info">
+              <div class="milestone-title">第一位訂閱者，開始創作</div>
+              <div class="milestone-date">2022 年 3 月</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="about-card">
+        <div class="about-card-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+          訂閱者最活躍時段
+        </div>
+        <div style="font-size:13px;color:var(--t3);margin-bottom:10px;transition:color var(--tr)">下午 6 點 — 深夜 12 點最多人在線</div>
+        <div class="schedule-bars">
+          <div class="sbar-wrap"><div class="sbar" style="height:20%"></div><div class="sbar-lbl">6</div></div>
+          <div class="sbar-wrap"><div class="sbar" style="height:25%"></div><div class="sbar-lbl">7</div></div>
+          <div class="sbar-wrap"><div class="sbar" style="height:35%"></div><div class="sbar-lbl">8</div></div>
+          <div class="sbar-wrap"><div class="sbar" style="height:45%"></div><div class="sbar-lbl">9</div></div>
+          <div class="sbar-wrap"><div class="sbar" style="height:55%"></div><div class="sbar-lbl">10</div></div>
+          <div class="sbar-wrap"><div class="sbar" style="height:60%"></div><div class="sbar-lbl">11</div></div>
+          <div class="sbar-wrap"><div class="sbar" style="height:70%"></div><div class="sbar-lbl">12</div></div>
+          <div class="sbar-wrap"><div class="sbar" style="height:65%"></div><div class="sbar-lbl">13</div></div>
+          <div class="sbar-wrap"><div class="sbar" style="height:55%"></div><div class="sbar-lbl">14</div></div>
+          <div class="sbar-wrap"><div class="sbar" style="height:50%"></div><div class="sbar-lbl">15</div></div>
+          <div class="sbar-wrap"><div class="sbar" style="height:60%"></div><div class="sbar-lbl">16</div></div>
+          <div class="sbar-wrap"><div class="sbar" style="height:72%"></div><div class="sbar-lbl">17</div></div>
+          <div class="sbar-wrap"><div class="sbar peak" style="height:90%"></div><div class="sbar-lbl">18</div></div>
+          <div class="sbar-wrap"><div class="sbar peak" style="height:100%"></div><div class="sbar-lbl">19</div></div>
+          <div class="sbar-wrap"><div class="sbar peak" style="height:95%"></div><div class="sbar-lbl">20</div></div>
+          <div class="sbar-wrap"><div class="sbar peak" style="height:88%"></div><div class="sbar-lbl">21</div></div>
+          <div class="sbar-wrap"><div class="sbar peak" style="height:80%"></div><div class="sbar-lbl">22</div></div>
+          <div class="sbar-wrap"><div class="sbar peak" style="height:75%"></div><div class="sbar-lbl">23</div></div>
+          <div class="sbar-wrap"><div class="sbar" style="height:45%"></div><div class="sbar-lbl">0</div></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div style="height:80px"></div>
+</div>
+
+<!-- STICKY BAR -->
+<div class="sticky-bar" id="stickyBar">
+  <div class="sticky-info">
+    <div class="sticky-avatar">A</div>
+    <div>
+      <div class="sticky-name">Ava Lin</div>
+      <div class="sticky-price">月付 NT$299/月起</div>
+    </div>
+  </div>
+  <button class="sticky-btn" onclick="window.location.href='fanhub-subscribe-modal.html'">立即訂閱</button>
+</div>
+
+<!-- TOAST -->
+<div class="toast" id="toast">
+  <div class="t-dot"></div>
+  <span id="toastMsg"></span>
+</div>
+
+<script>
+/* Theme */
+const root = document.documentElement;
+root.dataset.theme = 'light'; // demo: force light on load
+document.getElementById('themeBtn').addEventListener('click', () => {
+  const n = root.dataset.theme === 'light' ? 'dark' : 'light';
+  root.dataset.theme = n; localStorage.setItem('fh-theme', n);
+});
+
+/* Cover Ken Burns effect */
+setTimeout(() => document.getElementById('coverBg').classList.add('loaded'), 100);
+
+/* Save */
+let saved = false;
+function toggleSave() {
+  saved = !saved;
+  const btn = document.getElementById('btnSave');
+  btn.classList.toggle('saved', saved);
+  btn.querySelector('path').setAttribute('fill', saved ? 'var(--p)' : 'none');
+  btn.querySelector('path').setAttribute('stroke', saved ? 'var(--p)' : 'currentColor');
+  showToast(saved ? '已加入收藏' : '已取消收藏');
+}
+
+/* Period toggle */
+let isYearly = false;
+function setPeriod(p) {
+  isYearly = p === 'y';
+  document.getElementById('btnM').classList.toggle('active', !isYearly);
+  document.getElementById('btnY').classList.toggle('active', isYearly);
+  document.getElementById('profilePrice').textContent = isYearly ? 'NT$249' : 'NT$299';
+  document.getElementById('profilePeriodNote').textContent = isYearly ? '年付 NT$2,988 · 省 NT$600' : '隨時可取消';
+  document.getElementById('saveBadge').textContent = isYearly ? '✓ 已省 17%' : '切換年付省 17%';
+  document.getElementById('btnPrice').textContent = isYearly ? 'NT$249' : 'NT$299';
+}
+
+/* Story expand */
+let storyExpanded = false;
+function toggleStory() {
+  storyExpanded = !storyExpanded;
+  document.getElementById('storyMore').style.display = storyExpanded ? 'inline' : 'none';
+  const btn = document.getElementById('storyMoreBtn');
+  btn.innerHTML = storyExpanded
+    ? '收起 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;display:inline"><polyline points="18 15 12 9 6 15"/></svg>'
+    : '閱讀更多 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px;display:inline"><polyline points="6 9 12 15 18 9"/></svg>';
+}
+
+/* Tab switch */
+function switchTab(el, id) {
+  document.querySelectorAll('.ctab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  el.classList.add('active');
+  document.getElementById('panel-' + id).classList.add('active');
+}
+
+/* Sticky bar */
+const stickyBar = document.getElementById('stickyBar');
+const subSection = document.querySelector('.sub-section');
+const obs = new IntersectionObserver(entries => {
+  stickyBar.classList.toggle('visible', !entries[0].isIntersecting);
+}, {threshold:0});
+obs.observe(subSection);
+
+/* Toast */
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  document.getElementById('toastMsg').textContent = msg;
+  t.classList.add('show');
+  clearTimeout(window._tt);
+  window._tt = setTimeout(() => t.classList.remove('show'), 2200);
+}
+</script>
+</body>
+</html>

@@ -12,382 +12,252 @@
   --p:#cc5e76;--ph:#b84d65;--p2:#8a3248;
   --t1:#2e1118;--t2:#4a1e2a;--t3:#7a4858;
   --bd:rgba(150,70,90,.25);--bd2:rgba(150,70,90,.42);
+  --nav:rgba(253,249,246,.96);
+  --ok:#2d8a4e;--ok-bg:#eaf6ee;
   --tr:.24s cubic-bezier(.4,0,.2,1);
-  --nav:rgba(253,249,246,.94);
-  --green:#2d8a4e;--green-bg:#eaf6ee;
 }
 [data-theme=dark]{
   --bg:#080508;--surface:#1e1016;--surface2:#2a1820;--surface3:#382030;
   --p:#d4718b;--ph:#e07d96;--p2:#9b4c6a;
   --t1:#f8e0e8;--t2:#d8a8b8;--t3:#a87888;
-  --bd:rgba(200,120,150,.22);--bd2:rgba(212,113,139,.26);
+  --bd:rgba(200,120,150,.22);--bd2:rgba(200,120,150,.42);
   --nav:rgba(8,5,8,.96);
-  --green:#5eca7a;--green-bg:#0d2518;
+  --ok:#5eca7a;--ok-bg:#0d2518;
 }
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 body{
-  font-family:'DM Sans',sans-serif;
-  font-size:16px;
-  background:var(--bg);color:var(--t1);
-  min-height:100vh;
+  font-family:'DM Sans',sans-serif;font-size:16px;
+  background:var(--bg);color:var(--t1);min-height:100vh;
   -webkit-font-smoothing:antialiased;
   transition:background var(--tr),color var(--tr);
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Crect width='1' height='1' x='0' y='0' fill='rgba(180,100,110,.025)'/%3E%3Crect width='1' height='1' x='2' y='2' fill='rgba(180,100,110,.018)'/%3E%3C/svg%3E");
 }
-[data-theme=dark] body{background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4'%3E%3Crect width='1' height='1' x='0' y='0' fill='rgba(212,113,139,.04)'/%3E%3Crect width='1' height='1' x='2' y='2' fill='rgba(212,113,139,.025)'/%3E%3C/svg%3E")}
 button{font-family:inherit;cursor:pointer;border:none;outline:none;background:none}
 input{font-family:inherit}
 
-/* ── NAVBAR ─────────────────────────────────────── */
 .nav{
-  position:fixed;top:0;left:0;right:0;z-index:10;
   height:52px;background:var(--nav);
-  backdrop-filter:blur(20px) saturate(160%);
-  -webkit-backdrop-filter:blur(20px) saturate(160%);
   border-bottom:1px solid var(--bd);
   display:flex;align-items:center;justify-content:space-between;
-  padding:0 24px;transition:background var(--tr);
+  padding:0 24px;position:fixed;top:0;left:0;right:0;z-index:10;
+  transition:background var(--tr),border-color var(--tr);
+  backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
 }
 .nav-logo{font-size:17px;font-weight:500;letter-spacing:.18em;color:var(--p)}
 .nav-logo em{font-style:normal;font-weight:400;opacity:.55}
 .theme-btn{
   width:38px;height:22px;border-radius:11px;
   background:var(--surface2);border:1.5px solid var(--bd2);
-  position:relative;cursor:pointer;padding:2px;
-  display:flex;align-items:center;
+  position:relative;cursor:pointer;padding:2px;display:flex;align-items:center;
   transition:background var(--tr),border-color var(--tr);
 }
-.theme-btn::after{
-  content:'';width:16px;height:16px;border-radius:50%;
-  background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.18);
-  transition:transform var(--tr);
-}
+.theme-btn::after{content:'';width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.2);transition:transform var(--tr)}
 [data-theme=dark] .theme-btn{background:var(--p);border-color:var(--p)}
 [data-theme=dark] .theme-btn::after{transform:translateX(16px)}
 
-/* ── DEMO ─────────────────────────────────────── */
-.demo-wrap{
-  padding:100px 24px 48px;
-  display:flex;flex-direction:column;align-items:center;gap:12px;
-}
-.demo-label{font-size:17px;color:var(--t3)}
+/* Demo trigger */
+.demo-wrap{padding:90px 24px 24px;text-align:center}
 .demo-btn{
-  font-size:18px;font-weight:600;
-  padding:11px 28px;border-radius:22px;
-  background:var(--p);color:#fff;
+  font-size:15px;font-weight:600;padding:12px 28px;border-radius:22px;
+  background:var(--p);color:#fff;box-shadow:0 4px 14px rgba(204,94,118,.28);
   transition:background .18s,transform .15s;
-  box-shadow:0 4px 16px rgba(204,94,118,.28);
 }
 .demo-btn:hover{background:var(--ph);transform:translateY(-1px)}
 
-/* ── OVERLAY ─────────────────────────────────────── */
+/* Overlay */
 .overlay{
-  position:fixed;inset:0;z-index:200;
-  background:rgba(15,10,13,.55);
-  backdrop-filter:blur(6px);
-  -webkit-backdrop-filter:blur(6px);
+  position:fixed;inset:0;z-index:100;
+  background:rgba(8,5,8,.55);backdrop-filter:blur(6px);
   display:flex;align-items:center;justify-content:center;
-  padding:16px;
-  opacity:0;pointer-events:none;
-  transition:opacity .28s;
+  padding:16px;opacity:0;pointer-events:none;transition:opacity .24s;
 }
 .overlay.open{opacity:1;pointer-events:auto}
 
-/* ── MODAL ───────────────────────────────────────── */
+/* Modal */
 .modal{
-  background:var(--surface);
-  border-radius:20px;border:1px solid var(--bd);
-  width:100%;max-width:420px;
+  background:var(--surface);border-radius:20px;
+  border:1px solid var(--bd);width:100%;max-width:520px;
   max-height:90vh;overflow-y:auto;
-  transform:translateY(16px) scale(.98);
-  transition:transform .3s cubic-bezier(.34,1.26,.64,1);
-  scrollbar-width:none;position:relative;
+  transform:translateY(16px) scale(.97);
+  transition:transform .32s cubic-bezier(.34,1.26,.64,1);
+  scrollbar-width:thin;scrollbar-color:var(--bd) transparent;
 }
-.modal::-webkit-scrollbar{display:none}
 .overlay.open .modal{transform:translateY(0) scale(1)}
-
 .modal-close{
-  position:absolute;top:14px;right:14px;z-index:2;
+  position:absolute;top:14px;right:14px;
   width:30px;height:30px;border-radius:50%;
-  background:var(--surface2);
-  display:flex;align-items:center;justify-content:center;
+  background:var(--surface2);display:flex;align-items:center;justify-content:center;
   color:var(--t3);transition:all .18s;
 }
 .modal-close:hover{background:var(--surface3);color:var(--t1)}
 .modal-close svg{width:14px;height:14px}
 
-/* ── CREATOR HEADER ──────────────────────────────── */
+/* Creator header */
 .modal-header{
-  padding:22px 22px 16px;
-  display:flex;align-items:center;gap:13px;
-  border-bottom:1px solid var(--bd);
+  display:flex;align-items:center;gap:14px;
+  padding:22px 22px 18px;border-bottom:1px solid var(--bd);position:relative;
   transition:border-color var(--tr);
 }
 .modal-avatar{
-  width:50px;height:50px;border-radius:50%;
+  width:52px;height:52px;border-radius:50%;flex-shrink:0;
   background:linear-gradient(135deg,var(--p),var(--p2));
   display:flex;align-items:center;justify-content:center;
-  font-family:'Cormorant Garamond',serif;
-  font-size:20px;font-weight:600;color:#fff;
-  flex-shrink:0;
-  box-shadow:0 3px 12px rgba(204,94,118,.25);
+  font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:#fff;
 }
-.modal-creator-name{
-  font-family:'Cormorant Garamond',serif;
-  font-size:19px;font-weight:600;color:var(--t1);
-  display:flex;align-items:center;gap:5px;
-  transition:color var(--tr);
-}
-.vcheck{width:14px;height:14px;border-radius:50%;background:var(--p);display:inline-flex;align-items:center;justify-content:center}
-.vcheck svg{width:7px;height:7px}
-.modal-handle{font-size:17px;color:var(--t3);margin-top:2px;transition:color var(--tr)}
+.modal-creator-name{font-size:17px;font-weight:700;color:var(--t1);display:flex;align-items:center;gap:6px;transition:color var(--tr)}
+.modal-handle{font-size:14px;color:var(--t3);margin-top:2px;transition:color var(--tr)}
+.vcheck{width:16px;height:16px;border-radius:50%;background:var(--p);display:inline-flex;align-items:center;justify-content:center}
+.vcheck svg{width:9px;height:9px}
 
-/* ── SINGLE PLAN CARD ────────────────────────────── */
-.plan-wrap{padding:18px 22px 0}
-.plan-card{
-  border:2px solid var(--p);border-radius:14px;
-  padding:18px;background:var(--surface3);
-  transition:background var(--tr);
-}
-.plan-top{
-  display:flex;align-items:flex-start;
-  justify-content:space-between;margin-bottom:14px;
-}
-.plan-label{
-  font-size:18px;font-weight:500;color:var(--t3);
-  text-transform:uppercase;letter-spacing:.06em;
-  margin-bottom:5px;transition:color var(--tr);
-}
-.plan-price{
-  font-family:'Cormorant Garamond',serif;
-  font-size:34px;font-weight:600;color:var(--t1);
-  line-height:1;transition:color var(--tr);
-}
-.plan-price-yearly{
-  font-size:18px;font-weight:400;color:var(--t3);
-  margin-top:3px;transition:color var(--tr);
-}
-.plan-cancel-note{
-  font-size:18px;color:var(--t3);text-align:right;
-  line-height:1.55;transition:color var(--tr);
-}
-.plan-divider{height:1px;background:var(--bd);margin-bottom:14px;transition:background var(--tr)}
-.plan-perks{display:flex;flex-direction:column;gap:9px}
-.plan-perk{
-  display:flex;align-items:center;gap:9px;
-  font-size:18px;color:var(--t2);transition:color var(--tr);
-}
-.perk-check{
-  width:18px;height:18px;border-radius:50%;
-  background:var(--p);display:flex;align-items:center;
-  justify-content:center;flex-shrink:0;
-  transition:background var(--tr);
-}
-.perk-check svg{width:9px;height:9px}
-
-/* ── LOCKED CONTENT PREVIEW ──────────────────────── */
-.preview-wrap{padding:14px 22px 0}
-.preview-label{
-  font-size:18px;font-weight:500;color:var(--t3);
-  text-transform:uppercase;letter-spacing:.06em;
-  margin-bottom:10px;transition:color var(--tr);
-}
-.preview-thumbs{display:flex;gap:5px}
-.p-thumb{
-  flex:1;aspect-ratio:1;border-radius:8px;
-  position:relative;overflow:hidden;
-  transition:background var(--tr);
-}
-.p-thumb-free{background:linear-gradient(145deg,#f2ddd4,#e8c4c0)}
-[data-theme=dark] .p-thumb-free{background:linear-gradient(145deg,#2d1822,#3d2230)}
-.p-thumb-lock{
-  background:linear-gradient(145deg,#ead5d0,#e0c4bc);
-  display:flex;align-items:center;justify-content:center;
-}
-[data-theme=dark] .p-thumb-lock{background:linear-gradient(145deg,#241018,#301420)}
-.p-thumb-lock::after{
-  content:'';position:absolute;inset:0;
-  background:rgba(15,10,13,.32);border-radius:8px;
-}
-.p-thumb-lock svg{position:relative;z-index:1;width:14px;height:14px;stroke:rgba(255,255,255,.85)}
-.preview-note{
-  font-size:18px;color:var(--t3);
-  text-align:center;margin-top:8px;
-  transition:color var(--tr);
-}
-
-/* ── BILLING TOGGLE ──────────────────────────────── */
-.billing-wrap{
-  padding:14px 22px 0;
-  display:flex;align-items:center;justify-content:center;gap:10px;
-  font-size:18px;color:var(--t2);transition:color var(--tr);
-}
-.toggle-track{
-  width:36px;height:20px;border-radius:10px;
-  background:var(--surface2);border:1.5px solid var(--bd2);
-  position:relative;cursor:pointer;padding:2px;
-  display:flex;align-items:center;
-  transition:background .2s,border-color .2s;
-}
-.toggle-track.on{background:var(--p);border-color:var(--p)}
-.toggle-thumb{
-  width:14px;height:14px;border-radius:50%;
-  background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.18);
-  transition:transform .2s;
-}
-.toggle-track.on .toggle-thumb{transform:translateX(16px)}
-.bill-lbl{cursor:pointer;transition:color .18s}
-.bill-lbl.active{color:var(--t1);font-weight:500}
-.save-pill{
-  font-size:17px;font-weight:700;
-  padding:2px 8px;border-radius:8px;
-  background:var(--green-bg);color:var(--green);
-}
-
-/* ── ORDER SUMMARY ───────────────────────────────── */
-.summary-wrap{
-  margin:14px 22px 0;padding:13px 15px;
-  background:var(--surface2);border-radius:12px;
-  transition:background var(--tr);
-}
-.summary-row{
-  display:flex;justify-content:space-between;
-  font-size:18px;color:var(--t2);margin-bottom:6px;
-  transition:color var(--tr);
-}
-.summary-row:last-child{margin-bottom:0}
-.summary-divider{height:1px;background:var(--bd);margin:9px 0;transition:background var(--tr)}
-.summary-total{
-  display:flex;justify-content:space-between;
-  font-size:18px;font-weight:600;color:var(--t1);
-  transition:color var(--tr);
-}
-.summary-total-price{color:var(--p);transition:color var(--tr)}
-
-/* ── PAYMENT ─────────────────────────────────────── */
-.payment-wrap{padding:14px 22px 0}
-.payment-label{
-  font-size:18px;font-weight:500;color:var(--t3);
-  text-transform:uppercase;letter-spacing:.06em;
-  margin-bottom:10px;transition:color var(--tr);
-}
-.card-group{
-  background:var(--surface);
-  border:1.5px solid var(--bd2);border-radius:12px;
-  overflow:hidden;transition:border-color .2s,background var(--tr);
-}
-.card-group:focus-within{border-color:var(--p);box-shadow:0 0 0 3px rgba(204,94,118,.09)}
-.card-row{
-  display:flex;align-items:center;
-  padding:0 13px;height:44px;gap:9px;
+/* Plan tabs */
+.plan-tabs{
+  display:flex;gap:0;
   border-bottom:1px solid var(--bd);
   transition:border-color var(--tr);
 }
+.plan-tab{
+  flex:1;padding:14px 8px;font-size:14px;font-weight:500;
+  color:var(--t3);cursor:pointer;
+  border-bottom:2px solid transparent;margin-bottom:-1px;
+  transition:all .18s;text-align:center;
+}
+.plan-tab.active{color:var(--p);border-bottom-color:var(--p);font-weight:600}
+.plan-tab:hover:not(.active){color:var(--t2)}
+
+/* Plan panel */
+.plan-panel{display:none;padding:20px 22px 0}
+.plan-panel.active{display:block}
+
+.plan-price-row{display:flex;align-items:baseline;gap:6px;margin-bottom:4px}
+.plan-price{font-family:'Cormorant Garamond',serif;font-size:40px;font-weight:600;color:var(--t1);transition:color var(--tr)}
+.plan-price-unit{font-size:16px;color:var(--t3);transition:color var(--tr)}
+.plan-note{font-size:14px;color:var(--t3);margin-bottom:14px;transition:color var(--tr)}
+.plan-info-box{
+  background:var(--surface2);border-radius:12px;padding:14px 16px;
+  margin-bottom:14px;border-left:3px solid var(--p);
+  transition:background var(--tr);
+}
+.plan-info-box p{font-size:14px;color:var(--t2);line-height:1.6;transition:color var(--tr)}
+.plan-info-box strong{color:var(--p)}
+
+.perks{display:flex;flex-direction:column;gap:9px;margin-bottom:18px}
+.perk{display:flex;align-items:flex-start;gap:9px;font-size:14px;color:var(--t2);line-height:1.5;transition:color var(--tr)}
+.perk-dot{width:18px;height:18px;border-radius:50%;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center}
+.perk-dot svg{width:9px;height:9px}
+.perk-ok{background:var(--p)}
+.perk-green{background:var(--ok-bg);border:1px solid rgba(45,138,78,.3)}
+.perk-light{background:var(--surface3);border:1px solid var(--bd2)}
+
+/* Save pill for quarter */
+.save-pill{
+  display:inline-flex;align-items:center;gap:5px;
+  font-size:12px;font-weight:700;padding:3px 12px;border-radius:20px;
+  background:var(--ok-bg);color:var(--ok);border:1px solid rgba(45,138,78,.25);
+  margin-bottom:14px;
+}
+
+/* Summary */
+.summary{
+  border:1px solid var(--bd);border-radius:12px;
+  overflow:hidden;margin-bottom:18px;
+  transition:border-color var(--tr);
+}
+.summary-row{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:11px 16px;font-size:14px;color:var(--t2);
+  border-bottom:1px solid var(--bd);
+  transition:color var(--tr),border-color var(--tr);
+}
+.summary-row:last-child{border-bottom:none}
+.summary-total{
+  display:flex;justify-content:space-between;align-items:center;
+  padding:13px 16px;font-size:16px;font-weight:600;color:var(--t1);
+  background:var(--surface2);transition:color var(--tr),background var(--tr);
+}
+
+/* Payment */
+.payment-label{font-size:14px;font-weight:600;color:var(--t1);margin-bottom:10px;transition:color var(--tr)}
+.card-group{
+  border:1.5px solid var(--bd2);border-radius:12px;overflow:hidden;
+  margin-bottom:18px;transition:border-color var(--tr);
+}
+.card-group:focus-within{border-color:var(--p);box-shadow:0 0 0 3px rgba(204,94,118,.1)}
+.card-row{
+  display:flex;align-items:center;
+  padding:0 14px;height:48px;gap:10px;
+  border-bottom:1px solid var(--bd);transition:border-color var(--tr);
+}
 .card-row:last-child{border-bottom:none}
-.card-split{display:grid;grid-template-columns:1fr 1fr}
-.card-split .card-row{border-right:1px solid var(--bd)}
+.card-split{display:flex}
+.card-split .card-row{flex:1;border-right:1px solid var(--bd)}
 .card-split .card-row:last-child{border-right:none;border-bottom:none}
-.card-icon{color:var(--t3);flex-shrink:0}
-.card-icon svg{width:15px;height:15px}
+.card-icon{color:var(--t3)}
+.card-icon svg{width:16px;height:16px}
 .card-input{
   flex:1;border:none;background:transparent;
-  font-size:17px;color:var(--t1);outline:none;
-  font-family:'DM Sans',sans-serif;transition:color var(--tr);
+  font-size:15px;color:var(--t1);outline:none;
+  transition:color var(--tr);
 }
-.card-input::placeholder{color:var(--t3);font-size:18px}
-.card-brands{display:flex;gap:4px;margin-left:auto}
-.card-brand{
-  height:18px;padding:0 5px;border-radius:3px;
-  border:1px solid var(--bd2);font-size:8px;font-weight:700;
-  display:flex;align-items:center;color:var(--t3);
-  transition:all .18s;
-}
-.card-brand.active{border-color:var(--p);color:var(--p);background:var(--surface3)}
+.card-input::placeholder{color:var(--t3);font-size:14px}
+.card-brands{display:flex;gap:5px;margin-left:auto}
+.card-brand{font-size:11px;font-weight:700;color:var(--t3);opacity:.4;transition:opacity .18s,color var(--tr)}
+.card-brand.active{opacity:1;color:var(--p)}
 
-/* ── SUBMIT ──────────────────────────────────────── */
-.submit-wrap{padding:16px 22px 0}
+/* Submit */
 .submit-btn{
-  width:100%;height:50px;
+  width:100%;height:52px;border-radius:14px;
   background:var(--p);color:#fff;
-  border-radius:14px;font-size:18px;font-weight:600;
-  letter-spacing:.03em;
-  box-shadow:0 4px 18px rgba(204,94,118,.3);
-  transition:background .18s,transform .15s,box-shadow .18s;
+  font-size:16px;font-weight:600;
+  box-shadow:0 4px 16px rgba(204,94,118,.28);
+  transition:background .18s,transform .15s;
   display:flex;align-items:center;justify-content:center;gap:8px;
   position:relative;overflow:hidden;
 }
-.submit-btn:hover{background:var(--ph);transform:translateY(-1px);box-shadow:0 6px 24px rgba(204,94,118,.38)}
-.submit-btn::after{
-  content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,.15),transparent);
-  transition:left .5s;
-}
+.submit-btn:hover{background:var(--ph);transform:translateY(-1px)}
+.submit-btn::after{content:'';position:absolute;top:0;left:-100%;width:60%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.15),transparent);transition:left .5s}
 .submit-btn:hover::after{left:140%}
-.submit-btn svg{width:15px;height:15px}
-.submit-btn.loading{pointer-events:none;opacity:.8}
+.submit-btn svg{width:16px;height:16px}
 @keyframes spin{to{transform:rotate(360deg)}}
 .spinner{width:18px;height:18px;border-radius:50%;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;animation:spin .7s linear infinite;display:none}
 .submit-btn.loading .spinner{display:block}
 .submit-btn.loading .btn-text{display:none}
+.submit-btn.loading{pointer-events:none;opacity:.8}
 
-/* ── TRUST ───────────────────────────────────────── */
-.trust-wrap{
-  padding:12px 22px 22px;
+/* Trust */
+.trust-row{
   display:flex;align-items:center;justify-content:center;gap:16px;
+  padding:14px 0 20px;
 }
-.ti{display:flex;align-items:center;gap:4px;font-size:18px;color:var(--t3);transition:color var(--tr)}
-.ti svg{width:11px;height:11px;flex-shrink:0}
+.trust-item{display:flex;align-items:center;gap:4px;font-size:12px;color:var(--t3);transition:color var(--tr)}
+.trust-item svg{width:12px;height:12px;flex-shrink:0}
 
-/* ── SUCCESS ─────────────────────────────────────── */
-.success-panel{
-  display:none;padding:44px 24px 36px;text-align:center;
-}
+/* Success */
+.success-panel{display:none;padding:40px 22px 32px;text-align:center}
 .success-ring{
-  width:64px;height:64px;border-radius:50%;
-  border:2px solid var(--green);background:var(--green-bg);
-  display:flex;align-items:center;justify-content:center;
-  margin:0 auto 16px;
+  width:68px;height:68px;border-radius:50%;
+  border:2px solid var(--ok);background:var(--ok-bg);
+  display:flex;align-items:center;justify-content:center;margin:0 auto 18px;
 }
-.success-ring svg{width:26px;height:26px;stroke:var(--green)}
-.success-title{
-  font-family:'Cormorant Garamond',serif;
-  font-size:24px;font-weight:600;color:var(--t1);
-  margin-bottom:8px;transition:color var(--tr);
+.success-ring svg{width:30px;height:30px;stroke:var(--ok)}
+.success-title{font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600;color:var(--t1);margin-bottom:8px;transition:color var(--tr)}
+.success-msg{font-size:15px;color:var(--t2);line-height:1.65;margin-bottom:22px;transition:color var(--tr)}
+.success-gift{
+  background:var(--surface2);border:1px solid var(--bd);
+  border-radius:14px;padding:16px 18px;margin-bottom:20px;
+  border-left:3px solid var(--p);text-align:left;
+  transition:background var(--tr),border-color var(--tr);
 }
-.success-msg{font-size:17px;color:var(--t2);line-height:1.65;margin-bottom:22px;transition:color var(--tr)}
-.success-info{
-  display:flex;align-items:center;gap:10px;
-  padding:12px 16px;border-radius:12px;
-  background:var(--surface2);margin-bottom:20px;
-  transition:background var(--tr);
-}
-.success-avatar-sm{
-  width:36px;height:36px;border-radius:50%;
-  background:linear-gradient(135deg,var(--p),var(--p2));
-  display:flex;align-items:center;justify-content:center;
-  font-family:'Cormorant Garamond',serif;
-  font-size:18px;font-weight:600;color:#fff;
-}
-.success-sub-name{font-size:17px;font-weight:500;color:var(--t1);transition:color var(--tr)}
-.success-sub-plan{font-size:17px;color:var(--t3);transition:color var(--tr)}
+.success-gift-label{font-size:12px;color:var(--p);font-weight:600;letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px}
+.success-gift-text{font-size:14px;color:var(--t2);line-height:1.6;transition:color var(--tr)}
 .goto-btn{
-  width:100%;height:46px;border-radius:12px;
-  background:var(--p);color:#fff;
-  font-size:18px;font-weight:600;
+  width:100%;height:48px;border-radius:12px;
+  background:var(--p);color:#fff;font-size:15px;font-weight:600;
   transition:background .18s;
 }
 .goto-btn:hover{background:var(--ph)}
 
-/* ── ANIMATIONS ──────────────────────────────────── */
-@keyframes fadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
-.modal-header{animation:fadeUp .38s .04s both}
-.plan-wrap{animation:fadeUp .38s .08s both}
-.preview-wrap{animation:fadeUp .38s .11s both}
-.billing-wrap{animation:fadeUp .38s .13s both}
-.summary-wrap{animation:fadeUp .38s .15s both}
-.payment-wrap{animation:fadeUp .38s .17s both}
-.submit-wrap{animation:fadeUp .38s .19s both}
-.trust-wrap{animation:fadeUp .38s .21s both}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.modal-header{animation:fadeUp .35s .04s both}
+.plan-tabs{animation:fadeUp .35s .07s both}
 </style>
 </head>
 <body>
@@ -398,12 +268,12 @@ input{font-family:inherit}
 </nav>
 
 <div class="demo-wrap">
-  <div class="demo-label">點擊觸發訂閱視窗（模擬從創作者頁進入）</div>
+  <p style="font-size:15px;color:var(--t3);margin-bottom:16px">點擊觸發訂閱視窗（模擬從創作者頁進入）</p>
   <button class="demo-btn" onclick="openModal()">訂閱 Ava Lin</button>
 </div>
 
-<!-- OVERLAY -->
-<div class="overlay" id="overlay" onclick="handleOverlayClick(event)">
+<!-- Overlay + Modal -->
+<div class="overlay" id="overlay" onclick="handleOverlay(event)">
 <div class="modal" id="modal">
 
   <button class="modal-close" onclick="closeModal()">
@@ -412,101 +282,58 @@ input{font-family:inherit}
 
   <div id="mainContent">
 
-    <!-- Creator -->
+    <!-- Creator header -->
     <div class="modal-header">
       <div class="modal-avatar">A</div>
       <div>
         <div class="modal-creator-name">
           Ava Lin
-          <span class="vcheck"><svg viewBox="0 0 12 12" fill="none" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,6 5,9 10,3"/></svg></span>
+          <span class="vcheck"><svg viewBox="0 0 12 12" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,6 5,9 10,3"/></svg></span>
         </div>
-        <div class="modal-handle">@avalin · 訂閱解鎖全部專屬內容</div>
+        <div class="modal-handle">@avalin · 選擇適合你的方案</div>
       </div>
     </div>
 
-    <!-- Single plan -->
-    <div class="plan-wrap">
-      <div class="plan-card">
-        <div class="plan-top">
-          <div>
-            <div class="plan-label">訂閱方案</div>
-            <div class="plan-price" id="planPrice">NT$299</div>
-            <div class="plan-price-yearly" id="planSub">每月 · 隨時可取消</div>
-          </div>
-          <div class="plan-cancel-note">隨時取消<br>不收違約金</div>
-        </div>
-        <div class="plan-divider"></div>
-        <div class="plan-perks">
-          <div class="plan-perk">
-            <div class="perk-check"><svg viewBox="0 0 12 12" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,6 5,9 10,3"/></svg></div>
-            解鎖全部訂閱專屬貼文與相簿
-          </div>
-          <div class="plan-perk">
-            <div class="perk-check"><svg viewBox="0 0 12 12" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,6 5,9 10,3"/></svg></div>
-            私訊創作者
-          </div>
-          <div class="plan-perk">
-            <div class="perk-check"><svg viewBox="0 0 12 12" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,6 5,9 10,3"/></svg></div>
-            限定故事動態 · 直播優先入場
-          </div>
-        </div>
-      </div>
+    <!-- Plan tabs -->
+    <div class="plan-tabs">
+      <div class="plan-tab active" onclick="switchPlan('light')">輕訂閱</div>
+      <div class="plan-tab" onclick="switchPlan('month')">一個月</div>
+      <div class="plan-tab" onclick="switchPlan('quarter')">三個月</div>
     </div>
 
-    <!-- Locked preview -->
-    <div class="preview-wrap">
-      <div class="preview-label">訂閱後解鎖</div>
-      <div class="preview-thumbs">
-        <div class="p-thumb p-thumb-free"></div>
-        <div class="p-thumb p-thumb-lock">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2" stroke="rgba(255,255,255,.85)"/><path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="rgba(255,255,255,.85)"/></svg>
+    <!-- ── 輕訂閱 ── -->
+    <div class="plan-panel active" id="panel-light">
+      <div class="plan-price-row">
+        <div class="plan-price">NT$150</div>
+        <div class="plan-price-unit">/月</div>
+      </div>
+      <div class="plan-note">先試看，再決定要不要愛她</div>
+      <div class="plan-info-box">
+        <p>可看 Ava Lin <strong>過去 15 天</strong>的貼文 · 目前共 <strong>8 篇</strong>內容等你探索</p>
+      </div>
+      <div class="perks">
+        <div class="perk">
+          <div class="perk-dot perk-light"><svg viewBox="0 0 12 12" fill="none" stroke="var(--p)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,6 5,9 10,3"/></svg></div>
+          最近 15 天的全部貼文與相簿
         </div>
-        <div class="p-thumb p-thumb-lock">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2" stroke="rgba(255,255,255,.85)"/><path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="rgba(255,255,255,.85)"/></svg>
+        <div class="perk">
+          <div class="perk-dot perk-light"><svg viewBox="0 0 12 12" fill="none" stroke="var(--p)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,6 5,9 10,3"/></svg></div>
+          私訊 Ava Lin
         </div>
-        <div class="p-thumb p-thumb-lock">
-          <svg viewBox="0 0 24 24" fill="none" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="10" rx="2" stroke="rgba(255,255,255,.85)"/><path d="M8 11V7a4 4 0 0 1 8 0v4" stroke="rgba(255,255,255,.85)"/></svg>
+        <div class="perk">
+          <div class="perk-dot perk-light"><svg viewBox="0 0 12 12" fill="none" stroke="var(--p)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,6 5,9 10,3"/></svg></div>
+          確認喜歡後可升級正式訂閱
         </div>
       </div>
-      <div class="preview-note">+ 246 則專屬貼文等你解鎖</div>
-    </div>
-
-    <!-- Billing toggle -->
-    <div class="billing-wrap">
-      <span class="bill-lbl active" id="lblM" onclick="setBill('monthly')">月付</span>
-      <div class="toggle-track" id="billToggle" onclick="toggleBill()">
-        <div class="toggle-thumb"></div>
+      <div class="summary">
+        <div class="summary-row"><span>方案</span><span>輕訂閱</span></div>
+        <div class="summary-row"><span>可看內容</span><span>過去 15 天</span></div>
+        <div class="summary-total"><span>今日付款</span><span>NT$150</span></div>
       </div>
-      <span class="bill-lbl" id="lblY" onclick="setBill('yearly')">年付</span>
-      <span class="save-pill" id="savePill">切換年付省 17%</span>
-    </div>
-
-    <!-- Summary -->
-    <div class="summary-wrap">
-      <div class="summary-row">
-        <span>創作者</span><span>Ava Lin</span>
-      </div>
-      <div class="summary-row">
-        <span>方案</span><span id="summaryBill">月付</span>
-      </div>
-      <div class="summary-row">
-        <span>下次扣款</span><span id="summaryNext">—</span>
-      </div>
-      <div class="summary-divider"></div>
-      <div class="summary-total">
-        <span>今日付款</span>
-        <span class="summary-total-price" id="summaryTotal">NT$299</span>
-      </div>
-    </div>
-
-    <!-- Payment -->
-    <div class="payment-wrap">
       <div class="payment-label">付款資訊</div>
       <div class="card-group">
         <div class="card-row">
-          <div class="card-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-          </div>
+          <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div>
           <input class="card-input" type="text" placeholder="卡號" maxlength="19" oninput="formatCard(this)" autocomplete="cc-number">
           <div class="card-brands">
             <div class="card-brand" id="bVisa">VISA</div>
@@ -515,69 +342,170 @@ input{font-family:inherit}
           </div>
         </div>
         <div class="card-split">
-          <div class="card-row">
-            <input class="card-input" type="text" placeholder="MM / YY" maxlength="7" oninput="formatExpiry(this)" autocomplete="cc-exp">
-          </div>
-          <div class="card-row">
-            <div class="card-icon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-            </div>
-            <input class="card-input" type="text" placeholder="CVV" maxlength="4" autocomplete="cc-csc">
-          </div>
-        </div>
-        <div class="card-row">
-          <div class="card-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-          </div>
-          <input class="card-input" type="text" placeholder="持卡人姓名" autocomplete="cc-name">
+          <div class="card-row"><input class="card-input" type="text" placeholder="MM / YY" maxlength="7" oninput="formatExpiry(this)" autocomplete="cc-exp"></div>
+          <div class="card-row"><input class="card-input" type="text" placeholder="CVV" maxlength="4" autocomplete="cc-csc"></div>
         </div>
       </div>
-    </div>
-
-    <!-- Submit -->
-    <div class="submit-wrap">
-      <button class="submit-btn" id="submitBtn" onclick="doSubscribe()">
-        <span class="btn-text" style="display:flex;align-items:center;gap:8px">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-          確認訂閱 · <span id="btnPrice">NT$299</span>
-        </span>
+      <button class="submit-btn" onclick="doSubmit(this,'輕訂閱','NT$150')">
         <div class="spinner"></div>
+        <div class="btn-text" style="display:flex;align-items:center;gap:8px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          確認訂閱 · NT$150/月
+        </div>
       </button>
+      <div class="trust-row">
+        <div class="trust-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>安全加密</div>
+        <div class="trust-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>隨時可取消</div>
+        <div class="trust-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z"/></svg>隱私保護</div>
+      </div>
     </div>
 
-    <!-- Trust -->
-    <div class="trust-wrap">
-      <div class="ti">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-        SSL 加密保護
+    <!-- ── 正式・一個月 ── -->
+    <div class="plan-panel" id="panel-month">
+      <div class="plan-price-row">
+        <div class="plan-price">NT$299</div>
+        <div class="plan-price-unit">/月</div>
       </div>
-      <div class="ti">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
-        隨時可取消
+      <div class="plan-note">隨時可取消 · 訂閱後 30 天持續更新</div>
+      <div class="plan-info-box">
+        <p>解鎖 Ava Lin <strong>過去 60 天</strong>的所有內容，立刻就有豐富的起步體驗</p>
       </div>
-      <div class="ti">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
-        扣款前通知
+      <div class="perks">
+        <div class="perk">
+          <div class="perk-dot perk-ok"><svg viewBox="0 0 12 12" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,6 5,9 10,3"/></svg></div>
+          過去 60 天的全部貼文、相簿、影片
+        </div>
+        <div class="perk">
+          <div class="perk-dot perk-ok"><svg viewBox="0 0 12 12" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,6 5,9 10,3"/></svg></div>
+          私訊 Ava Lin，她會回覆
+        </div>
+        <div class="perk">
+          <div class="perk-dot perk-ok"><svg viewBox="0 0 12 12" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,6 5,9 10,3"/></svg></div>
+          限定故事動態 · 直播優先入場
+        </div>
+        <div class="perk">
+          <div class="perk-dot perk-ok"><svg viewBox="0 0 12 12" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,6 5,9 10,3"/></svg></div>
+          新訂閱者專屬迎新彩蛋
+        </div>
+      </div>
+      <div class="summary">
+        <div class="summary-row"><span>方案</span><span>正式訂閱 · 一個月</span></div>
+        <div class="summary-row"><span>可看內容</span><span>過去 60 天</span></div>
+        <div class="summary-row"><span>有效期</span><span>訂閱後 30 天</span></div>
+        <div class="summary-total"><span>今日付款</span><span>NT$299</span></div>
+      </div>
+      <div class="payment-label">付款資訊</div>
+      <div class="card-group">
+        <div class="card-row">
+          <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div>
+          <input class="card-input" type="text" placeholder="卡號" maxlength="19" oninput="formatCard(this)" autocomplete="cc-number">
+          <div class="card-brands">
+            <div class="card-brand">VISA</div>
+            <div class="card-brand">MC</div>
+            <div class="card-brand">JCB</div>
+          </div>
+        </div>
+        <div class="card-split">
+          <div class="card-row"><input class="card-input" type="text" placeholder="MM / YY" maxlength="7" oninput="formatExpiry(this)" autocomplete="cc-exp"></div>
+          <div class="card-row"><input class="card-input" type="text" placeholder="CVV" maxlength="4" autocomplete="cc-csc"></div>
+        </div>
+      </div>
+      <button class="submit-btn" onclick="doSubmit(this,'正式訂閱・一個月','NT$299')">
+        <div class="spinner"></div>
+        <div class="btn-text" style="display:flex;align-items:center;gap:8px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          確認訂閱 · NT$299/月
+        </div>
+      </button>
+      <div class="trust-row">
+        <div class="trust-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>安全加密</div>
+        <div class="trust-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>隨時可取消</div>
+        <div class="trust-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z"/></svg>隱私保護</div>
+      </div>
+    </div>
+
+    <!-- ── 正式・三個月 ── -->
+    <div class="plan-panel" id="panel-quarter">
+      <div class="plan-price-row">
+        <div class="plan-price">NT$748</div>
+        <div class="plan-price-unit" style="padding-top:12px">三個月</div>
+      </div>
+      <div class="plan-note">約 NT$249/月 · 比月付省一個月</div>
+      <div class="save-pill">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:13px;height:13px"><polyline points="20 6 9 17 4 12"/></svg>
+        省下一個月費用
+      </div>
+      <div class="plan-info-box">
+        <p><strong>解鎖全部歷史存檔</strong>——這是 Ava Lin 送給新訂閱者的歡迎禮物，248 篇內容等你探索</p>
+      </div>
+      <div class="perks">
+        <div class="perk">
+          <div class="perk-dot perk-green"><svg viewBox="0 0 12 12" fill="none" stroke="var(--ok)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,6 5,9 10,3"/></svg></div>
+          <strong>全部 248 篇歷史存檔</strong>立即解鎖
+        </div>
+        <div class="perk">
+          <div class="perk-dot perk-green"><svg viewBox="0 0 12 12" fill="none" stroke="var(--ok)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,6 5,9 10,3"/></svg></div>
+          訂閱後 90 天持續更新
+        </div>
+        <div class="perk">
+          <div class="perk-dot perk-green"><svg viewBox="0 0 12 12" fill="none" stroke="var(--ok)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,6 5,9 10,3"/></svg></div>
+          私訊 · 限定動態 · 直播優先入場
+        </div>
+        <div class="perk">
+          <div class="perk-dot perk-green"><svg viewBox="0 0 12 12" fill="none" stroke="var(--ok)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,6 5,9 10,3"/></svg></div>
+          新訂閱者專屬迎新彩蛋
+        </div>
+      </div>
+      <div class="summary">
+        <div class="summary-row"><span>方案</span><span>正式訂閱 · 三個月</span></div>
+        <div class="summary-row"><span>可看內容</span><span>全部歷史存檔</span></div>
+        <div class="summary-row"><span>有效期</span><span>訂閱後 90 天</span></div>
+        <div class="summary-total"><span>今日付款</span><span style="color:var(--ok)">NT$748</span></div>
+      </div>
+      <div class="payment-label">付款資訊</div>
+      <div class="card-group">
+        <div class="card-row">
+          <div class="card-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg></div>
+          <input class="card-input" type="text" placeholder="卡號" maxlength="19" oninput="formatCard(this)" autocomplete="cc-number">
+          <div class="card-brands">
+            <div class="card-brand">VISA</div>
+            <div class="card-brand">MC</div>
+            <div class="card-brand">JCB</div>
+          </div>
+        </div>
+        <div class="card-split">
+          <div class="card-row"><input class="card-input" type="text" placeholder="MM / YY" maxlength="7" oninput="formatExpiry(this)" autocomplete="cc-exp"></div>
+          <div class="card-row"><input class="card-input" type="text" placeholder="CVV" maxlength="4" autocomplete="cc-csc"></div>
+        </div>
+      </div>
+      <button class="submit-btn" style="background:var(--ok);box-shadow:0 4px 16px rgba(45,138,78,.28)"
+        onmouseover="this.style.background='#22703e'" onmouseout="this.style.background='var(--ok)'"
+        onclick="doSubmit(this,'正式訂閱・三個月','NT$748')">
+        <div class="spinner"></div>
+        <div class="btn-text" style="display:flex;align-items:center;gap:8px">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          解鎖全部存檔 · NT$748
+        </div>
+      </button>
+      <div class="trust-row">
+        <div class="trust-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>安全加密</div>
+        <div class="trust-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>隨時可取消</div>
+        <div class="trust-item"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z"/></svg>隱私保護</div>
       </div>
     </div>
 
   </div>
 
-  <!-- Success -->
+  <!-- Success panel -->
   <div class="success-panel" id="successPanel">
-    <div class="success-ring">
-      <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+    <div class="success-ring"><svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>
+    <div class="success-title">歡迎加入！</div>
+    <div class="success-msg" id="successMsg">你已成功訂閱 Ava Lin</div>
+    <div class="success-gift">
+      <div class="success-gift-label">🎁 Ava Lin 送給你的歡迎禮物</div>
+      <div class="success-gift-text" id="giftText">她把最真實的自己留給選擇進來的人。現在，就是你了。</div>
     </div>
-    <div class="success-title">訂閱成功！</div>
-    <p class="success-msg">你已解鎖 Ava Lin 的全部專屬內容。<br>感謝你的支持，創作者已收到通知。</p>
-    <div class="success-info">
-      <div class="success-avatar-sm">A</div>
-      <div style="text-align:left">
-        <div class="success-sub-name">Ava Lin</div>
-        <div class="success-sub-plan" id="successPlan">訂閱方案 · 每月 NT$299</div>
-      </div>
-    </div>
-    <button class="goto-btn" onclick="closeModal()">前往查看內容</button>
+    <button class="goto-btn" onclick="window.location.href='fanhub-creator-profile-v2.html'">前往她的主頁</button>
   </div>
 
 </div>
@@ -585,83 +513,65 @@ input{font-family:inherit}
 
 <script>
 const root = document.documentElement;
-root.dataset.theme = 'light'; // demo: force light on load
-document.getElementById('themeBtn').addEventListener('click', () => {
-  const n = root.dataset.theme === 'light' ? 'dark' : 'light';
-  root.dataset.theme = n; localStorage.setItem('fh-theme', n);
+root.dataset.theme = 'light';
+document.getElementById('themeBtn').addEventListener('click',()=>{
+  const n = root.dataset.theme==='light'?'dark':'light';
+  root.dataset.theme=n;
 });
 
-const MONTHLY = 299, YEARLY = 249;
-let billing = 'monthly';
-
-function openModal() {
-  updateSummary();
-  document.getElementById('overlay').classList.add('open');
-  document.getElementById('mainContent').style.display = '';
-  document.getElementById('successPanel').style.display = 'none';
-  document.getElementById('submitBtn').classList.remove('loading');
+function openModal(){
+  const ov=document.getElementById('overlay');
+  ov.classList.add('open');
+  document.body.style.overflow='hidden';
 }
-function closeModal() {
+function closeModal(){
   document.getElementById('overlay').classList.remove('open');
+  document.body.style.overflow='';
 }
-function handleOverlayClick(e) {
-  if (e.target === document.getElementById('overlay')) closeModal();
+function handleOverlay(e){if(e.target===document.getElementById('overlay'))closeModal()}
+
+let currentPlan='light';
+function switchPlan(plan){
+  currentPlan=plan;
+  document.querySelectorAll('.plan-tab').forEach((t,i)=>{
+    t.classList.toggle('active',['light','month','quarter'][i]===plan);
+  });
+  document.querySelectorAll('.plan-panel').forEach(p=>p.classList.remove('active'));
+  document.getElementById('panel-'+plan).classList.add('active');
 }
 
-function toggleBill() { setBill(billing === 'monthly' ? 'yearly' : 'monthly'); }
-function setBill(mode) {
-  billing = mode;
-  const y = mode === 'yearly';
-  document.getElementById('billToggle').classList.toggle('on', y);
-  document.getElementById('lblM').classList.toggle('active', !y);
-  document.getElementById('lblY').classList.toggle('active', y);
-  document.getElementById('savePill').textContent = y ? '✓ 已省 17%' : '切換年付省 17%';
-  const price = y ? YEARLY : MONTHLY;
-  document.getElementById('planPrice').textContent = 'NT$' + price;
-  document.getElementById('planSub').textContent = y
-    ? '每月（年付方案）· 隨時可取消'
-    : '每月 · 隨時可取消';
-  updateSummary();
+function formatCard(el){
+  let v=el.value.replace(/\D/g,'').slice(0,16);
+  el.value=v.replace(/(.{4})/g,'$1 ').trim();
+  const brands=document.querySelectorAll('.card-brand');
+  brands.forEach(b=>b.classList.remove('active'));
+  if(v[0]==='4') document.querySelectorAll('.card-brand')[0]?.classList.add('active');
+  else if(v[0]==='5') document.querySelectorAll('.card-brand')[1]?.classList.add('active');
+  else if(v.startsWith('35')) document.querySelectorAll('.card-brand')[2]?.classList.add('active');
+}
+function formatExpiry(el){
+  let v=el.value.replace(/\D/g,'').slice(0,4);
+  if(v.length>=2) v=v.slice(0,2)+' / '+v.slice(2);
+  el.value=v;
 }
 
-function updateSummary() {
-  const price = billing === 'yearly' ? YEARLY : MONTHLY;
-  document.getElementById('summaryBill').textContent = billing === 'yearly' ? '年付（省 17%）' : '月付';
-  document.getElementById('summaryTotal').textContent = 'NT$' + price;
-  document.getElementById('btnPrice').textContent = 'NT$' + price;
-  const d = new Date(); d.setMonth(d.getMonth() + 1);
-  document.getElementById('summaryNext').textContent =
-    d.getFullYear() + ' 年 ' + (d.getMonth()+1) + ' 月 ' + d.getDate() + ' 日';
-}
+const giftMessages={
+  light:'你選擇了輕訂閱，過去 15 天的她，現在都是你的了。喜歡的話，再往前走走。',
+  month:'你選擇了一個月的陪伴。過去 60 天的她在等你，慢慢看，不急。',
+  quarter:'你選擇了三個月。她把全部的過去都送給你了——這是只有你才能看到的她。'
+};
 
-function formatCard(el) {
-  let v = el.value.replace(/\D/g,'').substring(0,16);
-  el.value = v.replace(/(.{4})/g,'$1 ').trim();
-  document.getElementById('bVisa').classList.toggle('active', v.startsWith('4'));
-  document.getElementById('bMC').classList.toggle('active', /^5[1-5]/.test(v));
-  document.getElementById('bJCB').classList.toggle('active', /^35/.test(v));
-}
-function formatExpiry(el) {
-  let v = el.value.replace(/\D/g,'').substring(0,4);
-  if (v.length > 2) v = v.substring(0,2) + ' / ' + v.substring(2);
-  el.value = v;
-}
-
-function doSubscribe() {
-  const btn = document.getElementById('submitBtn');
+function doSubmit(btn, planName, amount){
   btn.classList.add('loading');
-  setTimeout(() => {
+  setTimeout(()=>{
     btn.classList.remove('loading');
-    document.getElementById('mainContent').style.display = 'none';
-    document.getElementById('successPanel').style.display = 'block';
-    const price = billing === 'yearly' ? YEARLY : MONTHLY;
-    const cycle = billing === 'yearly' ? '每月（年付）' : '每月';
-    document.getElementById('successPlan').textContent = '訂閱方案 · ' + cycle + ' NT$' + price;
-  }, 1800);
+    document.getElementById('mainContent').style.display='none';
+    const sp=document.getElementById('successPanel');
+    sp.style.display='block';
+    document.getElementById('successMsg').textContent=`你已成功訂閱 Ava Lin（${planName} · ${amount}）`;
+    document.getElementById('giftText').textContent=giftMessages[currentPlan];
+  },1600);
 }
-
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
-updateSummary();
 </script>
 </body>
 </html>

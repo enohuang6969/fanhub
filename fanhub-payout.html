@@ -126,12 +126,11 @@ input,select{font-family:inherit;outline:none}
 
 /* ── BALANCE HERO ─────────────────────────────────── */
 .balance-hero{
-  background:var(--t1);border-radius:18px;
+  background:#1a0d12;border-radius:18px;
   padding:28px 32px;margin-bottom:24px;
   display:grid;grid-template-columns:1fr auto;
   gap:24px;align-items:center;
   position:relative;overflow:hidden;
-  transition:background var(--tr);
 }
 .balance-deco{
   position:absolute;right:-40px;top:-40px;
@@ -143,32 +142,33 @@ input,select{font-family:inherit;outline:none}
   border:1px solid rgba(212,113,139,.07);
 }
 .balance-label{
-  font-size:18px;font-weight:500;letter-spacing:.14em;
+  font-size:13px;font-weight:600;letter-spacing:.14em;
   text-transform:uppercase;color:var(--p);margin-bottom:8px;
 }
 .balance-amount{
-  font-family:'Cormorant Garamond',serif;
-  font-size:56px;font-weight:600;color:#fff;line-height:1;
+  font-family:'DM Sans',sans-serif;
+  font-size:54px;font-weight:700;letter-spacing:-.03em;
+  color:#fff;line-height:1;
   margin-bottom:6px;
 }
-.balance-sub{font-size:18px;color:rgba(255,255,255,.45);margin-bottom:18px}
+.balance-sub{font-size:15px;color:rgba(255,255,255,.5);margin-bottom:18px}
 .balance-breakdown{display:flex;gap:20px;flex-wrap:wrap}
 .breakdown-item{display:flex;flex-direction:column;gap:2px}
 .breakdown-dot-row{display:flex;align-items:center;gap:6px}
 .breakdown-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
-.breakdown-lbl{font-size:18px;color:rgba(255,255,255,.45)}
-.breakdown-val{font-size:17px;font-weight:500;color:rgba(255,255,255,.8)}
+.breakdown-lbl{font-size:13px;color:rgba(255,255,255,.5)}
+.breakdown-val{font-size:15px;font-weight:600;color:rgba(255,255,255,.85)}
 .balance-right{
   display:flex;flex-direction:column;gap:12px;align-items:flex-end;
   position:relative;z-index:1;
 }
 .next-payout-card{
-  background:rgba(255,255,255,.07);border-radius:12px;
+  background:rgba(255,255,255,.08);border-radius:12px;
   padding:14px 16px;text-align:right;min-width:160px;
 }
-.next-payout-label{font-size:17px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.4);margin-bottom:4px}
-.next-payout-date{font-size:18px;font-weight:600;color:#fff}
-.next-payout-sub{font-size:18px;color:rgba(255,255,255,.4);margin-top:2px}
+.next-payout-label{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:rgba(255,255,255,.45);margin-bottom:4px}
+.next-payout-date{font-size:17px;font-weight:700;color:#fff}
+.next-payout-sub{font-size:13px;color:rgba(255,255,255,.45);margin-top:2px}
 
 /* ── SECTION CARD ─────────────────────────────────── */
 .section-card{

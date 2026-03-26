@@ -268,7 +268,7 @@ input{font-family:inherit}
 </nav>
 
 <div class="demo-wrap">
-  <p style="font-size:15px;color:var(--t3);margin-bottom:16px">點擊觸發訂閱視窗（模擬從創作者頁進入）</p>
+  <p style="font-size:15px;color:var(--t3);margin-bottom:16px">點擊下方按鈕體驗訂閱流程，或<a href="fanhub-creator-profile-v2.html" style="color:var(--p)">返回創作者主頁</a></p>
   <button class="demo-btn" onclick="openModal()">訂閱 Ava Lin</button>
 </div>
 
@@ -514,6 +514,8 @@ input{font-family:inherit}
 <script>
 const root = document.documentElement;
 root.dataset.theme = 'light';
+// 頁面載入後自動開啟 modal 方便預覽
+window.addEventListener('load', () => openModal());
 document.getElementById('themeBtn').addEventListener('click',()=>{
   const n = root.dataset.theme==='light'?'dark':'light';
   root.dataset.theme=n;

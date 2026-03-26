@@ -489,6 +489,7 @@ input{font-family:inherit;outline:none}
 /* Theme */
 const root = document.documentElement;
 root.dataset.theme = 'light'; // demo: force light on load
+window.addEventListener('load', () => openModal('image'));
 document.getElementById('themeBtn').addEventListener('click', () => {
   const n = root.dataset.theme === 'light' ? 'dark' : 'light';
   root.dataset.theme = n; localStorage.setItem('fh-theme', n);

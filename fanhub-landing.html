@@ -431,7 +431,7 @@ a{text-decoration:none;color:inherit}
   <ul class="nav-links">
     <li><a href="fanhub-explore.html">探索創作者</a></li>
     <li><a href="#plans">訂閱方案</a></li>
-    <li><a href="#creator">成為創作者</a></li>
+    
   </ul>
   <div class="nav-right">
     <div class="theme-btn" id="themeBtn"></div>
@@ -462,11 +462,6 @@ a{text-decoration:none;color:inherit}
     </div>
     <div class="value-props">
       <div class="vp">
-        <div class="vp-num">85%</div>
-        <div class="vp-lbl">創作者實拿</div>
-      </div>
-      <div class="vp-sep"></div>
-      <div class="vp">
         <div class="vp-num">免費</div>
         <div class="vp-lbl">加入，永不收費</div>
       </div>
@@ -474,6 +469,11 @@ a{text-decoration:none;color:inherit}
       <div class="vp">
         <div class="vp-num">隨時</div>
         <div class="vp-lbl">可取消訂閱</div>
+      </div>
+      <div class="vp-sep"></div>
+      <div class="vp">
+        <div class="vp-num">先試</div>
+        <div class="vp-lbl">輕訂閱再升級</div>
       </div>
     </div>
   </div>
@@ -523,13 +523,13 @@ a{text-decoration:none;color:inherit}
 <div class="ticker">
   <div class="ticker-track">
     <span class="ticker-item"><span class="ticker-dot"></span>台灣最大創作者訂閱平台</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>創作者實拿 85%</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>輕訂閱先試看，喜歡再升級</span>
     <span class="ticker-item"><span class="ticker-dot"></span>輕訂閱 · 正式訂閱 · 三個月方案</span>
     <span class="ticker-item"><span class="ticker-dot"></span>隨時取消 · 不收違約金</span>
     <span class="ticker-item"><span class="ticker-dot"></span>台灣金流 · 安全加密</span>
     <span class="ticker-item"><span class="ticker-dot"></span>每位創作者親自策展的個人主頁</span>
     <span class="ticker-item"><span class="ticker-dot"></span>台灣最大創作者訂閱平台</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>創作者實拿 85%</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>輕訂閱先試看，喜歡再升級</span>
     <span class="ticker-item"><span class="ticker-dot"></span>輕訂閱 · 正式訂閱 · 三個月方案</span>
     <span class="ticker-item"><span class="ticker-dot"></span>隨時取消 · 不收違約金</span>
     <span class="ticker-item"><span class="ticker-dot"></span>台灣金流 · 安全加密</span>
@@ -615,40 +615,13 @@ a{text-decoration:none;color:inherit}
         <div class="plan-feature green-arrow">私訊 · 限定動態 · 直播優先</div>
         <div class="plan-feature green-arrow">最適合真愛粉</div>
       </div>
-      <button class="plan-btn plan-btn-green" onclick="window.location.href='fanhub-explore.html'">找到值得三個月的她</button>
+      <button class="plan-btn plan-btn-green" onclick="window.location.href='fanhub-explore.html'">開始探索</button>
     </div>
 
   </div>
 </section>
 
-<!-- CREATOR SECTION -->
-<section class="creator-section reveal" id="creator">
-  <div class="creator-left">
-    <div class="section-eyebrow">成為創作者</div>
-    <h2 class="section-title">你的內容，<br>你的收入</h2>
-    <p style="font-size:16px;color:var(--t2);line-height:1.7;margin-bottom:24px;max-width:440px;transition:color var(--tr)">
-      FANHUB 讓你實拿 85%。不需要簽約，不需要外包，你就是自己的老闆。你的粉絲在等你，從今天開始。
-    </p>
-    <div class="creator-cta">
-      <button class="btn-creator-primary" onclick="window.location.href='fanhub-auth.html'">申請成為創作者</button>
-      <button class="btn-creator-ghost" onclick="window.location.href='fanhub-creator-profile-v2.html'">看看創作者主頁長什麼樣</button>
-    </div>
-  </div>
-  <div class="creator-right">
-    <div class="creator-stat-card">
-      <div class="csn">85%</div>
-      <div class="csl">每筆收入你實拿的比例，業界最高</div>
-    </div>
-    <div class="creator-stat-card">
-      <div class="csn">隨時</div>
-      <div class="csl">可提領，不用等月結，你的錢就是你的錢</div>
-    </div>
-    <div class="creator-stat-card">
-      <div class="csn">三種</div>
-      <div class="csl">訂閱方案自由搭配，讓更多人有機會支持你</div>
-    </div>
-  </div>
-</section>
+
 
 <!-- TRUST BAR -->
 <div class="trust-bar reveal">
@@ -686,6 +659,12 @@ a{text-decoration:none;color:inherit}
   <p class="final-note">加入即表示同意 <a href="fanhub-legal.html" style="color:var(--p)">服務條款</a> 及 <a href="fanhub-legal.html" style="color:var(--p)">隱私政策</a></p>
 </section>
 
+<!-- CREATOR SUBTLE LINK -->
+<div style="text-align:center;padding:20px;border-top:1px solid var(--bd);transition:border-color var(--tr)">
+  <span style="font-size:14px;color:var(--t3);transition:color var(--tr)">你是創作者？</span>
+  <a href="fanhub-settings.html" style="font-size:14px;color:var(--p);font-weight:500;margin-left:6px;text-decoration:underline">登入後前往設定申請</a>
+</div>
+
 <!-- FOOTER -->
 <footer class="footer">
   <div class="footer-logo">FAN<em>HUB</em></div>
@@ -693,7 +672,7 @@ a{text-decoration:none;color:inherit}
     <a href="fanhub-explore.html">探索創作者</a>
     <a href="fanhub-legal.html">服務條款</a>
     <a href="fanhub-legal.html">隱私政策</a>
-    <a href="fanhub-auth.html">成為創作者</a>
+    <a href="fanhub-auth.html">創作者入口</a>
   </div>
   <div class="footer-copy">© 2025 FANHUB · 台灣創作者平台</div>
 </footer>

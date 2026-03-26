@@ -120,13 +120,13 @@ a{text-decoration:none;color:inherit}
   transition:background .2s,transform .15s;
 }
 .cta-main:hover{background:var(--p);transform:translateY(-1px)}
-.cta-sub{
-  font-size:14px;color:var(--t3);
-  display:flex;align-items:center;gap:6px;
-  transition:color .18s;
+.cta-outline{
+  background:transparent;
+  color:var(--t1);
+  border:2px solid var(--t1);
+  transition:border-color .18s,color .18s,transform .15s;
 }
-.cta-sub:hover{color:var(--p)}
-.cta-sub svg{width:14px;height:14px}
+.cta-outline:hover{border-color:var(--p);color:var(--p);background:transparent;transform:translateY(-1px)}
 
 /* Value props */
 .value-props{display:flex;gap:28px;flex-wrap:wrap}
@@ -213,7 +213,7 @@ a{text-decoration:none;color:inherit}
 
 /* ── THREE PILLARS ───────────────────────────────── */
 .pillars{
-  display:grid;grid-template-columns:repeat(3,1fr);
+  display:grid;grid-template-columns:repeat(2,1fr);
   border-bottom:1px solid var(--bd);
   transition:border-color var(--tr);
 }
@@ -242,73 +242,7 @@ a{text-decoration:none;color:inherit}
   transition:color var(--tr);
 }
 
-/* ── PLANS SECTION ───────────────────────────────── */
-.plans-section{
-  padding:80px 40px;max-width:1060px;margin:0 auto;
-  border-bottom:1px solid var(--bd);
-  transition:border-color var(--tr);
-}
-@media(max-width:680px){.plans-section{padding:56px 24px}}
-.section-eyebrow{
-  font-size:11px;font-weight:600;letter-spacing:.18em;
-  text-transform:uppercase;color:var(--p);
-  margin-bottom:10px;display:flex;align-items:center;gap:10px;
-}
-.section-eyebrow::before{content:'';width:24px;height:1px;background:var(--p)}
-.section-title{
-  font-family:'Cormorant Garamond',serif;
-  font-size:clamp(32px,4vw,48px);font-weight:600;
-  color:var(--t1);margin-bottom:8px;line-height:1.1;
-  transition:color var(--tr);
-}
-.section-sub{font-size:16px;color:var(--t3);margin-bottom:40px;transition:color var(--tr)}
 
-.plans-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-@media(max-width:680px){.plans-grid{grid-template-columns:1fr}}
-.plan-card{
-  background:var(--surface);border:1.5px solid var(--bd);
-  border-radius:16px;padding:28px;
-  transition:all .22s,background var(--tr),border-color var(--tr);
-  position:relative;
-}
-.plan-card:hover{transform:translateY(-3px);box-shadow:0 8px 28px rgba(150,70,90,.1);border-color:var(--bd2)}
-.plan-card.featured{border-color:var(--p);border-width:2px;box-shadow:0 4px 20px rgba(204,94,118,.1)}
-.plan-badge-top{
-  position:absolute;top:-12px;left:50%;transform:translateX(-50%);
-  background:var(--p);color:#fff;font-size:11px;font-weight:700;
-  padding:3px 14px;border-radius:20px;white-space:nowrap;letter-spacing:.04em;
-}
-.plan-name{font-size:14px;font-weight:600;color:var(--t3);margin-bottom:12px;transition:color var(--tr)}
-.plan-name.featured-name{color:var(--p)}
-.plan-price{
-  font-family:'Cormorant Garamond',serif;
-  font-size:40px;font-weight:600;color:var(--t1);line-height:1;
-  transition:color var(--tr);
-}
-.plan-price-unit{font-size:15px;color:var(--t3);margin:5px 0 8px;transition:color var(--tr)}
-.plan-range{
-  font-size:13px;font-weight:600;color:var(--p);
-  background:var(--surface3);padding:4px 10px;border-radius:8px;
-  display:inline-block;margin-bottom:16px;
-  transition:background var(--tr),color var(--tr);
-}
-.plan-range.green{color:var(--ok);background:var(--ok-bg)}
-.plan-divider{height:1px;background:var(--bd);margin-bottom:16px;transition:background var(--tr)}
-.plan-features{display:flex;flex-direction:column;gap:9px;margin-bottom:22px}
-.plan-feature{font-size:14px;color:var(--t2);display:flex;align-items:flex-start;gap:8px;transition:color var(--tr)}
-.plan-feature::before{content:'→';color:var(--p);font-weight:700;flex-shrink:0}
-.plan-feature.green-arrow::before{color:var(--ok)}
-.plan-btn{
-  width:100%;padding:13px;border-radius:10px;
-  font-size:15px;font-weight:600;font-family:'DM Sans',sans-serif;
-  transition:all .18s;cursor:pointer;
-}
-.plan-btn-outline{border:1.5px solid var(--bd2);color:var(--t2);background:transparent}
-.plan-btn-outline:hover{border-color:var(--p);color:var(--p)}
-.plan-btn-fill{background:var(--p);color:#fff;border:none;box-shadow:0 3px 12px rgba(204,94,118,.25)}
-.plan-btn-fill:hover{background:var(--ph)}
-.plan-btn-green{background:var(--ok);color:#fff;border:none;box-shadow:0 3px 12px rgba(45,138,78,.25)}
-.plan-btn-green:hover{background:#22703e}
 
 /* ── CREATOR SECTION ─────────────────────────────── */
 .creator-section{
@@ -430,7 +364,7 @@ a{text-decoration:none;color:inherit}
   <div class="nav-logo" onclick="window.location.href='fanhub-landing.html'">FAN<em>HUB</em></div>
   <ul class="nav-links">
     <li><a href="fanhub-explore.html">探索創作者</a></li>
-    <li><a href="#plans">訂閱方案</a></li>
+    
     
   </ul>
   <div class="nav-right">
@@ -455,10 +389,7 @@ a{text-decoration:none;color:inherit}
     </p>
     <div class="hero-cta-group">
       <button class="cta-main" onclick="window.location.href='fanhub-auth.html'">立即免費加入</button>
-      <a href="fanhub-explore.html" class="cta-sub">
-        先瀏覽看看
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
-      </a>
+      <a href="fanhub-explore.html" class="cta-main cta-outline">先瀏覽看看</a>
     </div>
     <div class="value-props">
       <div class="vp">
@@ -523,13 +454,13 @@ a{text-decoration:none;color:inherit}
 <div class="ticker">
   <div class="ticker-track">
     <span class="ticker-item"><span class="ticker-dot"></span>台灣最大創作者訂閱平台</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>輕訂閱先試看，喜歡再升級</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>免費加入，探索你喜歡的創作者</span>
     <span class="ticker-item"><span class="ticker-dot"></span>輕訂閱 · 正式訂閱 · 三個月方案</span>
     <span class="ticker-item"><span class="ticker-dot"></span>隨時取消 · 不收違約金</span>
     <span class="ticker-item"><span class="ticker-dot"></span>台灣金流 · 安全加密</span>
     <span class="ticker-item"><span class="ticker-dot"></span>每位創作者親自策展的個人主頁</span>
     <span class="ticker-item"><span class="ticker-dot"></span>台灣最大創作者訂閱平台</span>
-    <span class="ticker-item"><span class="ticker-dot"></span>輕訂閱先試看，喜歡再升級</span>
+    <span class="ticker-item"><span class="ticker-dot"></span>免費加入，探索你喜歡的創作者</span>
     <span class="ticker-item"><span class="ticker-dot"></span>輕訂閱 · 正式訂閱 · 三個月方案</span>
     <span class="ticker-item"><span class="ticker-dot"></span>隨時取消 · 不收違約金</span>
     <span class="ticker-item"><span class="ticker-dot"></span>台灣金流 · 安全加密</span>
@@ -553,73 +484,9 @@ a{text-decoration:none;color:inherit}
       不確定值不值得？用輕訂閱先試看 15 天的內容，一半的價格，足夠的判斷依據。喜歡了再往前走，我們不強迫任何人。
     </div>
   </div>
-  <div class="pillar">
-    <div class="pillar-num">03</div>
-    <div class="pillar-title">她的積累，是你的禮物</div>
-    <div class="pillar-body">
-      選三個月，解鎖創作者的全部歷史存檔。這不是你買到的，這是她送給選擇長期陪伴她的人。每一篇過去，都是禮物。
-    </div>
-  </div>
-</section>
+  </section>
 
-<!-- PLANS SECTION -->
-<section class="plans-section reveal" id="plans">
-  <div class="section-eyebrow">訂閱方案</div>
-  <div class="section-title">找到適合你的<br>與她相處的方式</div>
-  <div class="section-sub">從試看到深入陪伴，每個方案都有它的道理</div>
 
-  <div class="plans-grid">
-
-    <!-- 輕訂閱 -->
-    <div class="plan-card">
-      <div class="plan-name">輕訂閱</div>
-      <div class="plan-price">50%</div>
-      <div class="plan-price-unit">正式月費的一半</div>
-      <div class="plan-range">可看過去 15 天</div>
-      <div class="plan-divider"></div>
-      <div class="plan-features">
-        <div class="plan-feature">花少少的錢先試看</div>
-        <div class="plan-feature">訂閱時系統告知有幾篇可看</div>
-        <div class="plan-feature">確認喜歡，再升級正式訂閱</div>
-      </div>
-      <button class="plan-btn plan-btn-outline" onclick="window.location.href='fanhub-explore.html'">先找找喜歡的創作者</button>
-    </div>
-
-    <!-- 正式・一個月 -->
-    <div class="plan-card featured">
-      <div class="plan-badge-top">最多人選擇</div>
-      <div class="plan-name featured-name">正式訂閱・一個月</div>
-      <div class="plan-price">月費</div>
-      <div class="plan-price-unit">創作者自訂 · 隨時可取消</div>
-      <div class="plan-range">可看過去 60 天</div>
-      <div class="plan-divider"></div>
-      <div class="plan-features">
-        <div class="plan-feature">過去 60 天全部貼文解鎖</div>
-        <div class="plan-feature">訂閱後 30 天持續更新</div>
-        <div class="plan-feature">私訊 · 限定動態 · 直播優先</div>
-        <div class="plan-feature">新訂閱者專屬迎新彩蛋</div>
-      </div>
-      <button class="plan-btn plan-btn-fill" onclick="window.location.href='fanhub-explore.html'">探索創作者</button>
-    </div>
-
-    <!-- 三個月 -->
-    <div class="plan-card">
-      <div class="plan-name">正式訂閱・三個月</div>
-      <div class="plan-price">× 2.5</div>
-      <div class="plan-price-unit">月費 × 2.5，省下一個月</div>
-      <div class="plan-range green">解鎖全部歷史存檔</div>
-      <div class="plan-divider"></div>
-      <div class="plan-features">
-        <div class="plan-feature green-arrow">全部歷史存檔立即解鎖</div>
-        <div class="plan-feature green-arrow">訂閱後 90 天持續更新</div>
-        <div class="plan-feature green-arrow">私訊 · 限定動態 · 直播優先</div>
-        <div class="plan-feature green-arrow">最適合真愛粉</div>
-      </div>
-      <button class="plan-btn plan-btn-green" onclick="window.location.href='fanhub-explore.html'">開始探索</button>
-    </div>
-
-  </div>
-</section>
 
 
 

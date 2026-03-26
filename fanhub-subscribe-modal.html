@@ -306,13 +306,13 @@ input{font-family:inherit}
 
     <!-- Plan tabs -->
     <div class="plan-tabs">
-      <div class="plan-tab active" onclick="switchPlan('light')">輕訂閱</div>
-      <div class="plan-tab" onclick="switchPlan('month')">一個月</div>
+      <div class="plan-tab" onclick="switchPlan('light')">輕訂閱</div>
+      <div class="plan-tab active" onclick="switchPlan('month')">一個月</div>
       <div class="plan-tab" onclick="switchPlan('quarter')">三個月</div>
     </div>
 
     <!-- ── 輕訂閱 ── -->
-    <div class="plan-panel active" id="panel-light">
+    <div class="plan-panel" id="panel-light">
       <div class="plan-price-row">
         <div class="plan-price">NT$150</div>
         <div class="plan-price-unit">/月</div>
@@ -371,7 +371,7 @@ input{font-family:inherit}
     </div>
 
     <!-- ── 正式・一個月 ── -->
-    <div class="plan-panel" id="panel-month">
+    <div class="plan-panel active" id="panel-month">
       <div class="plan-price-row">
         <div class="plan-price">NT$299</div>
         <div class="plan-price-unit">/月</div>
@@ -515,7 +515,7 @@ input{font-family:inherit}
       <div class="success-gift-label">🎁 Ava Lin 送給你的歡迎禮物</div>
       <div class="success-gift-text" id="giftText">她把最真實的自己留給選擇進來的人。現在，就是你了。</div>
     </div>
-    <button class="goto-btn" onclick="window.location.href='fanhub-creator-profile-v2.html'">前往她的主頁</button>
+    <button class="goto-btn" onclick="window.location.href='fanhub-subscribe-success.html?plan='+currentPlan">前往她的主頁</button>
   </div>
 
 </div>
@@ -542,7 +542,7 @@ function closeModal(){
 }
 function handleOverlay(e){if(e.target===document.getElementById('overlay'))closeModal()}
 
-let currentPlan='light';
+let currentPlan='month';
 function switchPlan(plan){
   currentPlan=plan;
   document.querySelectorAll('.plan-tab').forEach((t,i)=>{

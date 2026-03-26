@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="zh-TW" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>訂閱成功 · FANHUB</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300;1,600&family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#fdf9f6;--surface:#fff;--surface2:#faf3ef;--surface3:#fdf0eb;
+  --p:#cc5e76;--ph:#b84d65;--p2:#8a3248;
+  --t1:#2e1118;--t2:#4a1e2a;--t3:#7a4858;
+  --bd:rgba(150,70,90,.25);--bd2:rgba(150,70,90,.42);
+  --ok:#2d8a4e;--ok-bg:#eaf6ee;
+  --tr:.28s cubic-bezier(.4,0,.2,1);
+}
+[data-theme=dark]{
+  --bg:#080508;--surface:#1e1016;--surface2:#2a1820;--surface3:#382030;
+  --p:#d4718b;--ph:#e07d96;--p2:#9b4c6a;
+  --t1:#f8e0e8;--t2:#d8a8b8;--t3:#a87888;
+  --bd:rgba(200,120,150,.22);--bd2:rgba(200,120,150,.42);
+  --ok:#5eca7a;--ok-bg:#0d2518;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{min-height:100%}
+body{
+  font-family:'DM Sans',sans-serif;font-size:16px;
+  background:var(--bg);color:var(--t1);
+  -webkit-font-smoothing:antialiased;
+  transition:background var(--tr),color var(--tr);
+  overflow-x:hidden;
+}
+button{font-family:inherit;cursor:pointer;border:none;outline:none;background:none}
+
+/* NAV */
+.nav{
+  height:52px;display:flex;align-items:center;justify-content:space-between;
+  padding:0 28px;border-bottom:1px solid var(--bd);
+  background:var(--bg);
+  transition:background var(--tr),border-color var(--tr);
+}
+.nav-logo{font-size:16px;font-weight:500;letter-spacing:.18em;color:var(--p)}
+.nav-logo em{font-style:normal;font-weight:400;opacity:.55}
+.theme-btn{
+  width:38px;height:22px;border-radius:11px;
+  background:var(--surface2);border:1.5px solid var(--bd2);
+  position:relative;cursor:pointer;padding:2px;display:flex;align-items:center;
+  transition:background var(--tr),border-color var(--tr);
+}
+.theme-btn::after{content:'';width:16px;height:16px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.18);transition:transform var(--tr)}
+[data-theme=dark] .theme-btn{background:var(--p);border-color:var(--p)}
+[data-theme=dark] .theme-btn::after{transform:translateX(16px)}
+
+/* PAGE */
+.page{
+  max-width:560px;margin:0 auto;
+  padding:48px 24px 80px;
+  display:flex;flex-direction:column;align-items:center;
+}
+
+/* PLAN SELECTOR (demo) */
+.plan-selector{
+  display:flex;gap:6px;margin-bottom:40px;
+  background:var(--surface2);border-radius:12px;padding:4px;
+  transition:background var(--tr);
+}
+.plan-btn{
+  font-size:13px;font-weight:500;padding:7px 16px;border-radius:9px;
+  color:var(--t3);cursor:pointer;transition:all .2s;
+}
+.plan-btn.active{
+  background:var(--surface);color:var(--t1);
+  box-shadow:0 1px 6px rgba(0,0,0,.08);
+}
+
+/* PANEL */
+.success-panel{display:none;width:100%;animation:fadeUp .45s both}
+.success-panel.active{display:flex;flex-direction:column;align-items:center}
+@keyframes fadeUp{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+
+/* CHECK RING */
+.check-ring{
+  width:72px;height:72px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  margin-bottom:20px;position:relative;
+}
+.check-ring svg{width:30px;height:30px}
+.check-ring-light{background:var(--ok-bg);border:2px solid rgba(45,138,78,.25)}
+.check-ring-light svg{stroke:var(--ok)}
+.check-ring-month{background:linear-gradient(135deg,rgba(204,94,118,.1),rgba(138,50,72,.05));border:2px solid rgba(204,94,118,.25)}
+.check-ring-month svg{stroke:var(--p)}
+.check-ring-quarter{background:linear-gradient(135deg,rgba(45,138,78,.1),rgba(20,80,40,.05));border:2px solid rgba(45,138,78,.3)}
+.check-ring-quarter svg{stroke:var(--ok)}
+
+/* HEADLINE */
+.success-headline{
+  font-family:'Cormorant Garamond',serif;
+  font-size:clamp(30px,6vw,42px);font-weight:600;
+  color:var(--t1);line-height:1.1;text-align:center;
+  margin-bottom:8px;transition:color var(--tr);
+}
+.success-headline em{font-style:italic;font-weight:300;color:var(--p)}
+.success-sub{
+  font-size:16px;color:var(--t3);text-align:center;
+  margin-bottom:32px;line-height:1.6;max-width:380px;
+  transition:color var(--tr);
+}
+
+/* CREATOR CHIP */
+.creator-chip{
+  display:flex;align-items:center;gap:12px;
+  background:var(--surface);border:1px solid var(--bd);
+  border-radius:14px;padding:14px 18px;width:100%;
+  margin-bottom:24px;
+  transition:background var(--tr),border-color var(--tr);
+}
+.chip-avatar{
+  width:44px;height:44px;border-radius:50%;flex-shrink:0;
+  background:linear-gradient(135deg,var(--p),var(--p2));
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;color:#fff;
+}
+.chip-name{font-size:15px;font-weight:600;color:var(--t1);transition:color var(--tr)}
+.chip-plan{font-size:13px;color:var(--t3);margin-top:2px;transition:color var(--tr)}
+.chip-right{margin-left:auto;text-align:right}
+.chip-amount{font-size:16px;font-weight:700;color:var(--t1);letter-spacing:-.01em;transition:color var(--tr)}
+.chip-period{font-size:12px;color:var(--t3);transition:color var(--tr)}
+
+/* GIFT BOX */
+.gift-box{
+  width:100%;border-radius:16px;padding:22px 22px 20px;
+  margin-bottom:24px;position:relative;overflow:hidden;
+  border:1.5px solid;
+  transition:background var(--tr),border-color var(--tr);
+}
+.gift-box-light{background:var(--surface2);border-color:var(--bd2)}
+.gift-box-month{background:var(--surface3);border-color:rgba(204,94,118,.3)}
+.gift-box-quarter{background:var(--ok-bg);border-color:rgba(45,138,78,.3)}
+
+.gift-tag{
+  display:inline-flex;align-items:center;gap:6px;
+  font-size:12px;font-weight:700;letter-spacing:.06em;
+  text-transform:uppercase;margin-bottom:14px;
+}
+.gift-tag svg{width:14px;height:14px}
+.gift-tag-light{color:var(--t3)}
+.gift-tag-month{color:var(--p)}
+.gift-tag-quarter{color:var(--ok)}
+
+.gift-title{
+  font-family:'Cormorant Garamond',serif;
+  font-size:22px;font-weight:600;color:var(--t1);
+  margin-bottom:8px;line-height:1.2;
+  transition:color var(--tr);
+}
+.gift-body{
+  font-size:14px;color:var(--t2);line-height:1.7;
+  transition:color var(--tr);
+}
+
+/* CONTENT PREVIEW STRIP */
+.preview-strip{
+  display:flex;gap:4px;margin-top:14px;border-radius:10px;overflow:hidden;
+}
+.preview-thumb{height:70px;flex:1;position:relative;overflow:hidden}
+.preview-thumb-bg{width:100%;height:100%}
+.preview-count{
+  position:absolute;inset:0;
+  background:rgba(15,10,13,.45);
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:600;color:#fff;
+}
+
+/* UNLOCK BADGE (quarter) */
+.unlock-badge{
+  display:flex;align-items:center;gap:10px;
+  background:rgba(45,138,78,.08);border:1px solid rgba(45,138,78,.2);
+  border-radius:10px;padding:10px 14px;margin-top:12px;
+}
+.unlock-badge svg{width:16px;height:16px;stroke:var(--ok);flex-shrink:0}
+.unlock-badge-text{font-size:13px;color:var(--ok);font-weight:500}
+
+/* NEXT STEPS */
+.next-steps{
+  width:100%;display:flex;flex-direction:column;gap:10px;
+  margin-bottom:28px;
+}
+.next-step{
+  display:flex;align-items:center;gap:14px;
+  background:var(--surface);border:1px solid var(--bd);
+  border-radius:12px;padding:14px 16px;
+  cursor:pointer;transition:all .2s;
+}
+.next-step:hover{border-color:var(--p);transform:translateY(-1px);box-shadow:0 4px 14px rgba(150,70,90,.08)}
+.step-icon{
+  width:38px;height:38px;border-radius:10px;
+  background:var(--surface2);
+  display:flex;align-items:center;justify-content:center;
+  color:var(--p);flex-shrink:0;
+  transition:background var(--tr),color var(--tr);
+}
+.step-icon svg{width:17px;height:17px}
+.step-label{font-size:14px;font-weight:600;color:var(--t1);transition:color var(--tr)}
+.step-desc{font-size:12px;color:var(--t3);margin-top:2px;transition:color var(--tr)}
+.step-arrow{margin-left:auto;color:var(--t3);transition:color var(--tr)}
+.step-arrow svg{width:16px;height:16px}
+
+/* CTA */
+.goto-btn{
+  width:100%;height:52px;border-radius:14px;
+  background:var(--p);color:#fff;
+  font-size:16px;font-weight:600;
+  box-shadow:0 4px 16px rgba(204,94,118,.25);
+  transition:background .18s,transform .15s;
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  margin-bottom:14px;
+}
+.goto-btn:hover{background:var(--ph);transform:translateY(-1px)}
+.goto-btn-ghost{
+  font-size:14px;color:var(--t3);text-align:center;
+  transition:color .18s;cursor:pointer;
+}
+.goto-btn-ghost:hover{color:var(--p)}
+
+@media(max-width:480px){
+  .page{padding:32px 16px 64px}
+  .plan-selector{width:100%;justify-content:stretch}
+  .plan-btn{flex:1;text-align:center;font-size:12px;padding:7px 8px}
+}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-logo">FAN<em>HUB</em></div>
+  <div class="theme-btn" id="themeBtn"></div>
+</nav>
+
+<div class="page">
+
+  <!-- Demo plan selector -->
+  <div class="plan-selector">
+    <div class="plan-btn active" onclick="showPlan('light',this)">輕訂閱</div>
+    <div class="plan-btn" onclick="showPlan('month',this)">一個月</div>
+    <div class="plan-btn" onclick="showPlan('quarter',this)">三個月</div>
+  </div>
+
+  <!-- ── 輕訂閱 成功頁 ── -->
+  <div class="success-panel active" id="panel-light">
+    <div class="check-ring check-ring-light">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <div class="success-headline">好的開始，<em>從這裡試試</em></div>
+    <div class="success-sub">你選擇了輕訂閱，先試看 15 天的她，再決定要不要繼續走下去。</div>
+
+    <div class="creator-chip">
+      <div class="chip-avatar">A</div>
+      <div>
+        <div class="chip-name">Ava Lin</div>
+        <div class="chip-plan">輕訂閱 · 過去 15 天內容</div>
+      </div>
+      <div class="chip-right">
+        <div class="chip-amount">NT$150</div>
+        <div class="chip-period">本月</div>
+      </div>
+    </div>
+
+    <div class="gift-box gift-box-light">
+      <div class="gift-tag gift-tag-light">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        目前可看
+      </div>
+      <div class="gift-title">最近 15 天，共 8 篇內容</div>
+      <div class="gift-body">花少少的錢先認識她。如果你喜歡，升級正式訂閱就能看更多——過去 60 天，或者全部的她。</div>
+      <div class="preview-strip">
+        <div class="preview-thumb"><div class="preview-thumb-bg" style="background:linear-gradient(145deg,#f0d0c0,#e0b0a8)"></div></div>
+        <div class="preview-thumb"><div class="preview-thumb-bg" style="background:linear-gradient(145deg,#ddf0f8,#b8dcea)"></div></div>
+        <div class="preview-thumb"><div class="preview-thumb-bg" style="background:linear-gradient(145deg,#f8e8d0,#f0d0a8)"></div></div>
+        <div class="preview-thumb" style="flex:0.6">
+          <div class="preview-thumb-bg" style="background:linear-gradient(145deg,#e8d8f0,#d0b8e0)"></div>
+          <div class="preview-count">+5</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="next-steps">
+      <div class="next-step" onclick="window.location.href='fanhub-creator-profile-v2.html'">
+        <div class="step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+        <div>
+          <div class="step-label">前往 Ava Lin 的主頁</div>
+          <div class="step-desc">開始探索她最近 15 天的內容</div>
+        </div>
+        <div class="step-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></div>
+      </div>
+      <div class="next-step" onclick="window.location.href='fanhub-subscribe-modal.html'">
+        <div class="step-icon" style="background:var(--surface3);color:var(--p2)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/></svg></div>
+        <div>
+          <div class="step-label">升級正式訂閱</div>
+          <div class="step-desc">看更多，從過去 60 天到全部歷史</div>
+        </div>
+        <div class="step-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></div>
+      </div>
+    </div>
+
+    <button class="goto-btn" onclick="window.location.href='fanhub-creator-profile-v2.html'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      開始看她的內容
+    </button>
+    <div class="goto-btn-ghost" onclick="window.location.href='fanhub-explore.html'">繼續探索其他創作者</div>
+  </div>
+
+  <!-- ── 正式一個月 成功頁 ── -->
+  <div class="success-panel" id="panel-month">
+    <div class="check-ring check-ring-month">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <div class="success-headline">歡迎進來，<em>她在等你</em></div>
+    <div class="success-sub">你選擇了一個月的陪伴。過去 60 天的她，現在是你的了。</div>
+
+    <div class="creator-chip">
+      <div class="chip-avatar">A</div>
+      <div>
+        <div class="chip-name">Ava Lin</div>
+        <div class="chip-plan">正式訂閱 · 一個月 · 過去 60 天</div>
+      </div>
+      <div class="chip-right">
+        <div class="chip-amount">NT$299</div>
+        <div class="chip-period">本月</div>
+      </div>
+    </div>
+
+    <div class="gift-box gift-box-month">
+      <div class="gift-tag gift-tag-month">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v10H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
+        Ava Lin 送給你的禮物
+      </div>
+      <div class="gift-title">60 天的她，先送給你</div>
+      <div class="gift-body">她把過去兩個月最真實的自己留在這裡，等著你慢慢讀完。不急，這是屬於你的起點。</div>
+      <div class="preview-strip" style="margin-top:14px">
+        <div class="preview-thumb"><div class="preview-thumb-bg" style="background:linear-gradient(145deg,#f0d0c0,#e0b0a8)"></div></div>
+        <div class="preview-thumb"><div class="preview-thumb-bg" style="background:linear-gradient(145deg,#ddf0f8,#b8dcea)"></div></div>
+        <div class="preview-thumb"><div class="preview-thumb-bg" style="background:linear-gradient(145deg,#f8e8d0,#f0d0a8)"></div></div>
+        <div class="preview-thumb"><div class="preview-thumb-bg" style="background:linear-gradient(145deg,#e8d8f0,#d0b8e0)"></div></div>
+        <div class="preview-thumb" style="flex:0.7">
+          <div class="preview-thumb-bg" style="background:linear-gradient(145deg,#d0e8d0,#a8c8a0)"></div>
+          <div class="preview-count">+25</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="next-steps">
+      <div class="next-step" onclick="window.location.href='fanhub-creator-profile-v2.html'">
+        <div class="step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+        <div>
+          <div class="step-label">前往 Ava Lin 的主頁</div>
+          <div class="step-desc">探索她過去 60 天的全部內容</div>
+        </div>
+        <div class="step-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></div>
+      </div>
+      <div class="next-step" onclick="window.location.href='fanhub-messages.html'">
+        <div class="step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+        <div>
+          <div class="step-label">傳訊息給她</div>
+          <div class="step-desc">訂閱者可以直接和 Ava Lin 說話</div>
+        </div>
+        <div class="step-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></div>
+      </div>
+    </div>
+
+    <button class="goto-btn" onclick="window.location.href='fanhub-creator-profile-v2.html'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      開始看她的內容
+    </button>
+    <div class="goto-btn-ghost" onclick="window.location.href='fanhub-explore.html'">繼續探索其他創作者</div>
+  </div>
+
+  <!-- ── 正式三個月 成功頁 ── -->
+  <div class="success-panel" id="panel-quarter">
+    <div class="check-ring check-ring-quarter">
+      <svg viewBox="0 0 24 24" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+    </div>
+    <div class="success-headline">你選擇了<em>全部的她</em></div>
+    <div class="success-sub">三個月，全部的歷史。她把所有過去都送給了你——這是她選擇給你的。</div>
+
+    <div class="creator-chip">
+      <div class="chip-avatar">A</div>
+      <div>
+        <div class="chip-name">Ava Lin</div>
+        <div class="chip-plan">正式訂閱 · 三個月 · 全部歷史存檔</div>
+      </div>
+      <div class="chip-right">
+        <div class="chip-amount" style="color:var(--ok)">NT$748</div>
+        <div class="chip-period">三個月</div>
+      </div>
+    </div>
+
+    <div class="gift-box gift-box-quarter">
+      <div class="gift-tag gift-tag-quarter">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 12v10H4V12"/><path d="M22 7H2v5h20V7z"/><path d="M12 22V7"/><path d="M12 7H7.5a2.5 2.5 0 0 1 0-5C11 2 12 7 12 7z"/><path d="M12 7h4.5a2.5 2.5 0 0 0 0-5C13 2 12 7 12 7z"/></svg>
+        Ava Lin 送給你的歡迎禮物
+      </div>
+      <div class="gift-title">248 篇，全部都是你的</div>
+      <div class="gift-body">她把三年創作的全部，在這個瞬間送給了你。這不是你買到的——這是她選擇讓你看到的，因為你選擇了她。</div>
+      <div class="unlock-badge">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>
+        <div class="unlock-badge-text">全部 248 篇歷史存檔已解鎖 · 可永久閱覽</div>
+      </div>
+    </div>
+
+    <!-- Milestone moments -->
+    <div style="
+      width:100%;background:var(--surface);border:1px solid var(--bd);
+      border-radius:14px;padding:18px 20px;margin-bottom:24px;
+      transition:background var(--tr),border-color var(--tr);
+    ">
+      <div style="font-size:13px;font-weight:600;color:var(--t3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:14px;transition:color var(--tr)">她的創作旅程，你可以從頭看起</div>
+      <div style="display:flex;flex-direction:column;gap:11px">
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="width:32px;height:32px;border-radius:8px;background:rgba(204,94,118,.1);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">🌱</div>
+          <div>
+            <div style="font-size:13px;font-weight:500;color:var(--t1);transition:color var(--tr)">第一篇貼文</div>
+            <div style="font-size:11px;color:var(--t3);transition:color var(--tr)">2022 年 3 月 · 她創作的起點</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="width:32px;height:32px;border-radius:8px;background:rgba(45,138,78,.1);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">💪</div>
+          <div>
+            <div style="font-size:13px;font-weight:500;color:var(--t1);transition:color var(--tr)">第 100 天備賽記錄</div>
+            <div style="font-size:11px;color:var(--t3);transition:color var(--tr)">2022 年 10 月 · 目前最多人愛心的貼文</div>
+          </div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="width:32px;height:32px;border-radius:8px;background:rgba(212,160,94,.1);display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0">⭐</div>
+          <div>
+            <div style="font-size:13px;font-weight:500;color:var(--t1);transition:color var(--tr)">寫真集 Vol.08 · 海邊的下午</div>
+            <div style="font-size:11px;color:var(--t3);transition:color var(--tr)">2024 年 4 月 · 精選時刻之一</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="next-steps">
+      <div class="next-step" onclick="window.location.href='fanhub-creator-profile-v2.html'">
+        <div class="step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg></div>
+        <div>
+          <div class="step-label">前往 Ava Lin 的主頁</div>
+          <div class="step-desc">248 篇全部解鎖，從頭開始或隨意跳</div>
+        </div>
+        <div class="step-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></div>
+      </div>
+      <div class="next-step" onclick="window.location.href='fanhub-messages.html'">
+        <div class="step-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg></div>
+        <div>
+          <div class="step-label">傳訊息給她</div>
+          <div class="step-desc">告訴她你最喜歡哪一篇</div>
+        </div>
+        <div class="step-arrow"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><polyline points="9 18 15 12 9 6"/></svg></div>
+      </div>
+    </div>
+
+    <button class="goto-btn" style="background:var(--ok);box-shadow:0 4px 16px rgba(45,138,78,.25)"
+      onmouseover="this.style.background='#22703e'" onmouseout="this.style.background='var(--ok)'"
+      onclick="window.location.href='fanhub-creator-profile-v2.html'">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:18px;height:18px"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      解鎖全部 248 篇內容
+    </button>
+    <div class="goto-btn-ghost" onclick="window.location.href='fanhub-explore.html'">繼續探索其他創作者</div>
+  </div>
+
+</div>
+
+<script>
+const root = document.documentElement;
+root.dataset.theme = 'light';
+document.getElementById('themeBtn').addEventListener('click', () => {
+  const n = root.dataset.theme === 'light' ? 'dark' : 'light';
+  root.dataset.theme = n;
+});
+
+function showPlan(plan, btn) {
+  document.querySelectorAll('.plan-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  document.querySelectorAll('.success-panel').forEach(p => p.classList.remove('active'));
+  const panel = document.getElementById('panel-' + plan);
+  panel.classList.add('active');
+  // Re-trigger animation
+  panel.style.animation = 'none';
+  panel.offsetHeight;
+  panel.style.animation = '';
+}
+
+// URL param 支援：?plan=light|month|quarter
+const params = new URLSearchParams(location.search);
+const initPlan = params.get('plan') || 'month';
+const initBtn = document.querySelector('.plan-btn');
+if (initPlan !== 'light') {
+  const map = {month: 1, quarter: 2};
+  const idx = map[initPlan] ?? 0;
+  const btns = document.querySelectorAll('.plan-btn');
+  if (btns[idx]) showPlan(initPlan, btns[idx]);
+}
+</script>
+</body>
+</html>

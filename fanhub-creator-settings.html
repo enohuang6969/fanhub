@@ -719,29 +719,96 @@ input,textarea,select{font-family:inherit;outline:none}
       <div class="form-section">
         <div class="form-section-head">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-          <div class="form-section-title">訂閱方案</div>
+          <div class="form-section-title">訂閱方案設定</div>
         </div>
+
+        <!-- 正式月費 -->
         <div class="form-field">
-          <div class="field-label">月訂閱價格</div>
+          <div class="field-label">正式訂閱月費</div>
           <div class="price-input-wrap">
             <div class="price-prefix">NT$</div>
-            <input class="price-input" type="number" value="299" min="99" max="9999" id="priceInput" oninput="syncPrice()">
+            <input class="price-input" type="number" value="299" min="99" max="9999" id="priceInput" oninput="syncPrice();syncMicroPrice()">
             <div class="price-suffix">/月</div>
           </div>
-          <div style="font-size:12px;color:var(--t3);margin-top:6px">最低 NT$99 · 建議 NT$99–999</div>
+          <div style="font-size:13px;color:var(--t3);margin-top:6px;line-height:1.6">
+            最低 NT$99 · 建議 NT$99–999<br>
+            正式一個月：可看往前 60 天內容 · 正式三個月：全部歷史存檔
+          </div>
         </div>
-        <div class="form-field">
-          <div class="field-label">訂閱包含內容</div>
-          <textarea class="field-textarea" placeholder="描述訂閱者可以獲得什麼…" style="min-height:64px" oninput="markUnsaved()" oninput="markUnsaved()">解鎖全部貼文 · 限定相簿 · 私訊 · 直播優先入場</textarea>
-        </div>
+
+        <!-- 三個月方案 -->
         <div class="form-field">
           <div class="toggle-field">
             <div class="toggle-field-info">
-              <div class="toggle-field-label">提供年付優惠</div>
-              <div class="toggle-field-desc">年付訂閱者享 83 折優惠（約省 2 個月）</div>
+              <div class="toggle-field-label">開放三個月方案</div>
+              <div class="toggle-field-desc" id="quarterDesc">月費 × 2.5，省下一個月費用 · 解鎖全部歷史存檔</div>
             </div>
-            <div class="toggle-sw on" onclick="this.classList.toggle('on')"><div class="toggle-sw-thumb"></div></div>
+            <div class="toggle-sw on" id="quarterToggle" onclick="this.classList.toggle('on');markUnsaved()"><div class="toggle-sw-thumb"></div></div>
           </div>
+        </div>
+
+        <!-- 分隔線 -->
+        <div style="height:1px;background:var(--bd);margin:4px 0 20px;transition:background var(--tr)"></div>
+
+        <!-- 輕訂閱區塊 -->
+        <div style="margin-bottom:8px">
+          <div style="font-size:15px;font-weight:600;color:var(--t1);margin-bottom:4px;transition:color var(--tr)">輕訂閱方案</div>
+          <div style="font-size:13px;color:var(--t3);line-height:1.6;transition:color var(--tr)">
+            讓猶豫中的粉絲花一半的錢先試看，確認喜歡再升級正式訂閱。
+          </div>
+        </div>
+
+        <!-- 輕訂閱開關 -->
+        <div class="form-field">
+          <div class="toggle-field">
+            <div class="toggle-field-info">
+              <div class="toggle-field-label">開啟輕訂閱</div>
+              <div class="toggle-field-desc" id="microEligDesc">開啟後，輕訂閱者可以看你過去 15 天的內容，費用為正式月費的 50%</div>
+            </div>
+            <div class="toggle-sw" id="microToggle" onclick="toggleMicro(this)"><div class="toggle-sw-thumb"></div></div>
+          </div>
+        </div>
+
+        <!-- 輕訂閱資格提示 -->
+        <div id="microStatusBox" style="
+          background:var(--surface2);border-radius:12px;padding:14px 16px;
+          border:1.5px solid var(--bd2);margin-bottom:0;
+          transition:background var(--tr),border-color var(--tr);
+        ">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+            <div id="microStatusIcon" style="width:32px;height:32px;border-radius:50%;background:var(--ok-bg);border:1.5px solid rgba(45,138,78,.25);display:flex;align-items:center;justify-content:center;flex-shrink:0">
+              <svg viewBox="0 0 24 24" fill="none" stroke="var(--ok)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px"><polyline points="20 6 9 17 4 12"/></svg>
+            </div>
+            <div>
+              <div id="microStatusTitle" style="font-size:14px;font-weight:600;color:var(--ok);transition:color var(--tr)">已符合開啟資格</div>
+              <div id="microStatusSub" style="font-size:12px;color:var(--t3);transition:color var(--tr)">你的頻道已創作超過 31 天</div>
+            </div>
+          </div>
+          <!-- 輕訂閱計算 -->
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <div style="background:var(--surface);border:1px solid var(--bd);border-radius:10px;padding:12px 14px;transition:background var(--tr),border-color var(--tr)">
+              <div style="font-size:12px;color:var(--t3);margin-bottom:4px;transition:color var(--tr)">輕訂閱月費</div>
+              <div style="font-size:20px;font-weight:700;color:var(--p);letter-spacing:-.01em;transition:color var(--tr)" id="microPrice">NT$150</div>
+              <div style="font-size:11px;color:var(--t3);margin-top:2px;transition:color var(--tr)">正式月費的 50%</div>
+            </div>
+            <div style="background:var(--surface);border:1px solid var(--bd);border-radius:10px;padding:12px 14px;transition:background var(--tr),border-color var(--tr)">
+              <div style="font-size:12px;color:var(--t3);margin-bottom:4px;transition:color var(--tr)">可看範圍</div>
+              <div style="font-size:15px;font-weight:600;color:var(--t1);transition:color var(--tr)">過去 15 天</div>
+              <div style="font-size:11px;color:var(--t3);margin-top:2px;transition:color var(--tr)" id="microPostCount">目前約 8 篇</div>
+            </div>
+          </div>
+          <!-- 說明 -->
+          <div style="margin-top:10px;font-size:13px;color:var(--t3);line-height:1.6;padding-top:10px;border-top:1px solid var(--bd);transition:color var(--tr),border-color var(--tr)">
+            訂閱者選擇輕訂閱時，系統會告知<strong style="color:var(--t2)">目前有幾篇貼文可看</strong>，讓他自行判斷是否值得。輕訂閱者每個月看到的內容會滾動更新，無法累積看完歷史存檔。
+          </div>
+        </div>
+
+        <!-- 分隔線 -->
+        <div style="height:1px;background:var(--bd);margin:20px 0;transition:background var(--tr)"></div>
+
+        <div class="form-field">
+          <div class="field-label">訂閱包含內容說明</div>
+          <textarea class="field-textarea" placeholder="描述訂閱者可以獲得什麼…" style="min-height:64px" oninput="markUnsaved()">解鎖全部貼文 · 限定相簿 · 私訊 · 直播優先入場</textarea>
         </div>
         <div class="form-field">
           <div class="toggle-field">
@@ -749,7 +816,7 @@ input,textarea,select{font-family:inherit;outline:none}
               <div class="toggle-field-label">開放免費試閱</div>
               <div class="toggle-field-desc">讓訪客看到部分內容，增加訂閱意願</div>
             </div>
-            <div class="toggle-sw on" onclick="this.classList.toggle('on')"><div class="toggle-sw-thumb"></div></div>
+            <div class="toggle-sw on" onclick="this.classList.toggle('on');markUnsaved()"><div class="toggle-sw-thumb"></div></div>
           </div>
         </div>
       </div>
@@ -826,7 +893,7 @@ input,textarea,select{font-family:inherit;outline:none}
           <div class="mini-stats">
             <div class="mini-stat"><div class="mini-stat-num">12.4K</div><div class="mini-stat-lbl">粉絲</div></div>
             <div class="mini-stat"><div class="mini-stat-num">248</div><div class="mini-stat-lbl">貼文</div></div>
-            <div class="mini-stat"><div class="mini-stat-num">4.9</div><div class="mini-stat-lbl">評分</div></div>
+            <div class="mini-stat"><div class="mini-stat-num">36 月</div><div class="mini-stat-lbl">持續創作</div></div>
           </div>
         </div>
       </div>
@@ -838,6 +905,7 @@ input,textarea,select{font-family:inherit;outline:none}
           <div class="plan-preview-badge">限定</div>
         </div>
         <div class="plan-preview-price" id="previewPrice">NT$299<span>/月</span></div>
+        <div style="font-size:12px;color:var(--t3);margin-top:4px;transition:color var(--tr)">輕訂閱 NT$<span id="previewMicro">150</span>/月 · 看過去 15 天</div>
         <div class="plan-preview-perks">
           <div class="plan-preview-perk">
             <div class="perk-check-sm"><svg viewBox="0 0 10 10" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="2,5 4,7.5 8,2.5"/></svg></div>
